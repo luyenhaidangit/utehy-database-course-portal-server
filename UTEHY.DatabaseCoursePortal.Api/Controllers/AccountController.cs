@@ -36,18 +36,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpPost]
-        [Route("login")]
-        public async Task<ApiResult<string>> Login([FromBody] LoginRequest request)
+        [Route("login-by-email")]
+        public async Task<ApiResult<string>> Login([FromBody] LoginEmailRequest request)
         {
             //Verify
-            var user = await _userManager.FindByNameAsync(request.UserName);
+            var user = _dbContext.Users.FirstOrDefault(user => user.Email == request.Email && user.EmailConfirmed == true);
 
             if (user == null)
             {
                 return new ApiResult<string>()
                 {
                     Status = false,
-                    Message = "Tên người dùng không tồn tại!",
+                    Message = "Email người dùng không tồn tại!",
                 };
             }
 
@@ -58,7 +58,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 return new ApiResult<string>()
                 {
                     Status = false,
-                    Message = "Tài khoản hoặc mật khẩu người dùng không hợp lệ!",
+                    Message = "Tài khoản hoặc mật khẩu người dùng không chính xác!",
                 };
             }
 

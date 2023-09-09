@@ -2,12 +2,11 @@
 
 namespace UTEHY.DatabaseCoursePortal.Api.Models.UserViewModels
 {
-    public class LoginRequest
+    public class LoginEmailRequest
     {
         [Required]
-        [MinLength(4)]
-        [MaxLength(40)]
-        public string? UserName { get; set; }
+        [EmailAddress]
+        public string? Email { get; set; }
 
         [Required]
         [MinLength(4)]
