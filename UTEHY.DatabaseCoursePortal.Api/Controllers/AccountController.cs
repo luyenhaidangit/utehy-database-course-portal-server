@@ -15,6 +15,12 @@ using Twilio.Types;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Google.Apis.Auth;
+using System.Linq;
+using Google.Apis.Auth.OAuth2;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -37,7 +43,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 
         [HttpPost]
         [Route("login-by-email")]
-        public async Task<ApiResult<string>> Login([FromBody] LoginEmailRequest request)
+        public async Task<ApiResult<string>> LoginByEmail([FromBody] LoginEmailRequest request)
         {
             //Verify
             var user = _dbContext.Users.FirstOrDefault(user => user.Email == request.Email && user.EmailConfirmed == true);
@@ -53,7 +59,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
 
-            if(!result.Succeeded) 
+            if (!result.Succeeded)
             {
                 return new ApiResult<string>()
                 {
@@ -76,7 +82,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.UtcNow.AddDays(30);
 
-            var token = new JwtSecurityToken(issuer,audience,claims,expires,signingCredentials: creds);
+            var token = new JwtSecurityToken(issuer, audience, claims, expires, signingCredentials: creds);
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenData = tokenHandler.WriteToken(token);
 
@@ -105,7 +111,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             }
 
             //Authenticate
-            var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user,user.PhoneNumber);
+            var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
 
             //Send otp
             TwilioClient.Init(_config["Twilio:AccountSID"], _config["Twilio:AuthToken"]);
@@ -133,7 +139,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 }
             }
 
-            if(!twilioMessage.IsCompletedSuccessfully)
+            if (!twilioMessage.IsCompletedSuccessfully)
             {
                 return new ApiResult<string>()
                 {
@@ -178,6 +184,86 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             }
 
             //Create token
+            var issuer = _config["Jwt:Issuer"];
+            var audience = _config["Jwt:Audience"];
+            var roles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, string.Join(";",roles)),
+            };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.UtcNow.AddDays(30);
+
+            var token = new JwtSecurityToken(issuer, audience, claims, expires, signingCredentials: creds);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenData = tokenHandler.WriteToken(token);
+
+            return new ApiResult<string>()
+            {
+                Status = true,
+                Message = "Đăng nhập thành công!",
+                Data = tokenData
+            };
+        }
+
+        [HttpPost]
+        [Route("login-by-google")]
+        public async Task<ApiResult<string>> LoginByGoogle(string tokenProvider)
+        {
+            //Validate token
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>() { _config["Google:ClientId"] }
+            };
+
+            GoogleJsonWebSignature.Payload tokenPayload;
+
+            try
+            {
+                tokenPayload = await GoogleJsonWebSignature.ValidateAsync(tokenProvider, settings);
+            }
+            catch (Exception ex)
+            {
+                tokenPayload = null;
+            }
+
+            if(tokenPayload == null)
+            {
+                return new ApiResult<string>()
+                {
+                    Status = false,
+                    Message = "Mã xác thực google không hợp lệ!",
+                };
+            }
+
+            // Verify user
+            var userLoginInfo = new UserLoginInfo("google", tokenPayload.Subject, "google");
+
+            var user = await _userManager.FindByLoginAsync(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
+
+            if(user == null)
+            {
+                user = await _userManager.FindByEmailAsync(tokenPayload.Email);
+
+                if (user == null)
+                {
+                    user = new User 
+                    { 
+                        Email = tokenPayload.Email, 
+                        UserName = tokenPayload.Email,
+                        EmailConfirmed = tokenPayload.EmailVerified
+                    };
+
+                    await _userManager.CreateAsync(user);
+                    await _userManager.AddToRoleAsync(user, "admin");
+                }
+                await _userManager.AddLoginAsync(user, userLoginInfo);
+            }
+
+            // Create token
             var issuer = _config["Jwt:Issuer"];
             var audience = _config["Jwt:Audience"];
             var roles = await _userManager.GetRolesAsync(user);
