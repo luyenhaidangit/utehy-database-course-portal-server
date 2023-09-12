@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Google.Apis.Auth;
 using System.Linq;
 using Google.Apis.Auth.OAuth2;
+using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -32,20 +33,22 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _dbContext;
+        private readonly AuthService _authService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _dbContext = dbContext;
+            _authService = authService;
         }
 
         [HttpPost]
         [Route("login-by-email")]
         public async Task<ApiResult<string>> LoginByEmail([FromBody] LoginEmailRequest request)
         {
-            //Verify
+            //Check exists user
             var user = _dbContext.Users.FirstOrDefault(user => user.Email == request.Email && user.EmailConfirmed == true);
 
             if (user == null)
@@ -57,6 +60,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 };
             }
 
+            //Verify login
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
 
             if (!result.Succeeded)
@@ -69,28 +73,22 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             }
 
             //Create token
-            var issuer = _config["Jwt:Issuer"];
-            var audience = _config["Jwt:Audience"];
-            var roles = await _userManager.GetRolesAsync(user);
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, string.Join(";",roles)),
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(30);
+            var token = await _authService.CreateToken(user);
 
-            var token = new JwtSecurityToken(issuer, audience, claims, expires, signingCredentials: creds);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenData = tokenHandler.WriteToken(token);
+            if (token == null)
+            {
+                return new ApiResult<string>()
+                {
+                    Status = false,
+                    Message = "Tạo mã thông báo thất bại!",
+                };
+            }
 
             return new ApiResult<string>()
             {
                 Status = true,
                 Message = "Đăng nhập thành công!",
-                Data = tokenData
+                Data = token
             };
         }
 
@@ -98,7 +96,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         [Route("send-otp-login-numberphone")]
         public async Task<ApiResult<string>> SendOtpLoginNumberphone(string numberphone)
         {
-            //Verify
+            //Check exists user
             var user = _dbContext.Users.FirstOrDefault(user => user.PhoneNumber == numberphone && user.PhoneNumberConfirmed == true);
 
             if (user == null)
@@ -110,7 +108,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 };
             }
 
-            //Authenticate
+            //Verify login
             var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
 
             //Send otp
@@ -159,7 +157,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         [Route("login-by-verify-otp-numberphone")]
         public async Task<ApiResult<string>> LoginByVerifyOtpNumberphone(string numberphone, string otp)
         {
-            // Verify
+            //Verify login
             var user = _dbContext.Users.FirstOrDefault(user => user.PhoneNumber == numberphone && user.PhoneNumberConfirmed == true);
 
             if (user == null)
@@ -184,36 +182,30 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             }
 
             //Create token
-            var issuer = _config["Jwt:Issuer"];
-            var audience = _config["Jwt:Audience"];
-            var roles = await _userManager.GetRolesAsync(user);
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, string.Join(";",roles)),
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(30);
+            var token = await _authService.CreateToken(user);
 
-            var token = new JwtSecurityToken(issuer, audience, claims, expires, signingCredentials: creds);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenData = tokenHandler.WriteToken(token);
+            if (token == null)
+            {
+                return new ApiResult<string>()
+                {
+                    Status = false,
+                    Message = "Tạo mã thông báo thất bại!",
+                };
+            }
 
             return new ApiResult<string>()
             {
                 Status = true,
                 Message = "Đăng nhập thành công!",
-                Data = tokenData
+                Data = token
             };
         }
 
         [HttpPost]
         [Route("login-by-google")]
-        public async Task<ApiResult<string>> LoginByGoogle(string tokenProvider)
+        public async Task<ApiResult<string>> LoginByGoogle(string idToken)
         {
-            //Validate token
+            //Validate id token
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
                 Audience = new List<string>() { _config["Google:ClientId"] }
@@ -223,7 +215,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 
             try
             {
-                tokenPayload = await GoogleJsonWebSignature.ValidateAsync(tokenProvider, settings);
+                tokenPayload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
             }
             catch (Exception ex)
             {
@@ -254,7 +246,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                     { 
                         Email = tokenPayload.Email, 
                         UserName = tokenPayload.Email,
-                        EmailConfirmed = tokenPayload.EmailVerified
+                        EmailConfirmed = tokenPayload.EmailVerified,
+                        FirstName = "Luyện",
+                        LastName = "Đăng",
                     };
 
                     await _userManager.CreateAsync(user);
@@ -263,29 +257,23 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 await _userManager.AddLoginAsync(user, userLoginInfo);
             }
 
-            // Create token
-            var issuer = _config["Jwt:Issuer"];
-            var audience = _config["Jwt:Audience"];
-            var roles = await _userManager.GetRolesAsync(user);
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, string.Join(";",roles)),
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(30);
+            //Create token
+            var token = await _authService.CreateToken(user);
 
-            var token = new JwtSecurityToken(issuer, audience, claims, expires, signingCredentials: creds);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenData = tokenHandler.WriteToken(token);
+            if (token == null)
+            {
+                return new ApiResult<string>()
+                {
+                    Status = false,
+                    Message = "Tạo mã thông báo thất bại!",
+                };
+            }
 
             return new ApiResult<string>()
             {
                 Status = true,
                 Message = "Đăng nhập thành công!",
-                Data = tokenData
+                Data = token
             };
         }
     }
