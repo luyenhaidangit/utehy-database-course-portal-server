@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Services;
+using UTEHY.DatabaseCoursePortal.Api.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,12 +36,9 @@ builder.Services.AddAuthentication(
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
     }
-)
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration.GetSection("Google:ClientId").Value;
-    options.ClientSecret = builder.Configuration.GetSection("Google:ClientSecret").Value;
-});
+);
+
+builder.Services.AddDependencyInjectionServices();
 
 var app = builder.Build();
 
