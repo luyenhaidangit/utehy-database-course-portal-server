@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
-using UTEHY.DatabaseCoursePortal.Api.Services;
 using UTEHY.DatabaseCoursePortal.Api.Configurations;
+using UTEHY.DatabaseCoursePortal.Api.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.DocumentFilter<SwaggerModule>();
+});
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
