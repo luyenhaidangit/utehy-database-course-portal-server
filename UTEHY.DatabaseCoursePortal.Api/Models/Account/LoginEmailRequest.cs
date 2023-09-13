@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UTEHY.DatabaseCoursePortal.Api.Models.UserViewModels
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Account
 {
     public class LoginEmailRequest
     {

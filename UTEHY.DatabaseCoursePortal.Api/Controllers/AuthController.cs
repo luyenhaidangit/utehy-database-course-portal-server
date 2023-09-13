@@ -1,33 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
-using UTEHY.DatabaseCoursePortal.Api.Models.UserViewModels;
-using Twilio.TwiML.Messaging;
+using UTEHY.DatabaseCoursePortal.Api.Models.Account;
 using Twilio.Types;
-using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Google.Apis.Auth;
-using System.Linq;
-using Google.Apis.Auth.OAuth2;
 using UTEHY.DatabaseCoursePortal.Api.Services;
+using Twilio.Jwt.AccessToken;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -35,7 +23,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly AuthService _authService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
