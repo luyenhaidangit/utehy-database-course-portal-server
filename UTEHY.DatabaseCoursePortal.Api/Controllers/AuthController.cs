@@ -10,6 +10,8 @@ using Twilio.Types;
 using Google.Apis.Auth;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 using Twilio.Jwt.AccessToken;
+using Newtonsoft.Json.Linq;
+using UTEHY.DatabaseCoursePortal.Api.Helper;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -237,6 +239,72 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         EmailConfirmed = tokenPayload.EmailVerified,
                         FirstName = "Luyện",
                         LastName = "Đăng",
+                    };
+
+                    await _userManager.CreateAsync(user);
+                    await _userManager.AddToRoleAsync(user, "admin");
+                }
+                await _userManager.AddLoginAsync(user, userLoginInfo);
+            }
+
+            //Create token
+            var token = await _authService.CreateToken(user);
+
+            if (token == null)
+            {
+                return new ApiResult<string>()
+                {
+                    Status = false,
+                    Message = "Tạo mã thông báo thất bại!",
+                };
+            }
+
+            return new ApiResult<string>()
+            {
+                Status = true,
+                Message = "Đăng nhập thành công!",
+                Data = token
+            };
+        }
+
+        [HttpPost]
+        [Route("login-by-facebook")]
+        public async Task<ApiResult<string>> LoginByFacebook(string accessToken)
+        {
+            //Validate access token
+            var facebookProfile = RequestHelper.PerformRequest("https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name,gender,locale,birthday,picture&access_token=" + accessToken);
+
+            var jProfile = JObject.Parse(facebookProfile);
+
+            var email = jProfile["email"]?.ToString();
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return new ApiResult<string>()
+                {
+                    Status = true,
+                    Message = "Mã xác thực facebook không hợp lệ!",
+                };
+            }
+
+            //Verify user
+            var userLoginInfo = new UserLoginInfo("facebook", jProfile["id"]?.ToString(), "facebook");
+
+            var user = await _userManager.FindByLoginAsync(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
+
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(jProfile["email"]?.ToString());
+
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        Email = jProfile["email"]?.ToString(),
+                        UserName = jProfile["email"]?.ToString(),
+                        EmailConfirmed = true,
+                        FirstName = jProfile["first_name"]?.ToString(),
+                        LastName = jProfile["last_name"]?.ToString(),
                     };
 
                     await _userManager.CreateAsync(user);
