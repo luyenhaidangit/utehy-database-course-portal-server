@@ -40,6 +40,10 @@ builder.Services.AddAuthentication(
     }
 );
 
+// Http client
+builder.Services.AddHttpClient();
+
+// DI service
 builder.Services.AddDependencyInjectionServices();
 
 var app = builder.Build();
