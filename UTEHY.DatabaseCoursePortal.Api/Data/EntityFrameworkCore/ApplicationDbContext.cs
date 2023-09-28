@@ -20,6 +20,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             //Configuration
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
+            builder.ApplyConfiguration(new BannerConfiguration());
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
             builder.Entity<IdentityUserRole<Guid>>().ToTable("UserRoles");
             builder.Entity<IdentityUserLogin<Guid>>().ToTable("UserLogins");
