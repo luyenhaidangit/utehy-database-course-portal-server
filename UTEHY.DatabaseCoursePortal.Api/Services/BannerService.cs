@@ -16,10 +16,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _dbContext = dbContext;
         }
 
-        public async Task<PageResult<Banner>> Get(int? page,int? size,string type, string place)
+        public async Task<PageResult<Banner>> Get(int? page,int? size,string? type, string? place)
         {
-            var query = _dbContext.Banners
-            .Where(b => b.Type == type && b.Place == place);
+            var query = _dbContext.Banners.AsQueryable();
+
+            if (!string.IsNullOrEmpty(type))
+            {
+                query = query.Where(b => b.Type == type);
+            }
+
+            // Kiểm tra xem place có giá trị không null trước khi thêm vào truy vấn
+            if (!string.IsNullOrEmpty(place))
+            {
+                query = query.Where(b => b.Place == place);
+            }
 
             int total = await query.CountAsync();
 
