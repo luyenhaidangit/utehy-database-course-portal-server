@@ -1,6 +1,8 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Banner
+﻿using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Banner
 {
-    public class GetBannerRequest
+    public class GetBannerRequest : PageRequest
     {
         public string Place { get; set; }
 

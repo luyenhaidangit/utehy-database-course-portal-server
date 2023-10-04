@@ -1,4 +1,6 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Services
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
     public class FileService
     {
@@ -9,63 +11,29 @@
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<string> SaveFileAsync(Stream fileStream, string fileName)
+        public async Task<string> UploadFile(IFormFile? file, string folder)
         {
-            try
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string relativeFolderPath = folder;
+            string uploadsFolder = Path.Combine(webRootPath, relativeFolderPath);
+
+            if (!Directory.Exists(uploadsFolder))
             {
-                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "uploads", fileName);
-
-                using (var fileStreamOut = new FileStream(filePath, FileMode.Create))
-                {
-                    await fileStream.CopyToAsync(fileStreamOut);
-                }
-
-                return filePath;
+                Directory.CreateDirectory(uploadsFolder);
             }
-            catch (Exception ex)
+
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string filePath = Path.Combine(relativeFolderPath, uniqueFileName);
+
+            using (var stream = new FileStream(Path.Combine(webRootPath, filePath), FileMode.Create))
             {
-                throw ex;
+                await file.CopyToAsync(stream);
             }
-        }
 
-        public async Task<Stream> GetFileAsync(string fileName)
-        {
-            try
-            {
-                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "uploads", fileName);
+            string absoluteFilePath = Path.Combine(webRootPath, folder, uniqueFileName);
+            string relativeFilePath = Path.GetRelativePath(webRootPath, absoluteFilePath);
 
-                if (File.Exists(filePath))
-                {
-                    var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                    return fileStream;
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<bool> DeleteFileAsync(string fileName)
-        {
-            try
-            {
-                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "uploads", fileName);
-
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return "/" + relativeFilePath.Replace("\\", "/");
         }
     }
 }

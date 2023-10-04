@@ -23,9 +23,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         [HttpGet]
         public async Task<ApiResult<PageResult<Banner>>> Get([FromQuery] GetBannerRequest request)
         {
-            var result = await _bannerService.Get(null,null,request.Type, request.Place);
+            var result = await _bannerService.Get(request);
 
-            if(result?.Items?.Count == 0)
+            if (result?.Items?.Count == 0)
             {
                 return new ApiResult<PageResult<Banner>>()
                 {
@@ -39,6 +39,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             {
                 Status = true,
                 Message = "Danh sách banner đã được lấy thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult<Banner>> Create([FromForm] CreateBannerRequest request)
+        {
+            var result = await _bannerService.Create(request);
+
+            return new ApiResult<Banner>()
+            {
+                Status = true,
+                Message = "Tạo mới banner thành công!",
                 Data = result
             };
         }

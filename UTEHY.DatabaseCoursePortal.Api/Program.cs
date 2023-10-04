@@ -6,17 +6,19 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Configurations;
 using UTEHY.DatabaseCoursePortal.Api.Providers;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Service
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+
+// Swagger
+builder.Services.AddSwaggerGen(swaggerGetOptions =>
 {
-    c.DocumentFilter<SwaggerModule>();
+    swaggerGetOptions.DocumentFilter<SwaggerProvider>();
+    swaggerGetOptions.OperationFilter<SwaggerProvider>();
 });
 
 // Database
@@ -32,6 +34,7 @@ builder.Services.AddIdentity<User, Role>(options =>
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
+// Authentication
 builder.Services.AddAuthentication(
     options =>
     {
@@ -45,6 +48,8 @@ builder.Services.AddHttpClient();
 
 // DI service
 builder.Services.AddDependencyInjectionServices();
+builder.Services.AddFluentValidation();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
