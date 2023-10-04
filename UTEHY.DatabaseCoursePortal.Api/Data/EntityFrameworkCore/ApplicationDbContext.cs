@@ -13,6 +13,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         {
         }
 
+        public virtual DbSet<Banner> Banners { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

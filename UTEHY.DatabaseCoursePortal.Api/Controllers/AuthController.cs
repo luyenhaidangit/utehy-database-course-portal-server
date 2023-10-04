@@ -9,10 +9,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Account;
 using Twilio.Types;
 using Google.Apis.Auth;
 using UTEHY.DatabaseCoursePortal.Api.Services;
-using Twilio.Jwt.AccessToken;
 using Newtonsoft.Json.Linq;
-using UTEHY.DatabaseCoursePortal.Api.Helper;
-using Google.Apis.Auth.OAuth2;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -25,7 +22,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _dbContext;
         private readonly AuthService _authService;
-        private readonly IHttpClientFactory _httpClientFactory;
 
         public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService, IHttpClientFactory httpClientFactory)
         {
@@ -34,7 +30,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             _config = config;
             _dbContext = dbContext;
             _authService = authService;
-            _httpClientFactory = httpClientFactory;
         }
 
         [HttpPost]
