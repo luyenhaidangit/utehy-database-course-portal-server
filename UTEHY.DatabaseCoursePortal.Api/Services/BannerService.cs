@@ -58,10 +58,31 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<Banner> Create(CreateBannerRequest request)
         {
-            request.Image = await _fileService.UploadFile(request.ImageFile, PathFolder.Banner);
+            if(request?.ImageFile?.Length > 0)
+            {
+                request.Image = await _fileService.UploadFileAsync(request.ImageFile, PathFolder.Banner);
+            }
+
             var banner = _mapper.Map<Banner>(request);
 
             await _dbContext.Banners.AddAsync(banner);
+            await _dbContext.SaveChangesAsync();
+
+            return banner;
+        }
+
+        public async Task<Banner> Edit(EditBannerRequest request)
+        {
+            var banner = await _dbContext.Banners.FindAsync(request.Id);
+
+            if(request.ImageFile?.Length > 0)
+            {
+                await _fileService.DeleteFileAsync(request?.Image);
+                request.Image = await _fileService.UploadFileAsync(request?.ImageFile, PathFolder.Banner);
+            }
+
+            _mapper.Map(request, banner);
+
             await _dbContext.SaveChangesAsync();
 
             return banner;

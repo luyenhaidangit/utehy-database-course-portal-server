@@ -11,7 +11,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<string> UploadFile(IFormFile? file, string folder)
+        public async Task<string> UploadFileAsync(IFormFile? file, string folder)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
             string relativeFolderPath = folder;
@@ -34,6 +34,22 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             string relativeFilePath = Path.GetRelativePath(webRootPath, absoluteFilePath);
 
             return "/" + relativeFilePath.Replace("\\", "/");
+        }
+
+        public async Task<string> DeleteFileAsync(string? fileUrl)
+        {
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string filePath = Path.Combine(webRootPath, fileUrl.TrimStart('/'));
+
+            if (File.Exists(filePath))
+            {
+                await Task.Run(() => File.Delete(filePath));
+                return fileUrl;
+            }
+            else
+            {
+                throw new FileNotFoundException($"The file '{fileUrl}' does not exist.");
+            }
         }
     }
 }

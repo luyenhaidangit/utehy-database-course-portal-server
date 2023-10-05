@@ -20,7 +20,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             _bannerService = bannerService;
         }
 
-        [HttpGet]
+        [HttpGet("get")]
         public async Task<ApiResult<PageResult<Banner>>> Get([FromQuery] GetBannerRequest request)
         {
             var result = await _bannerService.Get(request);
@@ -43,7 +43,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ApiResult<Banner>> Create([FromForm] CreateBannerRequest request)
         {
             var result = await _bannerService.Create(request);
@@ -52,6 +52,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             {
                 Status = true,
                 Message = "Tạo mới banner thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("edit")]
+        public async Task<ApiResult<Banner>> Edit([FromForm] EditBannerRequest request)
+        {
+            var result = await _bannerService.Edit(request);
+
+            return new ApiResult<Banner>()
+            {
+                Status = true,
+                Message = "Cập nhật banner thành công!",
                 Data = result
             };
         }

@@ -10,6 +10,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
         {
             CreateMap<Banner, CreateBannerRequest>();
             CreateMap<CreateBannerRequest, Banner>();
+            CreateMap<EditBannerRequest, Banner>();
+            CreateMap<Banner, EditBannerRequest>();
         }
     }
 }

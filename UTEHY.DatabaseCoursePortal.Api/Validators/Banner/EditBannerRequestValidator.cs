@@ -1,20 +1,20 @@
-﻿using FluentValidation;
-using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
+﻿using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
+using FluentValidation;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Validators.Banner
 {
-    public class CreateBannerRequestValidator : AbstractValidator<CreateBannerRequest>
+    public class EditBannerRequestValidator : AbstractValidator<EditBannerRequest>
     {
-        public CreateBannerRequestValidator()
+        public EditBannerRequestValidator() 
         {
-            RuleFor(x => x.Place)
-            .NotEmpty().WithMessage("Place không được để trống");
+            RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Id không được để trống");
 
             RuleFor(x => x.Type)
             .NotEmpty().WithMessage("Type không được để trống");
 
-            RuleFor(x => x.ImageFile)
-            .NotEmpty().WithMessage("ImageFile không được để trống");
+            RuleFor(x => x.Image)
+            .NotEmpty().WithMessage("Image không được để trống");
 
             RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title không được để trống");
