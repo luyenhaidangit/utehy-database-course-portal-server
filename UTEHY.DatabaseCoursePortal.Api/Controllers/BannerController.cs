@@ -25,12 +25,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var result = await _bannerService.Get(request);
 
-            if (result?.Items?.Count == 0)
+            if(result == null)
             {
                 return new ApiResult<PageResult<Banner>>()
                 {
-                    Status = true,
-                    Message = "Không tìm thấy banner phù hợp!",
+                    Status = false,
+                    Message = "Có lỗi xảy ra trong quá trình lấy dữ liệu!",
                     Data = null
                 };
             }
@@ -48,6 +48,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var result = await _bannerService.Create(request);
 
+            if (result == null)
+            {
+                return new ApiResult<Banner>()
+                {
+                    Status = false,
+                    Message = "Có lỗi xảy ra trong quá trình tạo banner!",
+                    Data = null
+                };
+            }
+
             return new ApiResult<Banner>()
             {
                 Status = true,
@@ -61,10 +71,43 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var result = await _bannerService.Edit(request);
 
+            if (result == null)
+            {
+                return new ApiResult<Banner>()
+                {
+                    Status = false,
+                    Message = "Có lỗi xảy ra trong quá trình sửa banner!",
+                    Data = null
+                };
+            }
+
             return new ApiResult<Banner>()
             {
                 Status = true,
                 Message = "Cập nhật banner thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("delete")]
+        public async Task<ApiResult<Banner>> Delete([FromBody] int id)
+        {
+            var result = await _bannerService.Delete(id);
+
+            if (result == null)
+            {
+                return new ApiResult<Banner>()
+                {
+                    Status = false,
+                    Message = "Có lỗi xảy ra trong quá trình xoá banner!",
+                    Data = null
+                };
+            }
+
+            return new ApiResult<Banner>()
+            {
+                Status = true,
+                Message = "Xoá banner thành công!",
                 Data = result
             };
         }

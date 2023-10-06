@@ -10,6 +10,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Banner
 
         public string? Type { get; set; }
 
+        [JsonIgnore]
         public string? Image { get; set; }
 
         public IFormFile? ImageFile { get; set; }

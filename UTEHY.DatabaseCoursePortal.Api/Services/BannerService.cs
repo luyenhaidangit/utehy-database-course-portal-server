@@ -73,15 +73,47 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<Banner> Edit(EditBannerRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var banner = await _dbContext.Banners.FindAsync(request.Id);
 
-            if(request.ImageFile?.Length > 0)
+            if (banner == null)
             {
-                await _fileService.DeleteFileAsync(request?.Image);
-                request.Image = await _fileService.UploadFileAsync(request?.ImageFile, PathFolder.Banner);
+                throw new Exception("Banner không tồn tại!");
+            }
+
+            if (request.ImageFile?.Length > 0)
+            {
+                await _fileService.DeleteFileAsync(banner.Image);
+                request.Image = await _fileService.UploadFileAsync(request.ImageFile, PathFolder.Banner);
+            }
+            else
+            {
+                request.Image = banner.Image;
             }
 
             _mapper.Map(request, banner);
+
+            await _dbContext.SaveChangesAsync();
+
+            return banner;
+        }
+
+        public async Task<Banner> Delete(int id)
+        {
+            var banner = await _dbContext.Banners.FindAsync(id);
+
+            if (banner == null)
+            {
+                throw new Exception("Banner không tồn tại!");
+            }
+
+            await _fileService.DeleteFileAsync(banner.Image);
+
+            _dbContext.Banners.Remove(banner);
 
             await _dbContext.SaveChangesAsync();
 

@@ -13,9 +13,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Validators.Banner
             RuleFor(x => x.Type)
             .NotEmpty().WithMessage("Type không được để trống");
 
-            RuleFor(x => x.Image)
-            .NotEmpty().WithMessage("Image không được để trống");
-
             RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title không được để trống");
 
