@@ -36,7 +36,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return "/" + relativeFilePath.Replace("\\", "/");
         }
 
-        public async Task<string> DeleteFileAsync(string? fileUrl)
+        public async Task<string> DeleteFileAsync(string fileUrl)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
             string filePath = Path.Combine(webRootPath, fileUrl.TrimStart('/'));
@@ -48,8 +48,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
             else
             {
-                throw new FileNotFoundException($"The file '{fileUrl}' does not exist.");
+                return null;
             }
+        }
+
+        public async Task<List<string>> DeleteFilesAsync(List<string> fileUrls)
+        {
+            List<string> deletedUrls = new List<string>();
+
+            foreach (var fileUrl in fileUrls)
+            {
+                string webRootPath = _webHostEnvironment.WebRootPath;
+                string filePath = Path.Combine(webRootPath, fileUrl.TrimStart('/'));
+
+                if (File.Exists(filePath))
+                {
+                    await Task.Run(() => File.Delete(filePath));
+                    deletedUrls.Add(fileUrl);
+                }
+            }
+
+            return deletedUrls;
         }
     }
 }

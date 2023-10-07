@@ -58,7 +58,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<Banner> Create(CreateBannerRequest request)
         {
-            if(request?.ImageFile?.Length > 0)
+            if (request.ImageFile?.Length > 0)
             {
                 request.Image = await _fileService.UploadFileAsync(request.ImageFile, PathFolder.Banner);
             }
@@ -73,11 +73,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<Banner> Edit(EditBannerRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
             var banner = await _dbContext.Banners.FindAsync(request.Id);
 
             if (banner == null)
@@ -87,8 +82,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             if (request.ImageFile?.Length > 0)
             {
-                await _fileService.DeleteFileAsync(banner.Image);
                 request.Image = await _fileService.UploadFileAsync(request.ImageFile, PathFolder.Banner);
+                await _fileService.DeleteFileAsync(banner.Image);
             }
             else
             {
@@ -111,13 +106,35 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new Exception("Banner không tồn tại!");
             }
 
-            await _fileService.DeleteFileAsync(banner.Image);
-
             _dbContext.Banners.Remove(banner);
+
+            await _fileService.DeleteFileAsync(banner.Image);
 
             await _dbContext.SaveChangesAsync();
 
             return banner;
         }
+
+        public async Task<List<Banner>> DeleteMultiple(List<int> ids)
+        {
+            var banners = await _dbContext.Banners.Where(x => ids.Contains(x.Id)).ToListAsync();
+
+            var invalidIds = ids.Except(banners.Select(b => b.Id)).ToList();
+
+            if (invalidIds.Any())
+            {
+                throw new Exception($"Danh sách Ids banner không tồn tại: {string.Join(", ", invalidIds)}");
+            }
+
+            _dbContext.Banners.RemoveRange(banners);
+
+            var fileUrls = banners.Select(banner => banner.Image).ToList();
+
+            await _fileService.DeleteFilesAsync(fileUrls);
+
+            await _dbContext.SaveChangesAsync();
+
+            return banners;
+        }           
     }
 }

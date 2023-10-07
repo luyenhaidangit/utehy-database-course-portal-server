@@ -25,16 +25,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var result = await _bannerService.Get(request);
 
-            if(result == null)
-            {
-                return new ApiResult<PageResult<Banner>>()
-                {
-                    Status = false,
-                    Message = "Có lỗi xảy ra trong quá trình lấy dữ liệu!",
-                    Data = null
-                };
-            }
-
             return new ApiResult<PageResult<Banner>>()
             {
                 Status = true,
@@ -47,16 +37,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         public async Task<ApiResult<Banner>> Create([FromForm] CreateBannerRequest request)
         {
             var result = await _bannerService.Create(request);
-
-            if (result == null)
-            {
-                return new ApiResult<Banner>()
-                {
-                    Status = false,
-                    Message = "Có lỗi xảy ra trong quá trình tạo banner!",
-                    Data = null
-                };
-            }
 
             return new ApiResult<Banner>()
             {
@@ -71,16 +51,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var result = await _bannerService.Edit(request);
 
-            if (result == null)
-            {
-                return new ApiResult<Banner>()
-                {
-                    Status = false,
-                    Message = "Có lỗi xảy ra trong quá trình sửa banner!",
-                    Data = null
-                };
-            }
-
             return new ApiResult<Banner>()
             {
                 Status = true,
@@ -94,20 +64,23 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var result = await _bannerService.Delete(id);
 
-            if (result == null)
-            {
-                return new ApiResult<Banner>()
-                {
-                    Status = false,
-                    Message = "Có lỗi xảy ra trong quá trình xoá banner!",
-                    Data = null
-                };
-            }
-
             return new ApiResult<Banner>()
             {
                 Status = true,
                 Message = "Xoá banner thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("delete-multiple")]
+        public async Task<ApiResult<List<Banner>>> DeleteMultiple([FromBody] List<int> ids)
+        {
+            var result = await _bannerService.DeleteMultiple(ids);
+
+            return new ApiResult<List<Banner>>()
+            {
+                Status = true,
+                Message = "Xoá nhiều banner thành công!",
                 Data = result
             };
         }
