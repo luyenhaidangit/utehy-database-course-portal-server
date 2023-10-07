@@ -5,7 +5,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
 {
     public static class FluentValidationProvider
     {
-        public static IServiceCollection AddFluentValidation(this IServiceCollection services)
+        public static IServiceCollection AddFluentValidationProvider(this IServiceCollection services)
         {
             services.AddFluentValidation(options =>
             {

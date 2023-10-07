@@ -21,11 +21,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpGet("get")]
-        public async Task<ApiResult<PageResult<Banner>>> Get([FromQuery] GetBannerRequest request)
+        public async Task<ApiResult<PagingResult<Banner>>> Get([FromQuery] GetBannerRequest request)
         {
             var result = await _bannerService.Get(request);
 
-            return new ApiResult<PageResult<Banner>>()
+            return new ApiResult<PagingResult<Banner>>()
             {
                 Status = true,
                 Message = "Danh sách banner đã được lấy thành công!",

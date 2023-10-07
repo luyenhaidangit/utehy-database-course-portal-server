@@ -24,7 +24,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<PageResult<Banner>> Get(GetBannerRequest request)
+        public async Task<PagingResult<Banner>> Get(GetBannerRequest request)
         {
             var query = _dbContext.Banners.AsQueryable();
 
@@ -51,7 +51,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .Take(request.PageSize.Value)
             .ToListAsync();
 
-            var result = new PageResult<Banner>(items,request.PageIndex.Value,request.PageSize.Value,total,totalPages);
+            var result = new PagingResult<Banner>(items,request.PageIndex.Value,request.PageSize.Value,total,totalPages);
 
             return result;
         }

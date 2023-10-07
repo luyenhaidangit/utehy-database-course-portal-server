@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -10,46 +8,14 @@ using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Service
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAppProvider();
 
-// Swagger
-builder.Services.AddSwaggerGen(swaggerGetOptions =>
-{
-    swaggerGetOptions.DocumentFilter<SwaggerProvider>();
-    swaggerGetOptions.OperationFilter<SwaggerProvider>();
-});
-
-// Database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-// Identity
-builder.Services.AddIdentity<User, Role>(options =>
-{
-    options.User.RequireUniqueEmail = false;
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-}).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
-// Authentication
-builder.Services.AddAuthentication(
-    options =>
-    {
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    }
-);
-
-// Http client
-builder.Services.AddHttpClient();
-
-// DI service
-builder.Services.AddDependencyInjectionServices();
-builder.Services.AddFluentValidation();
-builder.Services.AddAutoMapper(typeof(Program));
+// Provider
+builder.Services.AddEntityFrameworkProvider(builder);
+builder.Services.AddFluentValidationProvider();
+builder.Services.AddDependencyInjectionProvider();
+builder.Services.AddSwaggerProvider();
+builder.Services.AddAutoMapperProvider();
 
 var app = builder.Build();
 

@@ -4,7 +4,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Configurations
 {
     public static class DependencyInjectionProvider
     {
-        public static IServiceCollection AddDependencyInjectionServices(this IServiceCollection services)
+        public static IServiceCollection AddDependencyInjectionProvider(this IServiceCollection services)
         {
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -15,7 +15,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Configurations
 
             foreach (var serviceType in serviceTypes)
             {
-                // Đăng ký dịch vụ với kiểu của nó và kiểu triển khai của nó
                 services.AddScoped(serviceType);
             }
 

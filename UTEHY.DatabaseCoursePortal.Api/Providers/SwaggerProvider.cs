@@ -1,43 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Microsoft.OpenApi.Models;
+using UTEHY.DatabaseCoursePortal.Api.Modules;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Providers
 {
-    public class SwaggerProvider : IDocumentFilter, IOperationFilter
+    public static class SwaggerProvider
     {
-        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+        public static IServiceCollection AddSwaggerProvider(this IServiceCollection services)
         {
-            foreach (var path in swaggerDoc.Paths.ToList())
+            services.AddSwaggerGen(c =>
             {
-                var lowercasePath = path.Key.ToLowerInvariant();
-                if (lowercasePath != path.Key)
+                c.DocumentFilter<SwaggerModule>();
+                c.OperationFilter<SwaggerModule>();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UTEHY Database Course Portal API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    swaggerDoc.Paths[lowercasePath] = path.Value;
-                    swaggerDoc.Paths.Remove(path.Key);
-                }
-            }
-        }
+                    Description = "JWT Authorization header using the Bearer scheme.",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer"
+                });
+                c.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement{
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
 
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            if (context.ApiDescription == null || operation.Parameters == null)
-                return;
-
-            if (!context.ApiDescription.ParameterDescriptions.Any())
-                return;
-
-
-            context.ApiDescription.ParameterDescriptions.Where(p => p.Source.Equals(BindingSource.Form)
-                        && p.CustomAttributes().Any(p => p.GetType().Equals(typeof(JsonIgnoreAttribute))))
-                .ToList().ForEach(p => operation.RequestBody.Content.Values.Single(v => v.Schema.Properties.Remove(p.Name)));
-
-
-
-            context.ApiDescription.ParameterDescriptions.Where(p => p.Source.Equals(BindingSource.Query)
-                          && p.CustomAttributes().Any(p => p.GetType().Equals(typeof(JsonIgnoreAttribute))))
-                .ToList().ForEach(p => operation.Parameters.Remove(operation.Parameters.Single(w => w.Name.Equals(p.Name))));
+            return services;
         }
     }
 }

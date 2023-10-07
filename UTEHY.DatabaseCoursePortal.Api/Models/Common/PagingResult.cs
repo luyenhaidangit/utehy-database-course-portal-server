@@ -1,8 +1,8 @@
 ﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Common
 {
-    public class PageResult<T>
+    public class PagingResult<T>
     {
-        public PageResult(List<T>? items, int pageIndex, int pageSize, int totalRecords,int totalPages) 
+        public PagingResult(List<T>? items, int pageIndex, int pageSize, int totalRecords,int totalPages) 
         { 
             Items = items;
 

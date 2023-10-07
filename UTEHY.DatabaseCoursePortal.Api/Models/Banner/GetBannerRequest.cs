@@ -2,10 +2,10 @@
 
 namespace UTEHY.DatabaseCoursePortal.Api.Models.Banner
 {
-    public class GetBannerRequest : PageRequest
+    public class GetBannerRequest : PagingRequest
     {
-        public string Place { get; set; }
+        public string? Place { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
     }
 }
