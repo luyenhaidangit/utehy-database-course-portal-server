@@ -15,6 +15,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         }
 
         public virtual DbSet<Banner>? Banners { get; set; }
+        public virtual DbSet<Permission>? Permissions { get; set; }
+        public virtual DbSet<RolePermission>? RolePermissions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -24,6 +27,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new BannerConfiguration());
+            builder.ApplyConfiguration(new PermissionConfiguration());
+            builder.ApplyConfiguration(new RolePermissionConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");

@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
-using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
-using UTEHY.DatabaseCoursePortal.Api.Configurations;
+﻿using UTEHY.DatabaseCoursePortal.Api.Configurations;
 using UTEHY.DatabaseCoursePortal.Api.Providers;
-using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +7,7 @@ builder.Services.AddAppProvider();
 
 // Provider
 builder.Services.AddEntityFrameworkProvider(builder);
+builder.Services.AddIdentityProvider(builder);
 builder.Services.AddFluentValidationProvider();
 builder.Services.AddDependencyInjectionProvider();
 builder.Services.AddSwaggerProvider();

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -11,33 +12,49 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _config;
+        private readonly UserService _userService;
 
-        public AuthService(UserManager<User> userManager, IConfiguration config)
+        public AuthService(UserManager<User> userManager, IConfiguration config,UserService userService)
         {
             _userManager = userManager;
             _config = config;
+            _userService = userService;
         }
 
         public async Task<string> CreateToken(User user)
         {
-            var issuer = _config["Jwt:Issuer"];
-            var audience = _config["Jwt:Audience"];
-            var roles = await _userManager.GetRolesAsync(user);
+            var key = _config["Jwt:Key"];
+
+            var permissions = await _userService.GetPermissionAsync(user);
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, string.Join(";", roles)),
+                new Claim(ClaimType.UserName, user.UserName),
+                new Claim(ClaimType.Email, user.Email),
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            foreach (var permission in permissions)
+            {
+                claims.Add(new Claim(ClaimType.Permission, permission));
+            }
+
+            var subject = new ClaimsIdentity(claims);
+            var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256Signature);
             var expires = DateTime.UtcNow.AddDays(30);
 
-            var token = new JwtSecurityToken(issuer, audience, claims, expires, signingCredentials: creds);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenData = tokenHandler.WriteToken(token);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = subject,
+                Expires = expires,
+                SigningCredentials = creds
+            };
 
-            return tokenData;
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            var token = tokenHandler.WriteToken(securityToken);
+
+            return token;
         }
 
     }
