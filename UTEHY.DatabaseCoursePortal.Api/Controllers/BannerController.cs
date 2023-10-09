@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UTEHY.DatabaseCoursePortal.Api.Attributes;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
@@ -10,9 +12,9 @@ using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
-    [Authorize(Policy = Constants.Permission.ManageBanner)]
     [Route("api/[controller]")]
     [ApiController]
+    [HasPermission(Constants.Permission.ManageBanner)]
     public class BannerController : ControllerBase
     {
         private readonly BannerService _bannerService;
@@ -22,8 +24,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             _bannerService = bannerService;
         }
 
-        [Authorize(Policy = Constants.Permission.ManageBannerView)]
         [HttpGet("get")]
+        [HasPermission(Constants.Permission.ManageBannerView)]
         public async Task<ApiResult<PagingResult<Banner>>> Get([FromQuery] GetBannerRequest request)
         {
             var result = await _bannerService.Get(request);
@@ -36,8 +38,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
-        [Authorize(Policy = Constants.Permission.ManageBannerCreate)]
         [HttpPost("create")]
+        [HasPermission(Constants.Permission.ManageBannerCreate)]
         public async Task<ApiResult<Banner>> Create([FromForm] CreateBannerRequest request)
         {
             var result = await _bannerService.Create(request);
@@ -50,8 +52,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
-        [Authorize(Policy = Constants.Permission.ManageBannerEdit)]
         [HttpPost("edit")]
+        [HasPermission(Constants.Permission.ManageBannerEdit)]
         public async Task<ApiResult<Banner>> Edit([FromForm] EditBannerRequest request)
         {
             var result = await _bannerService.Edit(request);
@@ -64,8 +66,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
-        [Authorize(Policy = Constants.Permission.ManageBannerDelete)]
         [HttpPost("delete")]
+        [HasPermission(Constants.Permission.ManageBannerDelete)]
         public async Task<ApiResult<Banner>> Delete([FromBody] int id)
         {
             var result = await _bannerService.Delete(id);
@@ -78,8 +80,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
-        [Authorize(Policy = Constants.Permission.ManageBannerDelete)]
         [HttpPost("delete-multiple")]
+        [HasPermission(Constants.Permission.ManageBannerDelete)]
         public async Task<ApiResult<List<Banner>>> DeleteMultiple([FromBody] List<int> ids)
         {
             var result = await _bannerService.DeleteMultiple(ids);
