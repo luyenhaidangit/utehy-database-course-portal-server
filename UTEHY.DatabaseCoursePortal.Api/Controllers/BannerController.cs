@@ -10,7 +10,7 @@ using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Constants.Permission.ManageBanner)]
     [Route("api/[controller]")]
     [ApiController]
     public class BannerController : ControllerBase
@@ -22,6 +22,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             _bannerService = bannerService;
         }
 
+        [Authorize(Policy = Constants.Permission.ManageBannerView)]
         [HttpGet("get")]
         public async Task<ApiResult<PagingResult<Banner>>> Get([FromQuery] GetBannerRequest request)
         {
@@ -35,6 +36,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
+        [Authorize(Policy = Constants.Permission.ManageBannerCreate)]
         [HttpPost("create")]
         public async Task<ApiResult<Banner>> Create([FromForm] CreateBannerRequest request)
         {
@@ -48,6 +50,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
+        [Authorize(Policy = Constants.Permission.ManageBannerEdit)]
         [HttpPost("edit")]
         public async Task<ApiResult<Banner>> Edit([FromForm] EditBannerRequest request)
         {
@@ -61,6 +64,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
+        [Authorize(Policy = Constants.Permission.ManageBannerDelete)]
         [HttpPost("delete")]
         public async Task<ApiResult<Banner>> Delete([FromBody] int id)
         {
@@ -74,6 +78,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
+        [Authorize(Policy = Constants.Permission.ManageBannerDelete)]
         [HttpPost("delete-multiple")]
         public async Task<ApiResult<List<Banner>>> DeleteMultiple([FromBody] List<int> ids)
         {

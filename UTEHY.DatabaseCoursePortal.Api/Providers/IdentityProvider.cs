@@ -7,6 +7,8 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Reflection;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Providers
 {
@@ -39,6 +41,23 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+            });
+
+            var permissionType = typeof(Constants.Permission);
+            var permissionFields = permissionType.GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(f => f.IsLiteral && !f.IsInitOnly)
+            .Select(f => (string)f.GetValue(null))
+            .ToList();
+
+            services.AddAuthorization(options =>
+            {
+                foreach (var permission in permissionFields)
+                {
+                    options.AddPolicy(permission, policy =>
+                    {
+                        policy.RequireClaim("Permission", permission);
+                    });
+                }
             });
 
             return services;
