@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders;
-using System.Reflection.Emit;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
 {
@@ -15,6 +14,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         }
 
         public virtual DbSet<Banner>? Banners { get; set; }
+        public virtual DbSet<Blog>? Blogs { get; set; }
         public virtual DbSet<Permission>? Permissions { get; set; }
         public virtual DbSet<RolePermission>? RolePermissions { get; set; }
 
