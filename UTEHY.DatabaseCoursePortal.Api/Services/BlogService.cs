@@ -49,5 +49,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return blog;
         }
+
+        public async Task<Blog> Edit(EditBlogRequest request)
+        {
+            var blog = await _dbContext.Blogs.FindAsync(request.Id);
+
+            _mapper.Map(request, blog);
+
+            await _dbContext.SaveChangesAsync();
+
+            return blog;
+        }
+
+        public async Task<Blog> Delete(int id)
+        {
+            var blog = await _dbContext.Blogs.FindAsync(id);
+
+            _dbContext.Blogs.Remove(blog);
+
+            await _dbContext.SaveChangesAsync();
+
+            return blog;
+        }
     }
 }

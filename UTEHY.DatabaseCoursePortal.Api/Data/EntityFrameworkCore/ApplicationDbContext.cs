@@ -29,6 +29,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new BannerConfiguration());
             builder.ApplyConfiguration(new PermissionConfiguration());
             builder.ApplyConfiguration(new RolePermissionConfiguration());
+            builder.ApplyConfiguration(new BlogConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");

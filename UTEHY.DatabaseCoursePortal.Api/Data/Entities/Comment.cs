@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
@@ -14,11 +13,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public bool IsReacted { get; set; }
         public bool IsRemoved { get; set; }
         public bool IsVoted { get; set; }
-        [ForeignKey("User")]
-        public Guid UserID { get; set; }
         public int VotersCount { get; set; }
-
-        public virtual User User { get; set; }
 
     }
 }
