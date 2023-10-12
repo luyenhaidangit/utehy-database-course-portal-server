@@ -12,7 +12,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string Description { get; set; }
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }
-        public string? Image { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsApproved { get; set; }
         public bool IsBookmark { get; set; }

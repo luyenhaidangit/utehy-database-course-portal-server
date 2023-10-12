@@ -8,7 +8,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
     {
         public void Configure(EntityTypeBuilder<Blog> builder)
         {
-            builder.ToTable("Blog");
+            builder.ToTable("Blogs");
 
             builder.HasKey(p => p.Id);
             builder.Property(p => p.MetaTitle).HasMaxLength(50);

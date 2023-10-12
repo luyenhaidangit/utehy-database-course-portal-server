@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Blog;
@@ -42,6 +43,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<Blog> Create(CreateBlogRequest request)
         {
+            if (request.Image?.Length > 0)
+            {
+                request.ImageUrl = await _fileService.UploadFileAsync(request.Image, PathFolder.Banner);
+            }
+
             var blog = _mapper.Map<Blog>(request);
 
             _dbContext.AddAsync(blog);
@@ -53,6 +59,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         public async Task<Blog> Edit(EditBlogRequest request)
         {
             var blog = await _dbContext.Blogs.FindAsync(request.Id);
+            if (blog == null)
+            {
+                throw new Exception("Banner không tồn tại!");
+            }
+
+            if (request.Image?.Length > 0)
+            {
+                request.ImageUrl = await _fileService.UploadFileAsync(request.Image, PathFolder.Blog);
+                await _fileService.DeleteFileAsync(blog.ImageUrl);
+            }
+            else
+            {
+                request.ImageUrl = blog.ImageUrl;
+            }
 
             _mapper.Map(request, blog);
 
