@@ -10,6 +10,7 @@ using Twilio.Types;
 using Google.Apis.Auth;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -206,8 +207,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         Email = tokenPayload.Email, 
                         UserName = tokenPayload.Email,
                         EmailConfirmed = tokenPayload.EmailVerified,
-                        FirstName = "Luyện",
-                        LastName = "Đăng",
+                        Name = "Luyện Hải Đăng",
                     };
 
                     await _userManager.CreateAsync(user);
@@ -285,8 +285,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         Email = jProfile["email"]?.ToString(),
                         UserName = jProfile["email"]?.ToString(),
                         EmailConfirmed = true,
-                        FirstName = jProfile["first_name"]?.ToString(),
-                        LastName = jProfile["last_name"]?.ToString(),
+                        Name = jProfile["first_name"]?.ToString() + jProfile["last_name"]?.ToString(),
                     };
 
                     await _userManager.CreateAsync(user);
@@ -387,8 +386,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         Email = email,
                         UserName = email,
                         EmailConfirmed = true,
-                        FirstName = "Luyện",
-                        LastName = "Đăng",
+                        Name = "Luyện Hải Đăng",
                     };
 
                     await _userManager.CreateAsync(user);
