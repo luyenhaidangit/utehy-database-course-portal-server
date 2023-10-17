@@ -18,8 +18,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null!, "haidang106"),
                 SecurityStamp = string.Empty,
-                FirstName = "Luyện",
-                LastName = "Đăng",
+                Name = "Luyện Hải Đăng"
             };
         }
     }

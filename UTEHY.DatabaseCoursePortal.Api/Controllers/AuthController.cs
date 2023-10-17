@@ -10,6 +10,7 @@ using Twilio.Types;
 using Google.Apis.Auth;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -22,14 +23,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _dbContext;
         private readonly AuthService _authService;
+        private readonly TwilioService _twilioService;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService, IHttpClientFactory httpClientFactory)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService, TwilioService twilioService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _dbContext = dbContext;
             _authService = authService;
+            _twilioService = twilioService;
         }
 
         [HttpPost]
@@ -100,39 +103,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
 
             //Send otp
-            TwilioClient.Init(_config["Twilio:AccountSID"], _config["Twilio:AuthToken"]);
-
-            var twilioMessage = MessageResource.CreateAsync(
-                body: "Mã xác thực đăng nhập UTEHY DatabaseCourse của bạn là " + otpCode,
-                from: new PhoneNumber(_config["Twilio:PhoneNumber"]),
-                to: new PhoneNumber(numberphone)
-            );
-
-            int counter = 0;
-            while (!twilioMessage.IsCompleted)
-            {
-                await Task.Delay(1000);
-
-                counter++;
-
-                if (counter >= 10)
-                {
-                    return new ApiResult<string>()
-                    {
-                        Status = false,
-                        Message = "Gửi tin nhắn thất bại, quá thời gian chờ!",
-                    };
-                }
-            }
-
-            if (!twilioMessage.IsCompletedSuccessfully)
-            {
-                return new ApiResult<string>()
-                {
-                    Status = false,
-                    Message = twilioMessage.Result.ErrorMessage
-                };
-            }
+            string message = "Mã xác thực đăng nhập UTEHY DatabaseCourse của bạn là " + otpCode;
+            await _twilioService.SendMessage(message, numberphone);
 
             return new ApiResult<string>()
             {
@@ -235,8 +207,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         Email = tokenPayload.Email, 
                         UserName = tokenPayload.Email,
                         EmailConfirmed = tokenPayload.EmailVerified,
-                        FirstName = "Luyện",
-                        LastName = "Đăng",
+                        Name = "Luyện Hải Đăng",
                     };
 
                     await _userManager.CreateAsync(user);
@@ -314,8 +285,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         Email = jProfile["email"]?.ToString(),
                         UserName = jProfile["email"]?.ToString(),
                         EmailConfirmed = true,
-                        FirstName = jProfile["first_name"]?.ToString(),
-                        LastName = jProfile["last_name"]?.ToString(),
+                        Name = jProfile["first_name"]?.ToString() + jProfile["last_name"]?.ToString(),
                     };
 
                     await _userManager.CreateAsync(user);
@@ -416,8 +386,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                         Email = email,
                         UserName = email,
                         EmailConfirmed = true,
-                        FirstName = "Luyện",
-                        LastName = "Đăng",
+                        Name = "Luyện Hải Đăng",
                     };
 
                     await _userManager.CreateAsync(user);
