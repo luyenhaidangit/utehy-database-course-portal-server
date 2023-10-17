@@ -16,7 +16,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
     {
         public static IServiceCollection AddIdentityProvider(this IServiceCollection services, WebApplicationBuilder builder)
         {
-            services.AddIdentity<User, Role>(options =>
+            services.AddIdentity<User, Data.Entities.Role>(options =>
             {
                 options.User.RequireUniqueEmail = false;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";

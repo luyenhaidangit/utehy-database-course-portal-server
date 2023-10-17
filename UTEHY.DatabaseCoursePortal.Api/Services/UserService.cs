@@ -1,7 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
+using System.Security.Claims;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Models.Account;
+using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.User;
+using static System.Net.WebRequestMethods;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -25,6 +31,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .Select(rolePermission => rolePermission.Permission.Name).ToListAsync();
 
             return permissions;
+        }
+
+        public async Task<User> GetUserInfo(HttpContext httpContext)
+        {
+            var email = httpContext.User.Claims.First(x => x.Type == "Email").Value;
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return user;
         }
     }
 }

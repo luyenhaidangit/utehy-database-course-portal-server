@@ -14,10 +14,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly UserService _userService;
 
-        public UserController(UserManager<User> userManager)
+        public UserController(UserManager<User> userManager, UserService userService)
         {
             _userManager = userManager;
+            _userService = userService;
         }
 
         [HttpGet("check-exists")]
@@ -53,6 +55,30 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Status = true,
                 Message = "Người dùng tồn tại!",
                 Data = null
+            };
+        }
+
+        [HttpGet("user-info")]
+        [HttpGet]
+        public async Task<ApiResult<User>> GetCurrentUser()
+        {
+            var user = await _userService.GetUserInfo(HttpContext);
+
+            if(user == null)
+            {
+                return new ApiResult<User>()
+                {
+                    Status = false,
+                    Message = "Không tìm thấy thông tin người dùng hợp lệ!",
+                    Data = null
+                };
+            }
+            
+            return new ApiResult<User>()
+            {
+                Status = true,
+                Message = "Lấy thông tin người dùng thành công!",
+                Data = user
             };
         }
     }
