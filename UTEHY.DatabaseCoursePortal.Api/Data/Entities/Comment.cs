@@ -8,6 +8,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string Content { get; set; }
         public int TypeCommentable { get; set; }
         public int CommentsCount { get; set; }
+        public int? BlogId { get; set; }
+        public int? VideoCourseId { get; set; }
+        public int? ParentCommentId { get; set; }
         public bool IsAnswered { get; set; }
         public bool IsApproved { get; set; }
         public bool IsReacted { get; set; }

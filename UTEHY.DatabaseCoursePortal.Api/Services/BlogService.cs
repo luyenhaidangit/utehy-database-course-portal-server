@@ -4,6 +4,7 @@ using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Blog;
+using UTEHY.DatabaseCoursePortal.Api.Models.Comment;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -90,6 +91,47 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             await _dbContext.SaveChangesAsync();
 
             return blog;
+        }
+
+        public async Task<List<Comment>> GetCommentBlog(int blogId)
+        {
+            var comment = await _dbContext.Comments.Where(x => x.BlogId == blogId).ToListAsync();
+            return comment;
+        }
+
+        public async Task<List<Comment>> GetCommentByCommentParentId(int parentCommentId)
+        {
+            var comment = await _dbContext.Comments.Where(x => x.ParentCommentId == parentCommentId).ToListAsync();
+            return comment;
+        }
+
+        public async Task<Comment> CreateCommentBlog(RequestCommentBlogViewModel requestComment)
+        {
+            var comment = _mapper.Map<Comment>(requestComment);
+
+            await _dbContext.Comments.AddAsync(comment);
+            await _dbContext.SaveChangesAsync();
+
+            return comment;
+        }
+
+        public async Task<Comment> CreateCommentChild(RequestCommentBlogViewModel requestComment)
+        {
+            var comment = _mapper.Map<Comment>(requestComment);
+
+            if (comment.ParentCommentId != null)
+            {
+                var commentParent = await _dbContext.Comments.FindAsync(comment.ParentCommentId);
+                if (commentParent != null)
+                {
+                    commentParent.CommentsCount += 1;
+                }
+            }
+
+            await _dbContext.Comments.AddAsync(comment);
+            await _dbContext.SaveChangesAsync();
+
+            return comment;
         }
     }
 }
