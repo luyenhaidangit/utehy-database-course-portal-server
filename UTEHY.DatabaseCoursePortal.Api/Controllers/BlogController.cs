@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Blog;
+using UTEHY.DatabaseCoursePortal.Api.Models.Comment;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
@@ -62,6 +63,74 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Status = true,
                 Message = "Xoá bài viết thành công!",
                 Data = result
+            };
+        }
+        [HttpGet("get-comment-blog")]
+        public async Task<ApiResult<List<Comment>>> GetCommentBlog(int blogId)
+        {
+            var listComment = await _blogService.GetCommentBlog(blogId);
+            if (listComment != null)
+            {
+                return new ApiResult<List<Comment>>()
+                {
+                    Status = true,
+                    Message = "Lấy bình luận thành công!",
+                    Data = listComment
+                };
+            }
+            return new ApiResult<List<Comment>>()
+            {
+                Status = true,
+                Message = "Bài viết chưa có bình luận!",
+                Data = null
+            };
+        }
+        [HttpGet("get-comment-by-commentparent")]
+        public async Task<ApiResult<List<Comment>>> GetCommentByCommentParentId(int commnetParentId)
+        {
+            var listComment = await _blogService.GetCommentByCommentParentId(commnetParentId);
+            if (listComment != null)
+            {
+                return new ApiResult<List<Comment>>()
+                {
+                    Status = true,
+                    Message = "Lấy bình luận con thành công!",
+                    Data = listComment
+                };
+            }
+            return new ApiResult<List<Comment>>()
+            {
+                Status = true,
+                Message = "Bình luận chưa có trả lời!",
+                Data = null
+            };
+        }
+        [HttpPost("create-comment-blog")]
+        public async Task<ApiResult<Comment>> CreateCommentBlog(RequestCommentBlogViewModel requestComment)
+        {
+            Comment result;
+            if (requestComment.ParentCommentId != null)
+            {
+                result = await _blogService.CreateCommentChild(requestComment);
+            }
+            else
+            {
+                result = await _blogService.CreateCommentBlog(requestComment);
+            }
+            if (result != null)
+            {
+                return new ApiResult<Comment>()
+                {
+                    Status = true,
+                    Message = "Bình luận thành công!",
+                    Data = result
+                };
+            }
+            return new ApiResult<Comment>()
+            {
+                Status = true,
+                Message = "Có lỗi xảy ra khi bình luận! Vui lòng thử lại",
+                Data = null
             };
         }
     }

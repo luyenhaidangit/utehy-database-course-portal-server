@@ -9,5 +9,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int Id { get; set; }
         public int TypeReactable { get; set; }
         public string Type { get; set; }
+        public int? BlogId { get; set; }
+        public int? CommentId { get; set; }
     }
 }
