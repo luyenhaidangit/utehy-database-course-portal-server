@@ -1,4 +1,5 @@
 ﻿using UTEHY.DatabaseCoursePortal.Api.Configurations;
+using UTEHY.DatabaseCoursePortal.Api.Middlewares;
 using UTEHY.DatabaseCoursePortal.Api.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 app.UseCors(builder => builder
     .AllowAnyOrigin()

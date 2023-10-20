@@ -23,9 +23,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _dbContext;
         private readonly AuthService _authService;
+        private readonly UserService _userService;
         private readonly TwilioService _twilioService;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService, TwilioService twilioService)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, ApplicationDbContext dbContext,AuthService authService, TwilioService twilioService, UserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -33,6 +34,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             _dbContext = dbContext;
             _authService = authService;
             _twilioService = twilioService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -85,26 +87,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 
         [HttpPost]
         [Route("send-otp-login-numberphone")]
-        public async Task<ApiResult<string>> SendOtpLoginNumberphone(string numberphone)
+        public async Task<ApiResult<string>> SendOtpLoginNumberphone([FromBody] SendOtpLoginPhoneRequest request)
         {
-            //Check exists user
-            var user = _dbContext.Users.FirstOrDefault(user => user.PhoneNumber == numberphone && user.PhoneNumberConfirmed == true);
-
-            if (user == null)
-            {
-                return new ApiResult<string>()
-                {
-                    Status = false,
-                    Message = "Số điện thoại không tồn tại trong hệ thống!",
-                };
-            }
-
-            //Verify login
-            var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-
-            //Send otp
-            string message = "Mã xác thực đăng nhập UTEHY DatabaseCourse của bạn là " + otpCode;
-            await _twilioService.SendMessage(message, numberphone);
+            await _authService.SendOtpLoginPhone(request);
 
             return new ApiResult<string>()
             {
@@ -115,43 +100,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 
         [HttpPost]
         [Route("login-by-verify-otp-numberphone")]
-        public async Task<ApiResult<string>> LoginByVerifyOtpNumberphone(string numberphone, string otp)
+        public async Task<ApiResult<string>> LoginByVerifyOtpNumberphone([FromBody] VerifyOtpLoginPhoneRequest request)
         {
-            //Verify login
-            var user = _dbContext.Users.FirstOrDefault(user => user.PhoneNumber == numberphone && user.PhoneNumberConfirmed == true);
-
-            if (user == null)
-            {
-                return new ApiResult<string>()
-                {
-                    Status = false,
-                    Message = "Số điện thoại không tồn tại trong hệ thống!",
-                };
-            }
-
-            // Check valid otp
-            var isOtpValid = await _userManager.VerifyChangePhoneNumberTokenAsync(user, otp, numberphone);
-
-            if (!isOtpValid)
-            {
-                return new ApiResult<string>()
-                {
-                    Status = false,
-                    Message = "Mã OTP không chính xác!",
-                };
-            }
-
-            //Create token
-            var token = await _authService.CreateToken(user);
-
-            if (token == null)
-            {
-                return new ApiResult<string>()
-                {
-                    Status = false,
-                    Message = "Tạo mã thông báo thất bại!",
-                };
-            }
+            string token = await _authService.VerifyOtpLoginPhone(request);
 
             return new ApiResult<string>()
             {
