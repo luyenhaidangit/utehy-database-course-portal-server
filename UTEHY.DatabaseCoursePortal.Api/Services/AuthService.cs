@@ -100,7 +100,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             //Create user
             if (user == null)
             {
-                throw new Exception("Số điện thoại không tồn tại trong hệ thống!");
+                throw new ApiException("Số điện thoại không tồn tại trong hệ thống!",HttpStatusCode.BadRequest);
             }
             else
             {

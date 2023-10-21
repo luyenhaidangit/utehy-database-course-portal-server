@@ -22,7 +22,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Middlewares
             catch (ApiException ex)
             {
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                //context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.StatusCode = ex.Status;
 
                 var errorResponse = new { status = ex.Status,message = ex.Message,Data = ex.Data };
                 var jsonErrorResponse = JsonConvert.SerializeObject(errorResponse);
