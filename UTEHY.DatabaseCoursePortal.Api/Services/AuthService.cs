@@ -77,6 +77,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 user = new User
                 {
+                    UserName = request.Phone,
                     PhoneNumber = request.Phone,
                     PhoneNumberConfirmed = true,
                     Name = request.Name,
@@ -141,12 +142,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 user = new User
                 {
+                    UserName = request.Email,
                     Email = request.Email,
                     EmailConfirmed = true,
                     Name = request.Name,
                 };
 
-                await _userManager.CreateAsync(user);
+                var res = await _userManager.CreateAsync(user);
                 await _userManager.AddToRoleAsync(user, Constants.Role.Student);
             }
 
@@ -172,7 +174,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             //Get user
             if (user == null)
             {
-                throw new ApiException("Số điện thoại không tồn tại trong hệ thống!", HttpStatusCode.BadRequest);
+                throw new ApiException("Email không tồn tại trong hệ thống!", HttpStatusCode.BadRequest);
             }
             else
             {
@@ -181,6 +183,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     user.Name = request.Name;
                 }
                 await _userManager.UpdateAsync(user);
+
+                if(request.Password != null)
+                {
+                    var tokenReset = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    await _userManager.ResetPasswordAsync(user, tokenReset, request.Password);
+                }
             }
 
             var isOtpValid = await _userManager.VerifyChangePhoneNumberTokenAsync(user, request.Otp, user.PhoneNumber);
