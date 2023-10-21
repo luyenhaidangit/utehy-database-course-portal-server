@@ -113,6 +113,33 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpPost]
+        [Route("send-otp-login-email")]
+        public async Task<ApiResult<string>> SendOtpLoginEmail([FromBody] SendOtpLoginEmailRequest request)
+        {
+            await _authService.SendOtpLoginEmail(request);
+
+            return new ApiResult<string>()
+            {
+                Status = true,
+                Message = "Mã OTP được gửi tới người dùng thành công!",
+            };
+        }
+
+        [HttpPost]
+        [Route("login-by-verify-otp-email")]
+        public async Task<ApiResult<string>> LoginByVerifyOtpEmail([FromBody] VerifyOtpLoginEmailRequest request)
+        {
+            string token = await _authService.VerifyOtpLoginEmail(request);
+
+            return new ApiResult<string>()
+            {
+                Status = true,
+                Message = "Đăng nhập thành công!",
+                Data = token
+            };
+        }
+
+        [HttpPost]
         [Route("login-by-google")]
         public async Task<ApiResult<string>> LoginByGoogle(string idToken)
         {
