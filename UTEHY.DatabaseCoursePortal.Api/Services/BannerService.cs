@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -17,7 +14,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly FileService _fileService;
         private readonly IMapper _mapper;
 
-        public BannerService(ApplicationDbContext dbContext, FileService fileService,IMapper mapper)
+        public BannerService(ApplicationDbContext dbContext, FileService fileService, IMapper mapper)
         {
             _dbContext = dbContext;
             _fileService = fileService;
@@ -51,7 +48,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .Take(request.PageSize.Value)
             .ToListAsync();
 
-            var result = new PagingResult<Banner>(items,request.PageIndex.Value,request.PageSize.Value,total,totalPages);
+            var result = new PagingResult<Banner>(items, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
 
             return result;
         }
@@ -64,6 +61,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
 
             var banner = _mapper.Map<Banner>(request);
+            banner.CreatedAt = DateTime.Now;
 
             await _dbContext.Banners.AddAsync(banner);
             await _dbContext.SaveChangesAsync();
@@ -91,6 +89,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
 
             _mapper.Map(request, banner);
+            banner.UpdatedAt = DateTime.Now;
 
             await _dbContext.SaveChangesAsync();
 
@@ -105,6 +104,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 throw new Exception("Banner không tồn tại!");
             }
+
+            banner.DeletedAt = DateTime.Now;
 
             _dbContext.Banners.Remove(banner);
 
@@ -135,6 +136,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             await _dbContext.SaveChangesAsync();
 
             return banners;
-        }           
+        }
     }
 }
