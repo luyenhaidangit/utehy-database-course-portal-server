@@ -13,11 +13,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }
         public string? ImageUrl { get; set; }
-        public bool IsApproved { get; set; }
-        public bool IsBookmark { get; set; }
-        public bool IsPublished { get; set; }
+        public bool? IsApproved { get; set; }
+        public bool? IsBookmark { get; set; }
+        public bool? IsPublished { get; set; }
         public string Slug { get; set; }
         public int? ParentId { get; set; }
         public DateTime PulishedAt { get; set; }
+        public int BlogTopicId { get; set; }
     }
 }

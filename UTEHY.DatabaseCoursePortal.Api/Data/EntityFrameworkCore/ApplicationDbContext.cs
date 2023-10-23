@@ -15,6 +15,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
 
         public virtual DbSet<Banner>? Banners { get; set; }
         public virtual DbSet<Blog>? Blogs { get; set; }
+        public virtual DbSet<BlogTopic>? BlogTopics { get; set; }
         public virtual DbSet<Comment>? Comments { get; set; }
         public virtual DbSet<Permission>? Permissions { get; set; }
         public virtual DbSet<RolePermission>? RolePermissions { get; set; }
@@ -31,6 +32,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new PermissionConfiguration());
             builder.ApplyConfiguration(new RolePermissionConfiguration());
             builder.ApplyConfiguration(new BlogConfiguration());
+            builder.ApplyConfiguration(new BlogTopicConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
@@ -39,6 +41,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaims");
             builder.Entity<IdentityUserToken<Guid>>().ToTable("UserTokens");
             builder.Entity<Banner>().HasQueryFilter(x => x.DeletedAt == null);
+            builder.Entity<Blog>().HasQueryFilter(x => x.DeletedAt == null);
+            builder.Entity<BlogTopic>().HasQueryFilter(x => x.DeletedAt == null);
+            builder.Entity<Comment>().HasQueryFilter(x => x.DeletedAt == null);
 
             //Seeder
             builder.Seed();

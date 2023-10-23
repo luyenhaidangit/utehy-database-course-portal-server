@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Twilio.TwiML.Voice;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
-using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
@@ -64,7 +61,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         {
             var user = await _userService.GetUserInfo(HttpContext);
 
-            if(user == null)
+            if (user == null)
             {
                 return new ApiResult<User>()
                 {
@@ -73,7 +70,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                     Data = null
                 };
             }
-            
+
             return new ApiResult<User>()
             {
                 Status = true,

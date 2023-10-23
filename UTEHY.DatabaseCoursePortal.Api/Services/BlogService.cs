@@ -50,6 +50,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
 
             var blog = _mapper.Map<Blog>(request);
+            blog.CreatedAt = DateTime.Now;
 
             _dbContext.AddAsync(blog);
             _dbContext.SaveChanges();
@@ -76,6 +77,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
 
             _mapper.Map(request, blog);
+            blog.UpdatedAt = DateTime.Now;
 
             await _dbContext.SaveChangesAsync();
 
@@ -85,6 +87,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         public async Task<Blog> Delete(int id)
         {
             var blog = await _dbContext.Blogs.FindAsync(id);
+
+            blog.DeletedAt = DateTime.Now;
 
             _dbContext.Blogs.Remove(blog);
 
@@ -109,21 +113,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             var comment = _mapper.Map<Comment>(requestComment);
 
-            await _dbContext.Comments.AddAsync(comment);
-            await _dbContext.SaveChangesAsync();
-
-            return comment;
-        }
-
-        public async Task<Comment> CreateCommentChild(RequestCommentBlogViewModel requestComment)
-        {
-            var comment = _mapper.Map<Comment>(requestComment);
+            comment.IsAnswered = false;
 
             if (comment.ParentCommentId != null)
             {
                 var commentParent = await _dbContext.Comments.FindAsync(comment.ParentCommentId);
                 if (commentParent != null)
                 {
+                    comment.IsAnswered = true;
                     commentParent.CommentsCount += 1;
                 }
             }

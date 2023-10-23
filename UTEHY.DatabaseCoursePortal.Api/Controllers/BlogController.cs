@@ -108,15 +108,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         [HttpPost("create-comment-blog")]
         public async Task<ApiResult<Comment>> CreateCommentBlog(RequestCommentBlogViewModel requestComment)
         {
-            Comment result;
-            if (requestComment.ParentCommentId != null)
-            {
-                result = await _blogService.CreateCommentChild(requestComment);
-            }
-            else
-            {
-                result = await _blogService.CreateCommentBlog(requestComment);
-            }
+            // Comment result;
+
+            var result = await _blogService.CreateCommentBlog(requestComment);
+
             if (result != null)
             {
                 return new ApiResult<Comment>()
