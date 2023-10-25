@@ -109,6 +109,28 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return comment;
         }
 
+        public async Task<PagingResult<Blog>> GetListBlogByIdTopic(int id, PagingRequest request)
+        {
+            var query = _dbContext.Blogs.AsQueryable();
+
+            int total = await query.CountAsync();
+
+            if (request.PageIndex == null) request.PageIndex = 1;
+            if (request.PageSize == null) request.PageSize = total;
+
+            int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
+
+            var items = await query
+            .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
+            .Take(request.PageSize.Value)
+            .Where(x => x.BlogTopicId == id)
+            .ToListAsync();
+
+            var result = new PagingResult<Blog>(items, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
+
+            return result;
+        }
+
         public async Task<Comment> CreateCommentBlog(RequestCommentBlogViewModel requestComment)
         {
             var comment = _mapper.Map<Comment>(requestComment);

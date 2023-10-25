@@ -65,6 +65,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Data = result
             };
         }
+
+        [HttpGet("get-blog-by-topic-id")]
+        public async Task<ApiResult<PagingResult<Blog>>> GetListBlogByIdTopic([FromQuery] PagingRequest request, int topicId)
+        {
+            var result = await _blogService.GetListBlogByIdTopic(topicId, request);
+
+            return new ApiResult<PagingResult<Blog>>()
+            {
+                Status = true,
+                Message = "Xoá bài viết thành công!",
+                Data = result
+            };
+
+        }
+
         [HttpGet("get-comment-blog")]
         public async Task<ApiResult<List<Comment>>> GetCommentBlog(int blogId)
         {
