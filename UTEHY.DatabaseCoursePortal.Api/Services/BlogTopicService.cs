@@ -2,7 +2,6 @@
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.BlogTopic;
-using UTEHY.DatabaseCoursePortal.Api.Providers;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -14,7 +13,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            _deleteEntity = deleteEntity;
         }
 
         public async Task<List<BlogTopic>> Get()
