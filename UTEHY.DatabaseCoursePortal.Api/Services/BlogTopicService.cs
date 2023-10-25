@@ -2,7 +2,6 @@
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.BlogTopic;
-using UTEHY.DatabaseCoursePortal.Api.Providers;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -10,12 +9,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly DeleteEntity _deleteEntity;
-        public BlogTopicService(ApplicationDbContext dbContext, IMapper mapper, DeleteEntity deleteEntity)
+        public BlogTopicService(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            _deleteEntity = deleteEntity;
         }
 
         public async Task<List<BlogTopic>> Get()
@@ -43,7 +40,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             if (blogTopic != null)
             {
-                _mapper.Map(request, blogTopic);
+                _mapper.Map(request, blogTopic, opt =>
+                {
+                    opt.Items["Request"] = request;
+                });
 
                 blogTopic.UpdatedAt = DateTime.Now;
 
