@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -11,9 +12,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231102171838_AddSeederBanner")]
+    partial class AddSeederBanner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -519,13 +521,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Description = "Số lượng khoá học hiển thị tối đa tại trang chủ",
                             Key = "MaxCourseHome",
                             Value = "20"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Số lượng banner hiển thị tối đa tại trang chủ",
-                            Key = "MaxBannerHome",
-                            Value = "10"
                         });
                 });
 
@@ -746,7 +741,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "74fb92ef-361d-445e-be46-0d0910274745",
+                            ConcurrencyStamp = "44c01f79-fabc-4c19-9ffe-c669660b36f3",
                             Description = "Admin Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -874,14 +869,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "08ce2432-4cc3-413c-b928-8fdf0e64b5e1",
+                            ConcurrencyStamp = "d79118fb-e490-442f-926c-ea72c0661c74",
                             Email = "luyenhaidangit@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Luyện Hải Đăng",
                             NormalizedEmail = "luyenhaidangit@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGZWeyOhnXEDWnxdCEUpyDQNHj1JJvWBmOksIl7j/Kek9YxkGNb4TW+LQcFsm+qLeQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHwM57aBuT16O1g1BoD6us15qE/E/ZKsqrAc4qSUYZtS/EOKOTZk6ZgXWN8LtcDeKw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

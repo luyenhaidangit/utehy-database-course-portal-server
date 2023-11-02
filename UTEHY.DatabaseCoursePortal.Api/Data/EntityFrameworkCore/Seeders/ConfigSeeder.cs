@@ -15,6 +15,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Value = "20",
                     Description = "Số lượng khoá học hiển thị tối đa tại trang chủ"
                 },
+                new Config
+                {
+                    Id = 2,
+                    Key = "MaxBannerHome",
+                    Value = "10",
+                    Description = "Số lượng banner hiển thị tối đa tại trang chủ"
+                },
             };
 
             return configs;

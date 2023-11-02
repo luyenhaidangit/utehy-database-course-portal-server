@@ -15,6 +15,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<Comment, RequestCommentBlogViewModel>();
             CreateMap<EditBannerRequest, Banner>();
             CreateMap<Banner, EditBannerRequest>();
+            CreateMap<Banner, BannerDto>();
+            CreateMap<BannerDto, Banner>();
         }
     }
 }
