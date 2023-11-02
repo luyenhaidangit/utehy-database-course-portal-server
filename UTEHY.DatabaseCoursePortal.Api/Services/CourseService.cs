@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -6,7 +7,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
     public class CourseService
     {
-        ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
+
         public CourseService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -26,6 +28,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         public async Task<List<VideoCourse>> GetListVideoCourseByIdCourse(int courseId)
         {
             var listVideoCourse = await _dbContext.VideoCourses.Where(x => x.CourseId == courseId).ToListAsync();
+
             return listVideoCourse;
         }
 

@@ -27,5 +27,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Data = result
             };
         }
+
+        [HttpGet("get-courses")]
+        public async Task<ApiResult<List<Course>>> GetCourses()
+        {
+            var result = await _homeService.GetCourses();
+
+            return new ApiResult<List<Course>>()
+            {
+                Status = true,
+                Message = "Danh sách khoá học thành công!",
+                Data = result
+            };
+        }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -11,9 +12,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231029175655_AddTableConfig")]
+    partial class AddTableConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -466,7 +468,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Số lượng khoá học hiển thị tối đa tại trang chủ",
                             Key = "MaxCourseHome",
                             Value = "20"
                         });
@@ -689,7 +690,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "39391931-41ca-47d3-8073-3ec761df2b3c",
+                            ConcurrencyStamp = "0b130421-082d-4ac1-916e-591e2414ae95",
                             Description = "Admin Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -817,14 +818,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "22095f24-19f3-4173-a53e-96b0a8d349a8",
+                            ConcurrencyStamp = "9652aa32-0083-4d09-8e05-e61aa138ee63",
                             Email = "luyenhaidangit@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Luyện Hải Đăng",
                             NormalizedEmail = "luyenhaidangit@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKal07InLp3QldisuxxdVreW3d+Gg+TejP4UE1qDWL5eO6yuIpMxUumSefrQO9p5FA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM7gO4HVWA5LIzoPf9dmhkzax1R2/60p0PvxuMf667RLaOC4cMzgp+BUL8inN59TWQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

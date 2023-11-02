@@ -1,6 +1,7 @@
 ﻿using UTEHY.DatabaseCoursePortal.Api.Configurations;
 using UTEHY.DatabaseCoursePortal.Api.Middlewares;
 using UTEHY.DatabaseCoursePortal.Api.Providers;
+using UTEHY.DatabaseCoursePortal.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

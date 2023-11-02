@@ -15,6 +15,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                 RoleId = RoleSeeder.Data().Id,
                 UserId = UserSeeder.Data().Id
             });
+
+            modelBuilder.Entity<Course>().HasData(CourseSeeder.Data());
+            modelBuilder.Entity<Config>().HasData(ConfigSeeder.Data());
         }
     }
 }
