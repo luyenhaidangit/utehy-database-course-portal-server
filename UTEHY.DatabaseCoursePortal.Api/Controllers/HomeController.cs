@@ -7,6 +7,7 @@ using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
+    [Route("api/[controller]")]
     public class HomeController
     {
         private readonly HomeService _homeService;
