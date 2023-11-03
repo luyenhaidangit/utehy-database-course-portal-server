@@ -19,7 +19,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Alt = "Banner-1",
                     CtaTitle = "Học thử miễn phí",
                     LinkTo = "https://fullstack.edu.vn/landing/htmlcss/",
-                    Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#6828fa\",\"background\":\"linear-gradient(to right, #6828fa, #ffbaa4)\"}}",
+                    Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#6828fa\",\"background\":\"linear-gradient(to right, #6828fa, #ffbaa4)\"}}}",
                     IsBlank = true,
                     Priority = 1,
                     Expired = new DateTime(2023, 12, 31)
@@ -35,7 +35,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Alt = "Banner-2",
                     CtaTitle = "Đăng ký ngay",
                     LinkTo = "https://fullstack.edu.vn/courses/reactjs?ref=banner",
-                    Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#6828fa\",\"background\":\"linear-gradient(to right, #6828fa, #ffbaa4)\"}}",
+                    Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#2877FA\",\"background\":\"linear-gradient(to right, #2877FA, #6717CD)\"}}}",
                     IsBlank = true,
                     Priority = 2,
                     Expired = new DateTime(2023, 12, 31)
@@ -51,7 +51,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Alt = "Banner-3",
                     CtaTitle = "Xem thành quả",
                     LinkTo = "https://fullstack.edu.vn/blog/tong-hop-cac-san-pham-cua-hoc-vien-tai-f8.html",
-                    Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#7612ff\",\"background\":\"linear-gradient(to right, #7612ff, #05b2ff)\"}}",
+                    Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#7612ff\",\"background\":\"linear-gradient(to right, #7612ff, #05b2ff)\"}}}",
                     IsBlank = true,
                     Priority = 3,
                     Expired = new DateTime(2023, 12, 31)

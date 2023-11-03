@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -11,9 +12,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231103174821_AddSeederBanner1141")]
+    partial class AddSeederBanner1141
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,7 +245,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             LinkTo = "https://fullstack.edu.vn/courses/reactjs?ref=banner",
                             Place = "Home",
                             Priority = 2,
-                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#2877FA\",\"background\":\"linear-gradient(to right, #2877FA, #6717CD)\"}}}",
+                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#6828fa\",\"background\":\"linear-gradient(to right, #6828fa, #ffbaa4)\"}}}",
                             Title = "Học ReactJS Miễn Phí!",
                             Type = "SlideShow"
                         },
@@ -259,7 +261,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             LinkTo = "https://fullstack.edu.vn/blog/tong-hop-cac-san-pham-cua-hoc-vien-tai-f8.html",
                             Place = "Home",
                             Priority = 3,
-                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#7612ff\",\"background\":\"linear-gradient(to right, #7612ff, #05b2ff)\"}}}",
+                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#6828fa\",\"background\":\"linear-gradient(to right, #6828fa, #ffbaa4)\"}}}",
                             Title = "Thành Quả của Học Viên",
                             Type = "SlideShow"
                         });
@@ -746,7 +748,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "d25a55db-9eae-4b9a-aa81-1a97f5107e20",
+                            ConcurrencyStamp = "717aaaa4-438b-474b-91d5-1db1ee8e91a5",
                             Description = "Admin Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -874,14 +876,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6992f370-c874-45b1-a05c-f655b7986f28",
+                            ConcurrencyStamp = "47f42fec-4f51-480e-8390-a7e024ef63c9",
                             Email = "luyenhaidangit@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Luyện Hải Đăng",
                             NormalizedEmail = "luyenhaidangit@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAniHlPqcAzdFikr+UgLg53ROZU62rDUfooDMxBkV7wfJos/75/Ty5Ahb6+26ptjLg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGZmeJb8uJRNiqQzw4urMDQQuiKHMbdkEITnJxllEXykV71aNdmYm2Owjb3R3QkWug==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
