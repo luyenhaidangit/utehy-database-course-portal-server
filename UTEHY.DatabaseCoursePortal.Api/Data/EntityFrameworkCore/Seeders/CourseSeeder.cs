@@ -6,35 +6,47 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
     {
         public static List<Course> Data()
         {
-            var course = new List<Course>()
+            var courses = new List<Course>()
             {
                 new Course
                 {
                     Id = 1,
-                    Title = "SQL căn bản",
-                    ImageUrl = "/Course/Course.png",
+                    Title = "Kiến Thức Nhập Môn IT",
+                    ImageUrl = "/Course/Course-1.png",
+                    Priority = 1,
+                    PublishedAt = new DateTime(2023, 11, 1),
+                    IsPublished = true,
                 },
                 new Course
                 {
                     Id = 2,
-                    Title = "SQL Advanced Queries",
-                    ImageUrl = "/Course/Course.png",
+                    Title = "HTML CSS từ Zero đến Hero",
+                    ImageUrl = "/Course/Course-2.png",
+                    Priority = 1,
+                    PublishedAt = new DateTime(2023, 11, 1),
+                    IsPublished = true,
                 },
                 new Course
                 {
                     Id = 3,
-                    Title = "Bảo mật Cơ sở dữ liệu",
-                    ImageUrl = "/Course/Course.png",
+                    Title = "Responsive Với Grid System",
+                    ImageUrl = "/Course/Course-3.png",
+                    Priority = 1,
+                    PublishedAt = new DateTime(2023, 11, 1),
+                    IsPublished = true,
                 },
                 new Course
                 {
                     Id = 4,
-                    Title = "Thiết kế Cơ sở dữ liệu",
-                    ImageUrl = "/Course/Course.png",
+                    Title = "Lập Trình JavaScript Cơ Bản",
+                    ImageUrl = "/Course/Course-4.png",
+                    Priority = 1,
+                    PublishedAt = new DateTime(2023, 11, 1),
+                    IsPublished = true,
                 },
             };
 
-            return course;
+            return courses;
         }
     }
 }

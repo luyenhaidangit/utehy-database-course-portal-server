@@ -10,6 +10,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual ICollection<Blog> Blogs { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Reaction> Reactions { get; set; }
+        public virtual List<UserCourse>? UserCourses { get; set; }
         #endregion
     }
 }

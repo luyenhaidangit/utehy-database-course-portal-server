@@ -23,6 +23,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Permission>? Permissions { get; set; }
         public virtual DbSet<RolePermission>? RolePermissions { get; set; }
         public virtual DbSet<Config>? Configs { get; set; } = null!;
+        public virtual DbSet<UserCourse> UserCourses { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -37,6 +39,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new BlogConfiguration());
             builder.ApplyConfiguration(new BlogTopicConfiguration());
             builder.ApplyConfiguration(new ConfigConfiguration());
+            builder.ApplyConfiguration(new UserCourseConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");

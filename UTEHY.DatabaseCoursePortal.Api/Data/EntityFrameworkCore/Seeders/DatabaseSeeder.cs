@@ -10,15 +10,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
         {
             modelBuilder.Entity<Role>().HasData(RoleSeeder.Data());
             modelBuilder.Entity<User>().HasData(UserSeeder.Data());
-            modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(new IdentityUserRole<Guid>
-            {
-                RoleId = RoleSeeder.Data().Id,
-                UserId = UserSeeder.Data().Id
-            });
-
+            modelBuilder.Entity<UserRole>().HasData(UserRoleSeeder.Data());
             modelBuilder.Entity<Course>().HasData(CourseSeeder.Data());
             modelBuilder.Entity<Config>().HasData(ConfigSeeder.Data());
             modelBuilder.Entity<Banner>().HasData(BannerSeeder.Data());
+            modelBuilder.Entity<UserCourse>().HasData(UserCourseSeeder.Data());
         }
     }
 }
