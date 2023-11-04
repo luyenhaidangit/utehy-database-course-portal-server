@@ -7,6 +7,7 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -37,17 +38,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-        public async Task<List<Course>> GetCourses()
+        public async Task<List<CourseDto>> GetCourses()
         {
-            var maxCourseBannerConfig = await _configService.GetConfigValue(ConfigConstant.MaxBannerHome);
-            var maxBannerHome = int.Parse(maxCourseBannerConfig);
+            var maxCourseBannerConfig = await _configService.GetConfigValue(ConfigConstant.MaxCourseHome);
+            var maxCourseHome = int.Parse(maxCourseBannerConfig);
 
-            var query = _dbContext.Courses.AsQueryable();
+            var query = _dbContext.Courses.Include(course => course.UserCourses).AsQueryable();
 
-            var result = await query
+            var courses = await query
+            .Where(b => b.IsPublished == true && b.PublishedAt < DateTime.UtcNow)
             .OrderByDescending(b => b.Priority)
-            .Take(maxBannerHome)
+            .Take(maxCourseHome)
             .ToListAsync();
+
+            var result = _mapper.Map<List<CourseDto>>(courses);
 
             return result;
         }

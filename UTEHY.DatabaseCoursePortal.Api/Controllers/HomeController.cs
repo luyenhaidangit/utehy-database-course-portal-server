@@ -2,6 +2,7 @@
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
@@ -31,11 +32,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpGet("get-courses")]
-        public async Task<ApiResult<List<Course>>> GetCourses()
+        public async Task<ApiResult<List<CourseDto>>> GetCourses()
         {
             var result = await _homeService.GetCourses();
 
-            return new ApiResult<List<Course>>()
+            return new ApiResult<List<CourseDto>>()
             {
                 Status = true,
                 Message = "Danh sách khoá học thành công!",

@@ -1,4 +1,6 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
+﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
+
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
 {
     public class CourseDto
     {
@@ -23,5 +25,9 @@
         public DateTime? PublishedAt { get; set; }
 
         public bool? IsPublished { get; set; }
+
+        public int? NumberRegistrations { get; set; }
+
+        public List<UserCourseRegistration>? UserCourseRegistrations { get; set; }
     }
 }

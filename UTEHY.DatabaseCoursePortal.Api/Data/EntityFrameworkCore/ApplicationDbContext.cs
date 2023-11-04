@@ -17,7 +17,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Blog>? Blogs { get; set; }
         public virtual DbSet<BlogTopic>? BlogTopics { get; set; }
         public virtual DbSet<Comment>? Comments { get; set; }
-        public virtual DbSet<Course>? Courses { get; set; } = null!;
+        public virtual DbSet<Course> Courses { get; set; } = null!;
         public virtual DbSet<VideoCourse>? VideoCourses { get; set; }
         public virtual DbSet<TrackCourse>? TrackCourses { get; set; }
         public virtual DbSet<Permission>? Permissions { get; set; }
