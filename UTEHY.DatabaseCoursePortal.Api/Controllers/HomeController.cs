@@ -32,11 +32,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpGet("get-courses")]
-        public async Task<ApiResult<List<CourseDto>>> GetCourses()
+        public async Task<ApiResult<List<CourseHomeDto>>> GetCourses()
         {
             var result = await _homeService.GetCourses();
 
-            return new ApiResult<List<CourseDto>>()
+            return new ApiResult<List<CourseHomeDto>>()
             {
                 Status = true,
                 Message = "Danh sách khoá học thành công!",

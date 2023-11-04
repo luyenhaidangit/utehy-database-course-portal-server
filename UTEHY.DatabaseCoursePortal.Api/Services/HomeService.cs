@@ -38,7 +38,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-        public async Task<List<CourseDto>> GetCourses()
+        public async Task<List<CourseHomeDto>> GetCourses()
         {
             var maxCourseBannerConfig = await _configService.GetConfigValue(ConfigConstant.MaxCourseHome);
             var maxCourseHome = int.Parse(maxCourseBannerConfig);
@@ -51,7 +51,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .Take(maxCourseHome)
             .ToListAsync();
 
-            var result = _mapper.Map<List<CourseDto>>(courses);
+            var result = _mapper.Map<List<CourseHomeDto>>(courses);
 
             return result;
         }

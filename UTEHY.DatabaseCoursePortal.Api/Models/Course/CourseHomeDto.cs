@@ -2,7 +2,7 @@
 
 namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
 {
-    public class CourseDto
+    public class CourseHomeDto
     {
         public int? Id { get; set; }
 
@@ -27,7 +27,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
         public bool? IsPublished { get; set; }
 
         public int? NumberRegistrations { get; set; }
-
-        public List<UserCourseRegistration>? UserCourseRegistrations { get; set; }
     }
 }
