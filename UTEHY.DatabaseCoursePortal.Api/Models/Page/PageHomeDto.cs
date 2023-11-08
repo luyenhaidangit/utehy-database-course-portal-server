@@ -1,6 +1,6 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Page
 {
-    public class Page
+    public class PageHomeDto
     {
         public int? Id { get; set; }
 
@@ -13,8 +13,6 @@
         public string? Content { get; set; }
 
         public string? Url { get; set; }
-
-        public int? Priority { get; set; }
 
         public string? Type { get; set; }
 

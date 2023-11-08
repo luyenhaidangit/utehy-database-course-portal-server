@@ -5,5 +5,7 @@
         public const string MaxCourseHome = "MaxCourseHome";
 
         public const string MaxBannerHome = "MaxBannerHome";
+
+        public const string MaxPageFeatureHome = "MaxPageFeatureHome";
     }
 }

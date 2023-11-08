@@ -9,6 +9,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
+using UTEHY.DatabaseCoursePortal.Api.Models.Page;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -52,6 +53,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .ToListAsync();
 
             var result = _mapper.Map<List<CourseHomeDto>>(courses);
+
+            return result;
+        }
+
+        public async Task<List<PageHomeDto>> GetFeaturePages()
+        {
+            var maxPageFeatureConfig = await _configService.GetConfigValue(ConfigConstant.MaxPageFeatureHome);
+            var maxPageFeature = int.Parse(maxPageFeatureConfig);
+
+            var query = _dbContext.Pages.AsQueryable();
+
+            var pages = await query
+            .Where(b => b.Status == BooleanConstant.True && b.Type == TypePageConstant.Feature)
+            .OrderByDescending(b => b.Priority)
+            .Take(maxPageFeature)
+            .ToListAsync();
+
+            var result = _mapper.Map<List<PageHomeDto>>(pages);
 
             return result;
         }

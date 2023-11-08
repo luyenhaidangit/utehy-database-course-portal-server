@@ -17,6 +17,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Description = "Công cụ sơ đồ ER để trực quan hóa cách các thực thể hệ thống như người hoặc đối tượng liên quan với nhau.",
                     Content = null,
                     Url = null,
+                    Priority = 4,
                     Type = "Feature",
                     Status = true
                 },
@@ -28,6 +29,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Description = "Tổng hợp câu hỏi trắc nghiệm CSDL có đáp án đầy đủ nhằm giúp các bạn dễ dàng ôn tập lại toàn bộ các kiến thức.",
                     Content = null,
                     Url = null,
+                    Priority = 3,
                     Type = "Feature",
                     Status = true
                 },
@@ -39,6 +41,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Description = "Trình biên dịch SQL trực tuyến ngay trên nền tảng web, không cần phải cài đặt trên máy tính cá nhân.",
                     Content = null,
                     Url = null,
+                    Priority = 2,
                     Type = "Feature",
                     Status = true
                 },
@@ -50,6 +53,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Description = "Nơi người dùng có thể tương tác, chia sẻ kiến thức, và giải quyết thắc mắc về CSDL.",
                     Content = null,
                     Url = null,
+                    Priority = 1,
                     Type = "Feature",
                     Status = true
                 },

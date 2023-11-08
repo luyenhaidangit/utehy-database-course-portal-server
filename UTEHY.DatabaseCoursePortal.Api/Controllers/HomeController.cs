@@ -4,6 +4,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
+using UTEHY.DatabaseCoursePortal.Api.Models.Page;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
@@ -40,6 +41,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             {
                 Status = true,
                 Message = "Danh sách khoá học thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-feature-pages")]
+        public async Task<ApiResult<List<PageHomeDto>>> GetFeaturePages()
+        {
+            var result = await _homeService.GetFeaturePages();
+
+            return new ApiResult<List<PageHomeDto>>()
+            {
+                Status = true,
+                Message = "Danh sách trang tính năng thành công!",
                 Data = result
             };
         }
