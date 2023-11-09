@@ -5,6 +5,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
 using UTEHY.DatabaseCoursePortal.Api.Models.Page;
+using UTEHY.DatabaseCoursePortal.Api.Models.Post;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
@@ -54,6 +55,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             {
                 Status = true,
                 Message = "Danh sách trang tính năng thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-posts")]
+        public async Task<ApiResult<List<PostHomeDto>>> GetPosts()
+        {
+            var result = await _homeService.GetPosts();
+
+            return new ApiResult<List<PostHomeDto>>()
+            {
+                Status = true,
+                Message = "Lấy danh sách bài viết thành công!",
                 Data = result
             };
         }

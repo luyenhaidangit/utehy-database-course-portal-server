@@ -10,6 +10,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
 using UTEHY.DatabaseCoursePortal.Api.Models.Page;
+using UTEHY.DatabaseCoursePortal.Api.Models.Post;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -71,6 +72,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .ToListAsync();
 
             var result = _mapper.Map<List<PageHomeDto>>(pages);
+
+            return result;
+        }
+
+        public async Task<List<PostHomeDto>> GetPosts()
+        {
+            var maxPostConfig = await _configService.GetConfigValue(ConfigConstant.MaxPostHome);
+            var maxPost = int.Parse(maxPostConfig);
+
+            var query = _dbContext.Posts.Include(post => post.User).AsQueryable();
+
+            var posts = await query
+            .Where(b => b.IsPublished == BooleanConstant.True)
+            .OrderByDescending(b => b.Priority)
+            .Take(maxPost)
+            .ToListAsync();
+
+            var result = _mapper.Map<List<PostHomeDto>>(posts);
 
             return result;
         }

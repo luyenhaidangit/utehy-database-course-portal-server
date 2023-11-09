@@ -29,6 +29,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Value = "10",
                     Description = "Số lượng trang tính năng hiển thị tối đa tại trang chủ"
                 },
+                new Config
+                {
+                    Id = 4,
+                    Key = "MaxPostHome",
+                    Value = "10",
+                    Description = "Số lượng bài viết hiển thị tối đa tại trang chủ"
+                },
             };
 
             return configs;

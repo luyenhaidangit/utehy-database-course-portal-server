@@ -25,6 +25,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Config>? Configs { get; set; } = null!;
         public virtual DbSet<UserCourse> UserCourses { get; set; } = null!;
         public virtual DbSet<Page> Pages { get; set; } = null!;
+        public virtual DbSet<Post> Posts { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

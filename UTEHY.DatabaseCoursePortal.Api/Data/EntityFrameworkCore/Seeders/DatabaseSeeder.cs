@@ -16,6 +16,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
             modelBuilder.Entity<Banner>().HasData(BannerSeeder.Data());
             modelBuilder.Entity<UserCourse>().HasData(UserCourseSeeder.Data());
             modelBuilder.Entity<Page>().HasData(PageSeeder.Data());
+            modelBuilder.Entity<Post>().HasData(PostSeeder.Data());
         }
     }
 }
