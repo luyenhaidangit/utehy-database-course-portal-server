@@ -20,6 +20,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Post
 
         public bool? IsPublished { get; set; }
 
+        public int? ReadingTime { get; set; }
+
         public UserProfileDto? User { get; set; }
     }
 }
