@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Google.Apis.YouTube.v3.Data;
+using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
+using UTEHY.DatabaseCoursePortal.Api.Models.GoogleClould;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
 using UTEHY.DatabaseCoursePortal.Api.Models.Page;
 using UTEHY.DatabaseCoursePortal.Api.Models.Post;
@@ -68,6 +70,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             {
                 Status = true,
                 Message = "Lấy danh sách bài viết thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-videos")]
+        public async Task<ApiResult<List<VideoYoutube>>> GetVideos()
+        {
+            var result = await _homeService.GetVideos();
+
+            return new ApiResult<List<VideoYoutube>>()
+            {
+                Status = true,
+                Message = "Lấy danh sách video youtube trang chủ thành công!",
                 Data = result
             };
         }

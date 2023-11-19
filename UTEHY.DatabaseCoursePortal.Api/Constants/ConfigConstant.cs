@@ -9,5 +9,9 @@
         public const string MaxPageFeatureHome = "MaxPageFeatureHome";
 
         public const string MaxPostHome = "MaxPostHome";
+
+        public const string IdChannelYoutube = "IdChannelYoutube";
+
+        public const string MaxVideoYoutubeHome = "MaxVideoYoutubeHome";
     }
 }

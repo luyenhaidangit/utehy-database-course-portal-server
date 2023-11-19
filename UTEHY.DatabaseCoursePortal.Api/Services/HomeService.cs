@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Apis.YouTube.v3.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,7 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
+using UTEHY.DatabaseCoursePortal.Api.Models.GoogleClould;
 using UTEHY.DatabaseCoursePortal.Api.Models.Home;
 using UTEHY.DatabaseCoursePortal.Api.Models.Page;
 using UTEHY.DatabaseCoursePortal.Api.Models.Post;
@@ -18,13 +20,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ConfigService _configService;
+        private readonly GoogleClouldService _googleClouldService;
         private readonly IMapper _mapper;
 
-        public HomeService(ApplicationDbContext dbContext, ConfigService configService, IMapper mapper)
+        public HomeService(ApplicationDbContext dbContext, ConfigService configService, IMapper mapper, GoogleClouldService googleClouldService)
         {
             _dbContext = dbContext;
             _configService = configService;
             _mapper = mapper;
+            _googleClouldService = googleClouldService;
         }
 
         public async Task<List<BannerDto>> GetBanners(Models.Home.GetBannerRequest request)
@@ -90,6 +94,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .ToListAsync();
 
             var result = _mapper.Map<List<PostHomeDto>>(posts);
+
+            return result;
+        }
+
+        public async Task<List<VideoYoutube>> GetVideos()
+        {
+            var idChannel = await _configService.GetConfigValue(ConfigConstant.IdChannelYoutube);
+
+            var maxVideoYoutubeHomeConfig = await _configService.GetConfigValue(ConfigConstant.MaxVideoYoutubeHome);
+            var maxVideoYoutubeHome = int.Parse(maxVideoYoutubeHomeConfig);
+
+            var result = await _googleClouldService.GetListInfoVideoByChannel(idChannel, maxVideoYoutubeHome);
 
             return result;
         }
