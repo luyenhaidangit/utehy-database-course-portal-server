@@ -22,6 +22,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     NormalizedName = "student",
                     Description = "Student Role"
                 },
+                new Role
+                {
+                    Id = new Guid("8D04DCE2-969A-435D-BBA4-DF3F325983DD"),
+                    Name = "teacher",
+                    NormalizedName = "teacher",
+                    Description = "Teacher Role"
+                },
             };
 
             return roles;

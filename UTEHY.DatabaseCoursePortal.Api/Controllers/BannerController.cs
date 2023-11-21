@@ -15,11 +15,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [HasPermission(Constants.Permission.ManageBanner)]
-    public class BannerController : ControllerBase
+    public class TeacherController : ControllerBase
     {
         private readonly BannerService _bannerService;
 
-        public BannerController(BannerService bannerService)
+        public TeacherController(BannerService bannerService)
         {
             _bannerService = bannerService;
         }

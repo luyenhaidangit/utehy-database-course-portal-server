@@ -20,7 +20,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     EmailConfirmed = true,
                     PasswordHash = hasher.HashPassword(null!, "haidang106"),
                     SecurityStamp = string.Empty,
-                    Name = "Luyện Hải Đăng"
+                    Name = "Luyện Hải Đăng",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true
                 },
                 new User
                 {
@@ -32,7 +34,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     EmailConfirmed = true,
                     PasswordHash = hasher.HashPassword(null!, "haidang106"),
                     SecurityStamp = string.Empty,
-                    Name = "Cao Văn Dân"
+                    Name = "Cao Văn Dân",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true
                 },
                 new User
                 {
@@ -44,7 +48,51 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     EmailConfirmed = true,
                     PasswordHash = hasher.HashPassword(null!, "haidang106"),
                     SecurityStamp = string.Empty,
-                    Name = "Nguyễn Văn Thắng"
+                    Name = "Nguyễn Văn Thắng",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true
+                },
+                new User
+                {
+                    Id = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08A6"),
+                    UserName = "phamxuantuyen",
+                    NormalizedUserName = "phamxuantuyen",
+                    Email = "phamxuantuyen@gmail.com",
+                    NormalizedEmail = "phamxuantuyen@gmail.com",
+                    EmailConfirmed = true,
+                    PasswordHash = hasher.HashPassword(null!, "haidang106"),
+                    SecurityStamp = string.Empty,
+                    Name = "Phạm Xuân Tuyển",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true
+                },
+                new User
+                {
+                    Id = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08A1"),
+                    UserName = "daoxuanduc",
+                    NormalizedUserName = "daoxuanduc",
+                    Email = "daoxuanduc@gmail.com",
+                    NormalizedEmail = "daoxuanduc@gmail.com",
+                    EmailConfirmed = true,
+                    PasswordHash = hasher.HashPassword(null!, "haidang106"),
+                    SecurityStamp = string.Empty,
+                    Name = "Đào Xuân Đức",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true
+                },
+                new User
+                {
+                    Id = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08B1"),
+                    UserName = "hoanggiabao",
+                    NormalizedUserName = "hoanggiabao",
+                    Email = "hoanggiabao@gmail.com",
+                    NormalizedEmail = "hoanggiabao@gmail.com",
+                    EmailConfirmed = true,
+                    PasswordHash = hasher.HashPassword(null!, "haidang106"),
+                    SecurityStamp = string.Empty,
+                    Name = "Hoàng Gia Bảo",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true
                 },
             };
 

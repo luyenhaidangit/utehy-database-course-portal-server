@@ -24,6 +24,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                      UserId = new Guid("1A3E854A-843D-4E65-AB88-9D5736C831F2"),
                      RoleId = new Guid("C3F087A2-48D5-4E09-8A63-8830A7B5B4E3")
                 },
+                //User: Tuyển, Role: Teacher
+                new UserRole
+                {
+                     UserId = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08A6"),
+                     RoleId = new Guid("8D04DCE2-969A-435D-BBA4-DF3F325983DD")
+                },
+                 //User: Đức, Role: Teacher
+                new UserRole
+                {
+                     UserId = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08A1"),
+                     RoleId = new Guid("8D04DCE2-969A-435D-BBA4-DF3F325983DD")
+                },
+                //User: Bảo, Role: Teacher
+                new UserRole
+                {
+                     UserId = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08B1"),
+                     RoleId = new Guid("8D04DCE2-969A-435D-BBA4-DF3F325983DD")
+                },
             };
 
             return userRoles;

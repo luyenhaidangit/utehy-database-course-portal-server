@@ -6,6 +6,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
     {
         public string? Name { get; set; }
 
+        public string? AvatarUrl { get; set; }
+
+        public bool? Status { get; set; }
+
         #region Relationship
         public virtual ICollection<Blog> Blogs { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
