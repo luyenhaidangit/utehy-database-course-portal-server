@@ -19,13 +19,17 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Comment>? Comments { get; set; }
         public virtual DbSet<Course> Courses { get; set; } = null!;
         public virtual DbSet<VideoCourse>? VideoCourses { get; set; }
-        public virtual DbSet<TrackCourse>? TrackCourses { get; set; }
+        //public virtual DbSet<TrackCourse>? TrackCourses { get; set; }
         public virtual DbSet<Permission>? Permissions { get; set; }
         public virtual DbSet<RolePermission>? RolePermissions { get; set; }
         public virtual DbSet<Config>? Configs { get; set; } = null!;
         public virtual DbSet<UserCourse> UserCourses { get; set; } = null!;
         public virtual DbSet<Page> Pages { get; set; } = null!;
-        public virtual DbSet<Post> Posts { get; set; } = null!;
+        public virtual DbSet<Track> Tracks { get; set; } = null!;
+        public virtual DbSet<AssignmentCourse> AssignmentCourses { get; set; } = null!;
+        public virtual DbSet<QuizCourse> QuizCourses { get; set; } = null!;
+        public virtual DbSet<TypeStepTrack> TypeStepTracks { get; set; } = null!;
+        public virtual DbSet<StepTrack> StepTracks { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,6 +46,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new ConfigConfiguration());
             builder.ApplyConfiguration(new UserCourseConfiguration());
             builder.ApplyConfiguration(new PageConfiguration());
+            builder.ApplyConfiguration(new TrackConfiguration());
+            builder.ApplyConfiguration(new AssignmentCourseConfiguration());
+            builder.ApplyConfiguration(new QuizCourseConfiguration());
+            builder.ApplyConfiguration(new TypeStepTrackConfiguration());
+            builder.ApplyConfiguration(new StepTrackConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");

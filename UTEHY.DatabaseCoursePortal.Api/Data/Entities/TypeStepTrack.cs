@@ -2,9 +2,9 @@
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
-    public class VideoCourse : EntityBase
+    public class TypeStepTrack : EntityBase
     {
         public int Id { get; set; }
-        public string VideoUrl { get; set; }
+        public string TypeStepTrackName { get; set; }
     }
 }

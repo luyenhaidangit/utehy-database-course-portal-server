@@ -2,9 +2,10 @@
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
-    public class VideoCourse : EntityBase
+    public class QuizCourse : EntityBase
     {
         public int Id { get; set; }
-        public string VideoUrl { get; set; }
+        public string Answer { get; set; }
+        public bool IsCorrectAnswer { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -25,12 +24,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return course;
         }
-        public async Task<List<VideoCourse>> GetListVideoCourseByIdCourse(int courseId)
-        {
-            var listVideoCourse = await _dbContext.VideoCourses.Where(x => x.CourseId == courseId).ToListAsync();
+        //public async Task<List<VideoCourse>> GetListVideoCourseByIdCourse(int courseId)
+        //{
+        //    var listVideoCourse = await _dbContext.VideoCourses.Where(x => x.CourseId == courseId).ToListAsync();
 
-            return listVideoCourse;
-        }
+        //    return listVideoCourse;
+        //}
 
     }
 }
