@@ -20,11 +20,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpGet("get")]
-        public async Task<ApiResult<PagingResult<User>>> Get([FromQuery] GetTeacherRequest request)
+        public async Task<ApiResult<PagingResult<TeacherDto>>> Get([FromQuery] GetTeacherRequest request)
         {
             var result = await _teacherService.Get(request);
 
-            return new ApiResult<PagingResult<User>>()
+            return new ApiResult<PagingResult<TeacherDto>>()
             {
                 Status = true,
                 Message = "Lấy thông tin danh sách giáo viên thành công!",

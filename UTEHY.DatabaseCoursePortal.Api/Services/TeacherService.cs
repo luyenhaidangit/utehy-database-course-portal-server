@@ -22,24 +22,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<PagingResult<User>> Get(GetTeacherRequest request)
+        public async Task<PagingResult<TeacherDto>> Get(GetTeacherRequest request)
         {
-            var query = _dbContext.Teachers.Where(teacher => teacher.User != null).Select(teacher => teacher.User).AsQueryable();
+            var query = _dbContext.Teachers.Include(x => x.User).AsQueryable();
 
             if (!string.IsNullOrEmpty(request.NameOrEmail))
             {
                 string search = request.NameOrEmail.ToLower();
-                query = query.Where(b => b.UserName.ToLower().Contains(request.NameOrEmail.ToLower()) || b.Email.ToLower().Contains(request.NameOrEmail.ToLower()));
+                query = query.Where(b => b.User.UserName.ToLower().Contains(request.NameOrEmail.ToLower()) || b.User.Email.ToLower().Contains(request.NameOrEmail.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(request.PhoneNumber))
             {
-                query = query.Where(b => b.PhoneNumber.ToLower().Contains(request.PhoneNumber.ToLower()));
+                query = query.Where(b => b.User.PhoneNumber.ToLower().Contains(request.PhoneNumber.ToLower()));
             }
 
             if (request.Status != null)
             {
-                query = query.Where(b => b.Status == request.Status);
+                query = query.Where(b => b.User.Status == request.Status);
             }
 
             int total = await query.CountAsync();
@@ -55,7 +55,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .Take(request.PageSize.Value)
             .ToListAsync();
 
-            var result = new PagingResult<User>(items, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
+            var itemsMapper = _mapper.Map<List<TeacherDto>>(items);
+
+            var result = new PagingResult<TeacherDto>(itemsMapper, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
 
             return result;
         }

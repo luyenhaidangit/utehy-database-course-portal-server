@@ -92,7 +92,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     SecurityStamp = string.Empty,
                     Name = "Hoàng Gia Bảo",
                     AvatarUrl = "/User/AvatarDefault.png",
-                    Status = true
+                    Status = true,
+                    PhoneNumber = "+84922002360"
                 },
             };
 
