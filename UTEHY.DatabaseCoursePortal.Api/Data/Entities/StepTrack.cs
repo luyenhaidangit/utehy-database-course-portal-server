@@ -6,9 +6,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
     {
         public int Id { get; set; }
         public int TypeStepTrackId { get; set; }
+        public int TrackID { get; set; }
         public int Position { get; set; }
-        public int? VideoCourseId { get; set; }
         public int? AssignmentCourseId { get; set; }
-        public bool IsComplete { get; set; }
+        public int? VideoCourseId { get; set; }
+        public int? QuizCourseId { get; set; }
+        //public VideoCourse? VideoCourse { get; set; }
+        //public QuizCourse? QuizCourse { get; set; }
     }
 }

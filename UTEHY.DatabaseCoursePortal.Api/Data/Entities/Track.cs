@@ -8,5 +8,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int CourseId { get; set; }
         public string Title { get; set; }
         public int Position { get; set; }
+        //public List<StepTrack>? StepTracks { get; set; }
     }
 }

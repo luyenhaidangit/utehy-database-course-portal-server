@@ -1,10 +1,7 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
-
-namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
 {
-    public class Course : EntityBase
+    public class CreateCourseRequest
     {
-        public int? Id { get; set; }
         public string? CertificateName { get; set; }
         public string? Content { get; set; }
         public string? Description { get; set; }
@@ -16,8 +13,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public DateTime? PublishedAt { get; set; }
 
         public bool? IsPublished { get; set; }
-
-        public List<UserCourse>? UserCourses { get; set; }
-        //public List<Track>? Tracks { get; set; }
     }
 }
