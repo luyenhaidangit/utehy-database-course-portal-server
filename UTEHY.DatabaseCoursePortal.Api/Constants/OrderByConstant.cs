@@ -2,8 +2,6 @@
 {
     public class OrderByConstant
     {
-        public const string Asc = "asc";
-
-        public const string Desc = "desc";
+        public const string Id = "id";
     }
 }

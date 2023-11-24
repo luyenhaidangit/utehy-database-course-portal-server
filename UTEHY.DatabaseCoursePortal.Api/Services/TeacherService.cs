@@ -49,8 +49,38 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
 
+            if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.SortBy))
+            {
+                query = query.OrderByDescending(b => b.Id);
+            }
+            else if (string.IsNullOrEmpty(request.OrderBy))
+            {
+                if(request.SortBy == SortByConstant.Asc)
+                {
+                    query = query.OrderBy(b => b.Id);
+                }
+                else
+                {
+                    query = query.OrderByDescending(b => b.Id);
+                }
+            }
+            else if (string.IsNullOrEmpty(request.SortBy))
+            {
+                query = query.OrderByDescending(b => b.Id);
+            }
+            else
+            {
+                if(request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Asc)
+                {
+                    query = query.OrderBy(b => b.Id);
+                }
+                else if(request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Desc)
+                {
+                    query = query.OrderByDescending(b => b.Id);
+                }
+            }
+
             var items = await query
-            .OrderByDescending(b => b.Id)
             .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
             .Take(request.PageSize.Value)
             .ToListAsync();
