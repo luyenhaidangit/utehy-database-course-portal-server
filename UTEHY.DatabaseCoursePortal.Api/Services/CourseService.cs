@@ -86,7 +86,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 //await _dbContext.QuizCourses.AddAsync(quizCourse);
                 //await _dbContext.SaveChangesAsync();
                 //stepTrack.AssignmentCourseId = quizCourse.Id;
-                CreateAssignment(request.AssignmentCourse);
+                var assigment = await CreateAssignment(request.AssignmentCourse);
+                stepTrack.AssignmentCourseId = assigment.Id;
             }
 
             await _dbContext.StepTracks.AddAsync(stepTrack);
