@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
@@ -12,11 +13,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly FileService _fileService;
 
-        public CourseService(ApplicationDbContext dbContext, IMapper mapper)
+        public CourseService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _fileService = fileService;
         }
         public async Task<List<Course>> GetCourses()
         {
@@ -28,6 +31,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             var course = await _dbContext.Courses.FindAsync(id);
 
+
             return course;
         }
         //public async Task<List<VideoCourse>> GetListVideoCourseByIdCourse(int courseId)
@@ -38,6 +42,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         //}
         public async Task<Course> CreateCourse(CreateCourseRequest request)
         {
+            if (request.ImageFile?.Length > 0)
+            {
+                request.ImageUrl = await _fileService.UploadFileAsync(request.ImageFile, PathFolder.Course);
+            }
             var course = _mapper.Map<Course>(request);
 
             if (request.PublishedAt < DateTime.Now)
@@ -72,12 +80,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 await _dbContext.SaveChangesAsync();
                 stepTrack.VideoCourseId = videoCourse.Id;
             }
-            if (request.QuizCourse != null)
+            if (request.AssignmentCourse != null)
             {
-                var quizCourse = _mapper.Map<QuizCourse>(request.QuizCourse);
-                await _dbContext.QuizCourses.AddAsync(quizCourse);
-                await _dbContext.SaveChangesAsync();
-                stepTrack.QuizCourseId = quizCourse.Id;
+                //var quizCourse = _mapper.Map<QuizCourse>(request.AssignmentCourse.QuizCourses);
+                //await _dbContext.QuizCourses.AddAsync(quizCourse);
+                //await _dbContext.SaveChangesAsync();
+                //stepTrack.AssignmentCourseId = quizCourse.Id;
+                CreateAssignment(request.AssignmentCourse);
             }
 
             await _dbContext.StepTracks.AddAsync(stepTrack);
@@ -123,14 +132,54 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     var videoCourse = await _dbContext.VideoCourses.FirstOrDefaultAsync(x => x.Id == stepTrack[i].VideoCourseId);
                     stepTrackVM[i].VideoCourse = videoCourse;
                 }
-                if (stepTrack[i].QuizCourseId != null)
+                if (stepTrack[i].AssignmentCourseId != null)
                 {
-                    var quizCourse = await _dbContext.QuizCourses.FirstOrDefaultAsync(x => x.Id == stepTrack[i].QuizCourseId);
-                    stepTrackVM[i].QuizCourse = quizCourse;
+                    var assignmentCourse = await _dbContext.AssignmentCourses.FirstOrDefaultAsync(x => x.Id == stepTrack[i].AssignmentCourseId);
+                    var quizCoursesByAssignmentCourseId = await _dbContext.QuizCourses.Where(x => x.AssignmentCourseId == stepTrack[i].AssignmentCourseId).ToListAsync();
+                    var quizCourses = new List<QuizCourseRequest>();
+                    for (int j = 0; i < quizCoursesByAssignmentCourseId.Count; j++)
+                    {
+                        quizCourses.Add(_mapper.Map<QuizCourseRequest>(quizCoursesByAssignmentCourseId[i]));
+                    }
+                    //var quizCourses = _mapper.Map<QuizCourseRequest>(quizCoursesByAssignmentCourseId);
+                    var assignmentCourserequest = new CreateAssignmentCourseRequest
+                    {
+                        Title = assignmentCourse.Title,
+                        Question = assignmentCourse.Question,
+                        QuizCourses = quizCourses
+                    };
+                    stepTrackVM[i].AssignmentCourse = assignmentCourserequest;
 
                 }
             }
             return stepTrackVM;
+        }
+
+        public async Task<AssignmentCourse> CreateAssignment(CreateAssignmentCourseRequest request)
+        {
+            var assignmentCourse = new AssignmentCourse
+            {
+                Title = request.Title,
+                Question = request.Question
+            };
+
+            await _dbContext.AssignmentCourses.AddAsync(assignmentCourse);
+            await _dbContext.SaveChangesAsync();
+
+            if (request.QuizCourses != null)
+            {
+                for (int i = 0; i < request.QuizCourses.Count; i++)
+                {
+                    var quizCourse = _mapper.Map<QuizCourse>(request.QuizCourses[i]);
+                    quizCourse.AssignmentCourseId = assignmentCourse.Id;
+
+                    await _dbContext.QuizCourses.AddAsync(quizCourse);
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return assignmentCourse;
         }
     }
 }

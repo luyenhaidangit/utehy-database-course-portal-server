@@ -19,7 +19,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpPost("create-course")]
-        public async Task<ActionResult<ApiResult<Course>>> CreateCourse(CreateCourseRequest request)
+        public async Task<ActionResult<ApiResult<Course>>> CreateCourse([FromQuery] CreateCourseRequest request)
         {
             var course = await _courseService.CreateCourse(request);
             return new ApiResult<Course>
@@ -29,6 +29,44 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Data = course
             };
         }
+
+        [HttpPost("create-track-by-courseid")]
+        public async Task<ActionResult<ApiResult<Track>>> CreateTrackByCourseId([FromQuery] CreateTrackRequest request)
+        {
+            var track = await _courseService.CreateTrackByCourseId(request);
+            return new ApiResult<Track>
+            {
+                Status = true,
+                Message = "Track được tạo thành công!",
+                Data = track
+            };
+        }
+
+        [HttpPost("create-steptrack-by-trackid")]
+        public async Task<ActionResult<ApiResult<StepTrack>>> CreateStepTrackByTrackId(CreateStepTrackRequest request)
+        {
+            var stepTrack = await _courseService.CreateStepTrackByTrackId(request);
+            return new ApiResult<StepTrack>
+            {
+                Status = true,
+                Message = "Step track được tạo thành công!",
+                Data = stepTrack
+            };
+        }
+
+        [HttpPost("create-assignment-course")]
+        public async Task<ActionResult<ApiResult<AssignmentCourse>>> CreateAssignmentCourse(CreateAssignmentCourseRequest request)
+        {
+            var assigmentCourse = await _courseService.CreateAssignment(request);
+
+            return new ApiResult<AssignmentCourse>
+            {
+                Status = true,
+                Message = "Bài tập được tạo thành công!",
+                Data = assigmentCourse
+            };
+        }
+
 
         [HttpGet("get-course-by-id")]
         public async Task<ActionResult<ApiResult<Course>>> GetCourseById(int id)
@@ -43,7 +81,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
         }
 
         [HttpGet("get-courses")]
-        public async Task<ActionResult<ApiResult<PagingResult<Course>>>> GetCourseById(PagingRequest request)
+        public async Task<ActionResult<ApiResult<PagingResult<Course>>>> GetCourses([FromQuery] PagingRequest request)
         {
             var courses = await _courseService.GetCourses(request);
             return new ApiResult<PagingResult<Course>>

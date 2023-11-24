@@ -12,6 +12,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<CreateTrackRequest, Track>();
             CreateMap<StepTrack, CreateStepTrackRequest>();
             CreateMap<CreateStepTrackRequest, StepTrack>();
+            CreateMap<CreateAssignmentCourseRequest, AssignmentCourse>();
+            CreateMap<AssignmentCourse, CreateAssignmentCourseRequest>();
+            CreateMap<QuizCourseRequest, QuizCourse>();
+            CreateMap<QuizCourse, QuizCourseRequest>();
         }
     }
 }

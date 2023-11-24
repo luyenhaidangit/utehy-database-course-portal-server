@@ -10,8 +10,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int Position { get; set; }
         public int? AssignmentCourseId { get; set; }
         public int? VideoCourseId { get; set; }
-        public int? QuizCourseId { get; set; }
-        //public VideoCourse? VideoCourse { get; set; }
-        //public QuizCourse? QuizCourse { get; set; }
     }
 }
