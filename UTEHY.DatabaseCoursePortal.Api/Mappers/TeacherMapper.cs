@@ -4,6 +4,7 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
 using UTEHY.DatabaseCoursePortal.Api.Models.Post;
 using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
+using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Mappers
 {
@@ -17,6 +18,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => SystemConfig.BaseUrl + src.User.AvatarUrl))
             .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => PhoneHelper.FormatPhoneNumber(src.User.PhoneNumber)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.User.Status));
+
+            CreateMap<CreateTeacherRequest, CreateUserRequest>();
         }
     }
 }

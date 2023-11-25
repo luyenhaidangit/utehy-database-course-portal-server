@@ -31,5 +31,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("create")]
+        public async Task<ApiResult<Teacher>> Create([FromForm] CreateTeacherRequest request)
+        {
+            var result = await _teacherService.Create(request);
+
+            return new ApiResult<Teacher>()
+            {
+                Status = true,
+                Message = "Tạo mới giáo viên thành công!",
+                Data = result
+            };
+        }
     }
 }
