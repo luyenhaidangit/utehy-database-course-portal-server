@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -11,9 +12,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231121160127_UpdateCourse")]
+    partial class UpdateCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,46 +131,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.AssignmentCourse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AssignmentCourses", (string)null);
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Banner", b =>
@@ -922,52 +884,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.QuizCourse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("AssignmentCourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Explanation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsCorrectAnswer")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuizCourses", (string)null);
-                });
-
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Reaction", b =>
                 {
                     b.Property<int>("Id")
@@ -1053,7 +969,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "118654f8-2468-4169-840e-0e99e699a062",
+                            ConcurrencyStamp = "127baa33-b555-497d-b0d6-71c1f160b3de",
                             Description = "Admin Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -1061,18 +977,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("c3f087a2-48d5-4e09-8a63-8830a7b5b4e3"),
-                            ConcurrencyStamp = "406705e7-7ea5-4742-b996-660c68d51f3b",
+                            ConcurrencyStamp = "d8c6755d-a94c-4c29-85de-dd04df66a75f",
                             Description = "Student Role",
                             Name = "student",
                             NormalizedName = "student"
-                        },
-                        new
-                        {
-                            Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd"),
-                            ConcurrencyStamp = "f1659393-f471-45a1-a3de-1a07cc5b7251",
-                            Description = "Teacher Role",
-                            Name = "teacher",
-                            NormalizedName = "teacher"
                         });
                 });
 
@@ -1100,84 +1008,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.ToTable("RolePermissions", (string)null);
                 });
 
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.TrackCourse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Position")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tracks", (string)null);
-                });
-
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.TypeStepTrack", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TypeStepTrackName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TypeStepTracks", (string)null);
-                });
-
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1186,9 +1016,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("AvatarUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -1232,9 +1059,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -1259,17 +1083,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "77f1f55d-9d1c-4cd1-b1fe-ef32aea6264e",
+                            ConcurrencyStamp = "ff7dbffa-44db-4955-8441-d57f3cf5f875",
                             Email = "luyenhaidangit@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Luyện Hải Đăng",
                             NormalizedEmail = "luyenhaidangit@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDcDSdmcHUBLQiw6sqoMngtwC0ai3IH7IRV3UDwyCBtqd+CQyPEdpVE/vVHwh6y+Eg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHcfnc62XxlfZIOkp6VWVWEr2chzDO0P0c/crONGkyNh/wEXVzZHfxTuxGHuyGJS5A==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
-                            Status = true,
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -1277,17 +1100,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             Id = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "93d8799b-0eb0-4e5b-8c24-59c6399395d6",
+                            ConcurrencyStamp = "660e2513-bbb4-4b81-94ca-8b9022aaceed",
                             Email = "caovandan@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Cao Văn Dân",
                             NormalizedEmail = "caovandan@gmail.com",
                             NormalizedUserName = "caovandan",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPRTAHKYAOixrsb3mFYRWzSfwIi2i/cqkSyttQSSvj1EDrKgMadC7dCOnRK32niMKQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMsOO5KdtxFHky3pX/BwsF+5NjFOtJtoY+KC32eNhewk7o9lRYLrzs6U/0gr+heFCw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
-                            Status = true,
                             TwoFactorEnabled = false,
                             UserName = "caovandan"
                         },
@@ -1295,77 +1117,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             Id = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dd986468-bde3-45fc-ac6c-ebcb836a6fd8",
+                            ConcurrencyStamp = "c83348c0-2511-4caa-9bb9-47761df4f318",
                             Email = "nguyenvanthang@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Nguyễn Văn Thắng",
                             NormalizedEmail = "nguyenvanthang@gmail.com",
                             NormalizedUserName = "nguyenvanthang",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFfZ/sD3js+Sh1Dn0N9x6XhqLhS6O1tVQ3IWLmpcJtzWU46UwbFgQcjzSQOrgV9y3g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEI8HJbak6FjE1w1uhQ+81zVVCcesFvyqpaLwxttIEE3mp7xjFxou8v0oogASrn9kgA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
-                            Status = true,
                             TwoFactorEnabled = false,
                             UserName = "nguyenvanthang"
-                        },
-                        new
-                        {
-                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a6"),
-                            AccessFailedCount = 0,
-                            AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "7f0734d5-c8ba-487c-b8b0-2190f39194e9",
-                            Email = "phamxuantuyen@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            Name = "Phạm Xuân Tuyển",
-                            NormalizedEmail = "phamxuantuyen@gmail.com",
-                            NormalizedUserName = "phamxuantuyen",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPoij97pWSjAGmCsWzUQiGaDgagiNVe//HwLO9C/Ote2PHpvssTfHY0lll3WwXkq7Q==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            Status = true,
-                            TwoFactorEnabled = false,
-                            UserName = "phamxuantuyen"
-                        },
-                        new
-                        {
-                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a1"),
-                            AccessFailedCount = 0,
-                            AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "1f322619-dc50-4492-b76b-d564a4945551",
-                            Email = "daoxuanduc@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            Name = "Đào Xuân Đức",
-                            NormalizedEmail = "daoxuanduc@gmail.com",
-                            NormalizedUserName = "daoxuanduc",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKtdOGOPnNZpsBKzYPzLH1lctck/+idJDPO+Q3nm+MDIx/y4W6ZfMbASzonuy89cyA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            Status = true,
-                            TwoFactorEnabled = false,
-                            UserName = "daoxuanduc"
-                        },
-                        new
-                        {
-                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b1"),
-                            AccessFailedCount = 0,
-                            AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "1144d16a-876c-4845-98cb-ff2a01bbdb04",
-                            Email = "hoanggiabao@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            Name = "Hoàng Gia Bảo",
-                            NormalizedEmail = "hoanggiabao@gmail.com",
-                            NormalizedUserName = "hoanggiabao",
-                            PasswordHash = "AQAAAAEAACcQAAAAED/eAD5uPlVV9fNsuIfazZ33Kp5kdLm45c48UT5QD/rsymhk9GDGMiMAx3/33LHQ4g==",
-                            PhoneNumber = "+84922002360",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            Status = true,
-                            TwoFactorEnabled = false,
-                            UserName = "hoanggiabao"
                         });
                 });
 
@@ -1492,21 +1255,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         {
                             UserId = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2"),
                             RoleId = new Guid("c3f087a2-48d5-4e09-8a63-8830a7b5b4e3")
-                        },
-                        new
-                        {
-                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a6"),
-                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd")
-                        },
-                        new
-                        {
-                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a1"),
-                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd")
-                        },
-                        new
-                        {
-                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b1"),
-                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd")
                         });
                 });
 
@@ -1618,15 +1366,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Teacher", b =>
-                {
-                    b.HasOne("UTEHY.DatabaseCoursePortal.Api.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.UserCourse", b =>

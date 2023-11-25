@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Providers
@@ -14,7 +10,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            }, ServiceLifetime.Transient);
 
             return services;
         }
