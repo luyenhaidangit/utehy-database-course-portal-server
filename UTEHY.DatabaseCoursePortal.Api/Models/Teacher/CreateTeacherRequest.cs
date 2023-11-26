@@ -1,4 +1,5 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Enums;
+﻿using NSwag.Annotations;
+using UTEHY.DatabaseCoursePortal.Api.Enums;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Models.Teacher
 {
@@ -14,6 +15,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Teacher
 
         public string? TeacherId { get; set; }
 
+        /// <summary>
+        /// 1.Điện thoại 2.Email
+        /// </summary>
         public VerificationType VerificationType { get; set; }
     }
 }

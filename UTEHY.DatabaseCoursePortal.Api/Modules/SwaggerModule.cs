@@ -2,11 +2,10 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
-using Microsoft.OpenApi.Any;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Modules
 {
-    public class SwaggerModule : IDocumentFilter, IOperationFilter, ISchemaFilter
+    public class SwaggerModule : IDocumentFilter, IOperationFilter
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
@@ -39,17 +38,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Modules
             context.ApiDescription.ParameterDescriptions.Where(p => p.Source.Equals(BindingSource.Query)
                           && p.CustomAttributes().Any(p => p.GetType().Equals(typeof(JsonIgnoreAttribute))))
                 .ToList().ForEach(p => operation.Parameters.Remove(operation.Parameters.Single(w => w.Name.Equals(p.Name))));
-        }
-
-        public void Apply(OpenApiSchema model, SchemaFilterContext context)
-        {
-            if (context.Type.IsEnum)
-            {
-                model.Enum.Clear();
-                Enum.GetNames(context.Type)
-                    .ToList()
-                    .ForEach(name => model.Enum.Add(new OpenApiString($" {Convert.ToInt64(Enum.Parse(context.Type, name))} = {name}")));
-            }
         }
     }
 }
