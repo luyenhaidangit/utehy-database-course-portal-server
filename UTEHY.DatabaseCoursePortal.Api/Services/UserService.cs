@@ -19,12 +19,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<User> _userManager;
         private readonly FileService _fileService;
+        private readonly ConfigService _configService;
 
-        public UserService(ApplicationDbContext dbContext, UserManager<User> userManager, FileService fileService)
+        public UserService(ApplicationDbContext dbContext, UserManager<User> userManager, FileService fileService, ConfigService configService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _fileService = fileService;
+            _configService = configService;
         }
 
         public async Task<List<string>> GetPermissionAsync(User user)
@@ -41,8 +43,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         public async Task<User> Create(CreateUserRequest request)
         {
             var existingUser = _dbContext.Users.FirstOrDefault(user =>
-            (user.PhoneNumber == request.Phone && user.PhoneNumberConfirmed && request.Phone != null) ||
-            (user.Email == request.Email && user.EmailConfirmed && request.Email != null));
+                (user.PhoneNumber == request.Phone && user.PhoneNumberConfirmed && !string.IsNullOrEmpty(request.Phone)) ||
+                (user.Email == request.Email && user.EmailConfirmed && !string.IsNullOrEmpty(request.Email)));
+
+            var userCreationCountConfig = await _configService.GetConfigValue(ConfigConstant.UserCreationCount);
+            var userCreationCount = int.Parse(userCreationCountConfig);
+            var username = Prefix.Username + (userCreationCount + 1);
 
             if (existingUser != null)
             {
@@ -57,6 +63,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             var newUser = new User()
             {
+                UserName = username,
                 Name = request.Name,
                 Email = request.Email,
                 PhoneNumber = request.Phone,
@@ -64,9 +71,28 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 Status = request.Status,
             };
 
-            var resultCreateUser = await _userManager.CreateAsync(newUser, request.Password);
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                var result = await _userManager.CreateAsync(newUser);
+
+                if (!result.Succeeded)
+                {
+                    throw new ApiException($"Không thể tạo người dùng. Lỗi: {string.Join(", ", result.Errors)}", HttpStatusCode.BadRequest);
+                }
+            }
+            else
+            {
+                var result = await _userManager.CreateAsync(newUser, request.Password);
+
+                if (!result.Succeeded)
+                {
+                    throw new ApiException($"Không thể tạo người dùng. Lỗi: {string.Join(", ", result.Errors)}", HttpStatusCode.BadRequest);
+                }
+            }
 
             await _userManager.AddToRoleAsync(newUser, request.Role);
+
+            await _configService.UpdateConfigValue(ConfigConstant.UserCreationCount, (userCreationCount + 1).ToString());
 
             return newUser;
         }
@@ -79,5 +105,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return user;
         }
+
+        //public async Task<string> GenerateAutoUsername()
+        //{
+        //    //var userCount = await _dbContext.Users.fi;
+
+        //    return $"User{userCount + 1}";
+        //}
     }
 }

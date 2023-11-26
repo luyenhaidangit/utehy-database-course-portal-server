@@ -18,8 +18,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
         {
             services.AddIdentity<User, Data.Entities.Role>(options =>
             {
+                options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = false;
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 1;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.User.AllowedUserNameCharacters = null;
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             var jwtKey = builder.Configuration.GetValue<string>("Jwt:Key");

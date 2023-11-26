@@ -109,11 +109,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<Teacher> Create(CreateTeacherRequest request)
         {
-            if (string.IsNullOrEmpty(request.Phone) && string.IsNullOrEmpty(request.Email))
-            {
-                throw new ApiException("Phải nhập ít nhật 1 phương thức xác thực tài khoản!", HttpStatusCode.BadRequest);
-            }
-
             if (string.IsNullOrEmpty(request.Email) && request.VerificationType == VerificationType.Email)
             {
                 throw new ApiException("Dữ liệu trường email không được để trống khi chọn kiểu xác thực là email!", HttpStatusCode.BadRequest);

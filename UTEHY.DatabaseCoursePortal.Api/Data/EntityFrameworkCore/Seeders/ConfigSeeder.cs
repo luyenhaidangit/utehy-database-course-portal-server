@@ -50,6 +50,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Value = "10",
                     Description = "Số lượng video youtube hiển thị tối đa tại trang chủ"
                 },
+                new Config
+                {
+                    Id = 7,
+                    Key = "UserCreationCount",
+                    Value = "0",
+                    Description = "Số người dùng đã tạo"
+                },
             };
 
             return configs;

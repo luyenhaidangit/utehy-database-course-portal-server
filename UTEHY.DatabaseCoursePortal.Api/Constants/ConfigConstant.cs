@@ -13,5 +13,7 @@
         public const string IdChannelYoutube = "IdChannelYoutube";
 
         public const string MaxVideoYoutubeHome = "MaxVideoYoutubeHome";
+
+        public const string UserCreationCount = "UserCreationCount";
     }
 }
