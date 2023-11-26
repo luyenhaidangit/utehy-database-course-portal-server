@@ -11,6 +11,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
             {
                 c.DocumentFilter<SwaggerModule>();
                 c.OperationFilter<SwaggerModule>();
+                c.SchemaFilter<SwaggerModule>();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "UTEHY Database Course Portal API", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
