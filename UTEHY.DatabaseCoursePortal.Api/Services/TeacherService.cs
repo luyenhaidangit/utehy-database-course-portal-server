@@ -44,7 +44,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             if (!string.IsNullOrEmpty(request.NameOrEmail))
             {
                 string search = request.NameOrEmail.ToLower();
-                query = query.Where(b => b.User.UserName.ToLower().Contains(request.NameOrEmail.ToLower()) || b.User.Email.ToLower().Contains(request.NameOrEmail.ToLower()));
+                query = query.Where(b => b.User.Name.ToLower().Contains(request.NameOrEmail.ToLower()) || b.User.Email.ToLower().Contains(request.NameOrEmail.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(request.PhoneNumber))
