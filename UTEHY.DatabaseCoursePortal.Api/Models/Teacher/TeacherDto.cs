@@ -18,5 +18,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Teacher
         public string? Email { get; set; }
 
         public string? PhoneNumber { get; set; }
+
+        public string? TeacherId { get; set; }
     }
 }

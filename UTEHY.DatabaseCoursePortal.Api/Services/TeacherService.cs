@@ -156,5 +156,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return newTeacher;
         }
+
+        public async Task<TeacherDto> GetById(int id)
+        {
+            var teacher = await _dbContext.Teachers.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
+
+            var result = _mapper.Map<TeacherDto>(teacher);
+
+            return result;
+        }
+
     }
 }
