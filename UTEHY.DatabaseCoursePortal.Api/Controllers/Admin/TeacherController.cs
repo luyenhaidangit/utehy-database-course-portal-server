@@ -33,7 +33,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<Teacher>> Create([FromForm] CreateTeacherRequest request)
+        public async Task<ApiResult<Teacher>> Create([FromBody] CreateTeacherRequest request)
         {
             var result = await _teacherService.Create(request);
 
