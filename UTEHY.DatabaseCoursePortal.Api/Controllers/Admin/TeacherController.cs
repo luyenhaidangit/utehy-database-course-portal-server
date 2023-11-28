@@ -83,5 +83,28 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("delete-multiple")]
+        public async Task<ApiResult<DeleteMultipleResult<int>>> DeleteMultiple([FromBody] DeleteMultipleRequest request)
+        {
+            var result = await _teacherService.DeleteMultiple(request.Ids);
+
+            var successMessage = result.FailedItems.Count > 0
+                ? $"Xoá thành công các giáo viên có ID: {string.Join(", ", result.SuccessfulItems)}"
+                : "Xoá nhiều giáo viên thành công!";
+
+            var failureMessage = result.FailedItems.Count > 0
+                ? $"Không tìm thấy giáo viên có ID: {string.Join(", ", result.FailedItems)}"
+                : string.Empty;
+
+            var message = $"{successMessage}\n{failureMessage}".Trim();
+
+            return new ApiResult<DeleteMultipleResult<int>>()
+            {
+                Status = true,
+                Message = message,
+                Data = result
+            };
+        }
     }
 }

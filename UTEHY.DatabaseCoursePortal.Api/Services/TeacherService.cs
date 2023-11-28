@@ -252,5 +252,43 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+
+        public async Task<DeleteMultipleResult<int>> DeleteMultiple(List<int> teacherIds)
+        {
+            var successfulIds = new List<int>();
+            var failedIds = new List<int>();
+
+            foreach (var teacherId in teacherIds)
+            {
+                var teacher = await _dbContext.Teachers.FindAsync(teacherId);
+
+                if (teacher == null)
+                {
+                    failedIds.Add(teacherId);
+                    continue;
+                }
+
+                teacher.DeletedAt = DateTime.Now;
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == teacher.UserId);
+
+                if (user != null)
+                {
+                    user.DeletedAt = DateTime.Now;
+                }
+
+                successfulIds.Add(teacherId);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            var result = new DeleteMultipleResult<int>
+            {
+                SuccessfulItems = successfulIds,
+                FailedItems = failedIds
+            };
+
+            return result;
+        }
     }
 }
