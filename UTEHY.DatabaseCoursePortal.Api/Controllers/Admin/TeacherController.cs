@@ -59,11 +59,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("edit")]
-        public async Task<ApiResult<Teacher>> Edit([FromBody] EditTeacherRequest request)
+        public async Task<ApiResult<TeacherDto>> Edit([FromBody] EditTeacherRequest request)
         {
             var result = await _teacherService.Edit(request);
 
-            return new ApiResult<Teacher>()
+            return new ApiResult<TeacherDto>()
             {
                 Status = true,
                 Message = "Cập nhật giáo viên thành công!",

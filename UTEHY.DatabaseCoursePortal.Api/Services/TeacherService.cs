@@ -166,7 +166,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-        public async Task<Teacher> Edit(EditTeacherRequest request)
+        public async Task<TeacherDto> Edit(EditTeacherRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -185,6 +185,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                     var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == teacher.UserId);
 
+                    if(!string.IsNullOrEmpty(request.Phone) && request.Phone != user.PhoneNumber && user.PhoneNumberConfirmed)
+                    {
+                        throw new ApiException("Số điện thoại người dùng đã xác nhận, không thể thay đổi!", HttpStatusCode.BadRequest);
+                    }
+
+                    if (!string.IsNullOrEmpty(request.Email) && request.Email != user.Email && user.EmailConfirmed)
+                    {
+                        throw new ApiException("Email người dùng đã xác nhận, không thể thay đổi!", HttpStatusCode.BadRequest);
+                    }
+
                     if (user == null)
                     {
                         throw new ApiException("Không tìm thấy người dùng liên kết với giáo viên!", HttpStatusCode.BadRequest);
@@ -193,12 +203,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     user.Email = request.Email;
                     user.PhoneNumber = request.Phone;
                     user.Status = request.Status;
+                    user.Name = request.Name;
 
                     await _dbContext.SaveChangesAsync();
 
                     transaction.Commit();
 
-                    return teacher;
+                    var result = _mapper.Map<TeacherDto>(teacher);
+
+                    return result;
                 }
                 catch (Exception ex)
                 {
