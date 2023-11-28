@@ -57,5 +57,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("edit")]
+        public async Task<ApiResult<Teacher>> Edit([FromBody] EditTeacherRequest request)
+        {
+            var result = await _teacherService.Edit(request);
+
+            return new ApiResult<Teacher>()
+            {
+                Status = true,
+                Message = "Cập nhật giáo viên thành công!",
+                Data = result
+            };
+        }
     }
 }

@@ -166,5 +166,48 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
+        public async Task<Teacher> Edit(EditTeacherRequest request)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var teacher = await _dbContext.Teachers.FindAsync(request.Id);
+
+                    if (teacher == null)
+                    {
+                        throw new ApiException("Không tìm thấy giáo viên có Id hợp lệ!", HttpStatusCode.BadRequest);
+                    }
+
+                    teacher.TeacherId = request.TeacherId;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == teacher.UserId);
+
+                    if (user == null)
+                    {
+                        throw new ApiException("Không tìm thấy người dùng liên kết với giáo viên!", HttpStatusCode.BadRequest);
+                    }
+
+                    user.Email = request.Email;
+                    user.PhoneNumber = request.Phone;
+                    user.Status = request.Status;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    return teacher;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback(); 
+                                            
+                    throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
+                }
+            }
+
+        }
     }
 }
