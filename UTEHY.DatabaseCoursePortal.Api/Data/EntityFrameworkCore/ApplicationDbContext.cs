@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders;
 
@@ -65,7 +67,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.Entity<BlogTopic>().HasQueryFilter(x => x.DeletedAt == null);
             builder.Entity<Comment>().HasQueryFilter(x => x.DeletedAt == null);
 
-            //Seeder
+            //Seeder 
             builder.Seed();
         }
     }

@@ -106,6 +106,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return user;
         }
 
+        public async Task<List<User>> Test()
+        {
+            var test = await _dbContext.Users.ToListAsync();
+
+
+            return test;
+        }
+
+
         //public async Task<string> GenerateAutoUsername()
         //{
         //    //var userCount = await _dbContext.Users.fi;

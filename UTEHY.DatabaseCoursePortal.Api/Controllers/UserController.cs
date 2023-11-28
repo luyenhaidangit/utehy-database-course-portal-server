@@ -78,5 +78,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Data = user
             };
         }
+
+        [HttpGet("test")]
+        public async Task<ApiResult<List<User>>> Test()
+        {
+            var user = await _userService.Test();
+
+           
+
+            return new ApiResult<List<User>>()
+            {
+                Status = true,
+                Message = "Lấy thông tin người dùng thành công!",
+                Data = user
+            };
+        }
     }
 }

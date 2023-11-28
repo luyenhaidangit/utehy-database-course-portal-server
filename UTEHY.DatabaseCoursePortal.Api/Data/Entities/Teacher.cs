@@ -1,6 +1,8 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+
+namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
-    public class Teacher
+    public class Teacher : EntityBase
     {
         public int? Id { get; set; }
 

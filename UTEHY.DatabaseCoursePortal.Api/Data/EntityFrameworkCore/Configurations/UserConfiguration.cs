@@ -10,6 +10,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
         {
             builder.ToTable("Users");
             builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
+
+            builder.HasQueryFilter(x => x.DeletedAt == null);
         }
     }
 }

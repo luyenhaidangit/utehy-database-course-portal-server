@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -39,7 +40,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<PagingResult<TeacherDto>> Get(GetTeacherRequest request)
         {
-            var query = _dbContext.Teachers.Include(x => x.User).AsQueryable();
+            var query = _dbContext.Teachers.Include(x => x.User).Where(x => x.DeletedAt == null).AsQueryable();
 
             if (!string.IsNullOrEmpty(request.NameOrEmail))
             {
@@ -221,6 +222,35 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
             }
 
+        }
+
+        public async Task<TeacherDto> Delete(int id)
+        {
+            var teacher = await _dbContext.Teachers.FindAsync(id);
+
+            if (teacher == null)
+            {
+                throw new ApiException("Không tìm thấy giáo viên có Id hợp lệ!", HttpStatusCode.BadRequest);
+            }
+
+            teacher.DeletedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == teacher.UserId);
+
+            if (user == null)
+            {
+                throw new ApiException("Không tìm thấy giáo viên có Id hợp lệ!", HttpStatusCode.BadRequest);
+            }
+
+            user.DeletedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            var result = _mapper.Map<TeacherDto>(teacher);
+
+            return result;
         }
     }
 }

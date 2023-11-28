@@ -10,6 +10,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public bool? Status { get; set; }
 
+        public DateTime? DeletedAt { get; set; }
+
         #region Relationship
         public virtual ICollection<Blog> Blogs { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

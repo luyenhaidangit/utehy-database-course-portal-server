@@ -70,5 +70,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("delete")]
+        public async Task<ApiResult<TeacherDto>> Delete([FromBody] DeleteRequest request)
+        {
+            var result = await _teacherService.Delete(request.Id);
+
+            return new ApiResult<TeacherDto>()
+            {
+                Status = true,
+                Message = "Xoá giáo viên thành công!",
+                Data = result
+            };
+        }
     }
 }

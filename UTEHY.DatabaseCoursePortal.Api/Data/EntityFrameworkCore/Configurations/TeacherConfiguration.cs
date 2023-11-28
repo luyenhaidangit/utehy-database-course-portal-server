@@ -11,6 +11,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
             builder.ToTable("Teachers");
 
             builder.HasKey(b => b.Id);
+
+            builder.HasQueryFilter(x => x.DeletedAt == null);
         }
     }
 }
