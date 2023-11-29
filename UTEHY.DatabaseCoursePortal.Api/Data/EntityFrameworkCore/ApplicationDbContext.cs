@@ -34,6 +34,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<QuizCourse> QuizCourses { get; set; } = null!;
         public virtual DbSet<TypeStepTrack> TypeStepTracks { get; set; } = null!;
         public virtual DbSet<StepTrack> StepTracks { get; set; } = null!;
+        public virtual DbSet<Question> Questions { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -55,6 +56,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new QuizCourseConfiguration());
             builder.ApplyConfiguration(new TypeStepTrackConfiguration());
             builder.ApplyConfiguration(new StepTrackConfiguration());
+            builder.ApplyConfiguration(new QuestionConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
