@@ -20,13 +20,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly UserManager<User> _userManager;
         private readonly FileService _fileService;
         private readonly ConfigService _configService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(ApplicationDbContext dbContext, UserManager<User> userManager, FileService fileService, ConfigService configService)
+        public UserService(ApplicationDbContext dbContext, UserManager<User> userManager, FileService fileService, ConfigService configService, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _fileService = fileService;
             _configService = configService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<string>> GetPermissionAsync(User user)
@@ -104,6 +106,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var user = await _userManager.FindByEmailAsync(email);
 
             return user;
+        }
+
+        public async Task<User> GetUserCurrent()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId != null)
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+
+                return user;
+            }
+
+            return null;
         }
 
         public async Task<List<User>> Test()

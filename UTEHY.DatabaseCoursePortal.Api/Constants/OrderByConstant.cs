@@ -3,5 +3,7 @@
     public class OrderByConstant
     {
         public const string Id = "id";
+
+        public const string Priority = "priority";
     }
 }
