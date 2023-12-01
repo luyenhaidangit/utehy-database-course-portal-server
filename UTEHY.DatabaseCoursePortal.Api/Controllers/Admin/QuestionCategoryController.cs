@@ -5,7 +5,7 @@ using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
-    [Route("api/admin/[controller]")]
+    [Route("api/admin/question-category")]
     [ApiController]
     public class QuestionCategory : ControllerBase
     {
@@ -16,12 +16,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             _questionCategoryService = questionCategoryService;
         }
 
-        [HttpGet("get")]
-        public async Task<ApiResult<PagingResult<QuestionCategoryDto>>> Get([FromQuery] GetQuestionCategoryRequest request)
+        [HttpGet("get-tree")]
+        public async Task<ApiResult<List<QuestionCategoryDto>>> GetTree([FromQuery] GetQuestionCategoryTreeRequest request)
         {
-            var result = await _questionCategoryService.Get(request);
+            var result = await _questionCategoryService.GetTree();
 
-            return new ApiResult<PagingResult<QuestionCategoryDto>>()
+            return new ApiResult<List<QuestionCategoryDto>>()
             {
                 Status = true,
                 Message = "Lấy thông tin danh sách loại câu hỏi thành công!",

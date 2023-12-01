@@ -15,5 +15,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int Priority { get; set; }
 
         public virtual List<Question>? Questions { get; set; }
+
+        //public virtual List<QuestionCategory>? QuestionCategories { get; set; }
     }
 }

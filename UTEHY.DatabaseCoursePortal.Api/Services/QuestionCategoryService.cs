@@ -29,63 +29,47 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<PagingResult<QuestionCategoryDto>> Get(GetQuestionCategoryRequest request)
+        public async Task<List<QuestionCategoryDto>?> GetTree()
         {
-            var query = _dbContext.QuestionCategories.Where(x => x.DeletedAt == null).AsQueryable();
+            var query = _dbContext.QuestionCategories
+                .Where(x => x.DeletedAt == null)
+                .AsQueryable();
 
-            if (!string.IsNullOrEmpty(request.Name))
+            var categories = await query.ToListAsync();
+
+            var categoryDtos = _mapper.Map<List<QuestionCategoryDto>>(categories);
+
+            var allCategoriesDto = new QuestionCategoryDto { Id = 0, Name = "Tất cả" };
+            categoryDtos.Insert(0, allCategoriesDto);
+
+            foreach (var categoryDto in categoryDtos)
             {
-                query = query.Where(b => b.Name.ToLower().Contains(request.Name.ToLower()));
+                categoryDto.QuestionCategories = GetChildCategories(categoryDto.Id);
             }
 
-            int total = await query.CountAsync();
+            return categoryDtos.Where(c => c.ParentQuestionCategoryId == null).ToList();
+        }
 
-            if (request.PageIndex == null) request.PageIndex = 1;
-            if (request.PageSize == null) request.PageSize = total;
+        private List<QuestionCategoryDto>? GetChildCategories(int parentId)
+        {
+            var childCategoriesQuery = _dbContext.QuestionCategories
+                .Where(x => x.ParentQuestionCategoryId == parentId && x.DeletedAt == null)
+                .AsQueryable();
 
-            int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
+            var childCategories = childCategoriesQuery.ToList();
 
-            if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.SortBy))
+            if (childCategories.Any())
             {
-                query = query.OrderByDescending(b => b.Priority);
-            }
-            else if (string.IsNullOrEmpty(request.OrderBy))
-            {
-                if (request.SortBy == SortByConstant.Asc)
+                var childCategoryDtos = _mapper.Map<List<QuestionCategoryDto>>(childCategories);
+                foreach (var childCategoryDto in childCategoryDtos)
                 {
-                    query = query.OrderBy(b => b.Priority);
+                    childCategoryDto.QuestionCategories = GetChildCategories(childCategoryDto.Id);
                 }
-                else
-                {
-                    query = query.OrderByDescending(b => b.Priority);
-                }
-            }
-            else if (string.IsNullOrEmpty(request.SortBy))
-            {
-                query = query.OrderByDescending(b => b.Id);
-            }
-            else
-            {
-                if (request.OrderBy == OrderByConstant.Priority && request.SortBy == SortByConstant.Asc)
-                {
-                    query = query.OrderBy(b => b.Priority);
-                }
-                else if (request.OrderBy == OrderByConstant.Priority && request.SortBy == SortByConstant.Desc)
-                {
-                    query = query.OrderByDescending(b => b.Priority);
-                }
+
+                return childCategoryDtos;
             }
 
-            var items = await query
-            .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
-            .Take(request.PageSize.Value)
-            .ToListAsync();
-
-            var itemsMapper = _mapper.Map<List<QuestionCategoryDto>>(items);
-
-            var result = new PagingResult<QuestionCategoryDto>(itemsMapper, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
-
-            return result;
+            return null;
         }
 
         public async Task<QuestionCategoryDto> Create(CreateQuestionCategoryRequest request)
