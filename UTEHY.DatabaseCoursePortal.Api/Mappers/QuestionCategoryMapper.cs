@@ -14,6 +14,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
         public QuestionCategoryMapper()
         {
             CreateMap<QuestionCategory, QuestionCategoryDto>();
+
+            CreateMap<EditQuestionCategoryRequest, QuestionCategory>();
         }
     }
 }
