@@ -15,8 +15,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory
 
         public int Priority { get; set; }
 
-        public List<Question>? Questions { get; set; }
-
         public List<QuestionCategoryDto>? QuestionCategories { get; set; }
     }
 }

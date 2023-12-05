@@ -1,8 +1,6 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
-
-namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 {
-    public class Question : EntityBase
+    public class QuestionDto
     {
         public int Id { get; set; }
 
@@ -19,7 +17,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int Difficulty { get; set; }
 
         public int Type { get; set; }
-
-        public virtual QuestionCategory QuestionCategory { get; set; }
     }
 }
