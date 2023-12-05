@@ -42,9 +42,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<PagingResult<QuestionDto>> Get(GetQuestionRequest request)
         {
-            var query = _dbContext.Questions.Include(x => x.QuestionCategory).Where(x => x.DeletedAt == null).AsQueryable();
-
-            var test = query.ToList();
+            var query = _dbContext.Questions.Where(x => x.DeletedAt == null).AsQueryable();
 
             var demo = _dbContext.Questions.ToList();
 
