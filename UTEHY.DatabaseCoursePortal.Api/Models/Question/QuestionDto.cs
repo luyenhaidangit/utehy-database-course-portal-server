@@ -1,4 +1,6 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
+﻿using UTEHY.DatabaseCoursePortal.Api.Models.QuestionAnswer;
+
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 {
     public class QuestionDto
     {
@@ -17,5 +19,7 @@
         public int Difficulty { get; set; }
 
         public int Type { get; set; }
+
+        public virtual List<QuestionAnswerDto> QuestionAnswers { get; set; }
     }
 }

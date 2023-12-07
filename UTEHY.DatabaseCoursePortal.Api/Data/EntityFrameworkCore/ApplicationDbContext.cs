@@ -59,6 +59,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new StepTrackConfiguration());
             builder.ApplyConfiguration(new QuestionConfiguration());
             builder.ApplyConfiguration(new QuestionCategoryConfiguration());
+            builder.ApplyConfiguration(new QuestionAnswerConfiguration());
+            builder.ApplyConfiguration(new TagConfiguration());
+            builder.ApplyConfiguration(new QuestionTagConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");

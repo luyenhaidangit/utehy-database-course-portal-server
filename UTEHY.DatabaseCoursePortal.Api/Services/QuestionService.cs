@@ -95,5 +95,55 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
-    }
+
+        public async Task<Teacher> Create(CreateTeacherRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Email) && request.VerificationType == VerificationType.Email)
+            {
+                throw new ApiException("Dữ liệu trường email không được để trống khi chọn kiểu xác thực là email!", HttpStatusCode.BadRequest);
+            }
+
+            if (string.IsNullOrEmpty(request.Phone) && request.VerificationType == VerificationType.Phone)
+            {
+                throw new ApiException("Dữ liệu trường số điện thoại không được để trống khi chọn kiểu xác thực là số điện thoại!", HttpStatusCode.BadRequest);
+            }
+
+            var createUserRequest = _mapper.Map<CreateUserRequest>(request);
+            createUserRequest.Role = Constants.Role.Teacher;
+
+            var user = await _userService.Create(createUserRequest);
+
+            var newTeacher = new Teacher()
+            {
+                UserId = user.Id,
+                TeacherId = request.TeacherId,
+            };
+
+            await _dbContext.Teachers.AddAsync(newTeacher);
+            await _dbContext.SaveChangesAsync();
+
+            if (request.VerificationType == VerificationType.Email)
+            {
+                var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+
+                var mail = new SendMailRequest
+                {
+                    ToEmail = request.Email,
+                    Subject = "Mã xác nhận tài khoản giáo viên UTEHY Database Course Portal",
+                    Body = "Mã xác thực đăng nhập UTEHY DatabaseCourse của bạn là " + otpCode,
+                };
+
+                await _mailService.Send(mail);
+            }
+            else
+            {
+                var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+
+                string message = "Mã xác thực tài khoản giáo viên UTEHY Database Course của bạn là " + otpCode;
+                await _twilioService.SendMessage(message, user.PhoneNumber);
+            }
+
+            return newTeacher;
+        }
+    }   
 }
