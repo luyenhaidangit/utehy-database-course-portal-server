@@ -12,14 +12,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public int Score { get; set; }
 
-        public Guid? UserId { get; set; }
-
         public int QuestionCategoryId { get; set; }
 
         public int Difficulty { get; set; }
 
         public int Type { get; set; }
 
-        public virtual List<QuestionAnswerDto> QuestionAnswers { get; set; }
+        public List<QuestionAnswerDto> QuestionAnswers { get; set; }
     }
 }

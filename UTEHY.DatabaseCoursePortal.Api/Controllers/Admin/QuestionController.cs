@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
@@ -27,6 +28,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             {
                 Status = true,
                 Message = "Lấy thông tin danh sách câu hỏi thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("create")]
+        public async Task<ApiResult<QuestionDto>> Create([FromBody] CreateQuestionRequest request)
+        {
+            var result = await _questionService.Create(request);
+
+            return new ApiResult<QuestionDto>()
+            {
+                Status = true,
+                Message = "Tạo mới câu hỏi thành công!",
                 Data = result
             };
         }

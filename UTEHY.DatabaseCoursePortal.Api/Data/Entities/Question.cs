@@ -12,8 +12,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public int Score { get; set; }
 
-        public Guid? UserId { get; set; }
-
         public int QuestionCategoryId { get; set; }
 
         public int Difficulty { get; set; }

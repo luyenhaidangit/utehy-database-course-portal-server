@@ -10,8 +10,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public int Score { get; set; }
 
-        public string QuestionCategoryId { get; set; }
+        public int QuestionCategoryId { get; set; }
 
         public List<QuestionAnswerDto> QuestionAnswers { get; set; }
+
+        public int Type { get; set; }
     }
 }

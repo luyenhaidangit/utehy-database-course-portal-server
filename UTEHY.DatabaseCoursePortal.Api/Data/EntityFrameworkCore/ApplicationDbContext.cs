@@ -36,6 +36,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<StepTrack> StepTracks { get; set; } = null!;
         public virtual DbSet<Question> Questions { get; set; } = null!;
         public virtual DbSet<QuestionCategory> QuestionCategories { get; set; } = null!;
+        public virtual DbSet<QuestionAnswer> QuestionAnswers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

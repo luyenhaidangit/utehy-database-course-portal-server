@@ -42,7 +42,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<PagingResult<QuestionDto>> Get(GetQuestionRequest request)
         {
-            var query = _dbContext.Questions.Where(x => x.DeletedAt == null).AsQueryable();
+            var query = _dbContext.Questions.AsQueryable();
 
             var demo = _dbContext.Questions.ToList();
 
@@ -96,54 +96,45 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-        public async Task<Teacher> Create(CreateTeacherRequest request)
+        public async Task<QuestionDto> Create(CreateQuestionRequest request)
         {
-            if (string.IsNullOrEmpty(request.Email) && request.VerificationType == VerificationType.Email)
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                throw new ApiException("Dữ liệu trường email không được để trống khi chọn kiểu xác thực là email!", HttpStatusCode.BadRequest);
-            }
-
-            if (string.IsNullOrEmpty(request.Phone) && request.VerificationType == VerificationType.Phone)
-            {
-                throw new ApiException("Dữ liệu trường số điện thoại không được để trống khi chọn kiểu xác thực là số điện thoại!", HttpStatusCode.BadRequest);
-            }
-
-            var createUserRequest = _mapper.Map<CreateUserRequest>(request);
-            createUserRequest.Role = Constants.Role.Teacher;
-
-            var user = await _userService.Create(createUserRequest);
-
-            var newTeacher = new Teacher()
-            {
-                UserId = user.Id,
-                TeacherId = request.TeacherId,
-            };
-
-            await _dbContext.Teachers.AddAsync(newTeacher);
-            await _dbContext.SaveChangesAsync();
-
-            if (request.VerificationType == VerificationType.Email)
-            {
-                var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-
-                var mail = new SendMailRequest
+                try
                 {
-                    ToEmail = request.Email,
-                    Subject = "Mã xác nhận tài khoản giáo viên UTEHY Database Course Portal",
-                    Body = "Mã xác thực đăng nhập UTEHY DatabaseCourse của bạn là " + otpCode,
-                };
+                    var question = _mapper.Map<Question>(request);
 
-                await _mailService.Send(mail);
+                    _dbContext.Questions.Add(question);
+                    _dbContext.SaveChanges();
+
+                    if (request.QuestionAnswers != null && request.QuestionAnswers.Any())
+                    {
+                        var questionAnswersEntities = request.QuestionAnswers
+                            .Select(answerDto => _mapper.Map<QuestionAnswer>(answerDto))
+                            .ToList();
+
+                        foreach (var answerEntity in questionAnswersEntities)
+                        {
+                            answerEntity.QuestionId = question.Id;
+                        }
+
+                        _dbContext.QuestionAnswers.AddRange(questionAnswersEntities);
+                        _dbContext.SaveChanges();
+                    }
+
+                    transaction.Commit();
+
+                    var questionDto = _mapper.Map<QuestionDto>(question);
+
+                    return questionDto;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
+                }
             }
-            else
-            {
-                var otpCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-
-                string message = "Mã xác thực tài khoản giáo viên UTEHY Database Course của bạn là " + otpCode;
-                await _twilioService.SendMessage(message, user.PhoneNumber);
-            }
-
-            return newTeacher;
         }
     }   
 }
