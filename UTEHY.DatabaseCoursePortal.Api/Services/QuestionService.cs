@@ -122,6 +122,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         _dbContext.SaveChanges();
                     }
 
+                    if (request.TagIds != null && request.TagIds.Any())
+                    {
+                        var questionTags = request.TagIds
+                            .Select(tagId => new QuestionTag { QuestionId = question.Id, TagId = tagId })
+                            .ToList();
+
+                        _dbContext.QuestionTags.AddRange(questionTags);
+                        _dbContext.SaveChanges();
+                    }
+
                     transaction.Commit();
 
                     var questionDto = _mapper.Map<QuestionDto>(question);

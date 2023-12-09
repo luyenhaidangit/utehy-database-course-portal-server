@@ -21,5 +21,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual QuestionCategory QuestionCategory { get; set; }
 
         public virtual List<QuestionAnswer> QuestionAnswers { get; set; }
+
+        public virtual List<QuestionTag> QuestionTags { get; set; }
     }
 }
