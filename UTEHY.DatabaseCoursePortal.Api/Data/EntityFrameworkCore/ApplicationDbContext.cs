@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations;
+using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Initializers;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
@@ -42,6 +43,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            QuestionCategoryInitializer.Initialize(builder);
 
             //Configuration
             builder.ApplyConfiguration(new UserConfiguration());
