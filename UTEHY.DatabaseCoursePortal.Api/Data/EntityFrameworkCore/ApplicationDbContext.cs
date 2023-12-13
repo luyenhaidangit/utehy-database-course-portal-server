@@ -82,5 +82,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             //Seeder 
             builder.Seed();
         }
+
+        public override int SaveChanges()
+        {
+            return base.SaveChanges();
+        }
     }
 }

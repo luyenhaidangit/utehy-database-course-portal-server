@@ -10,7 +10,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Initializers
             modelBuilder.Entity<QuestionCategory>().HasData(new QuestionCategory 
             {
                 Id = 1,
-                Name = "Mặc đinh",
+                Name = "Mặc định",
                 Description = "Thư mục loại câu hỏi mặc định",
                 ParentQuestionCategoryId = null,
                 IsDefault = true,

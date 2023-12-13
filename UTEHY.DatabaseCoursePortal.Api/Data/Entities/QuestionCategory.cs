@@ -2,7 +2,7 @@
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
-    public class QuestionCategory : EntityBase
+    public class QuestionCategory : EntityBase, IDefaultAttribute
     {
         public int Id { get; set; }
 
