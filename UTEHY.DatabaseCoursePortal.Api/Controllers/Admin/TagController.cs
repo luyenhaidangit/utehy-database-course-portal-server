@@ -4,7 +4,6 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.Tag;
-using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
@@ -29,6 +28,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             {
                 Status = true,
                 Message = "Lấy danh sách thẻ tag thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("create")]
+        public async Task<ApiResult<Tag>> Create([FromBody] CreateTagRequest request)
+        {
+            var result = await _tagService.Create(request);
+
+            return new ApiResult<Tag>()
+            {
+                Status = true,
+                Message = "Tạo mới tag thành công!",
                 Data = result
             };
         }

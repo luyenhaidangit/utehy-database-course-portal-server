@@ -23,22 +23,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     public class TagService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly FileService _fileService;
-        private readonly UserService _userService;
-        private readonly UserManager<User> _userManager;
-        private readonly MailService _mailService;
-        private readonly TwilioService _twilioService;
         private readonly IMapper _mapper;
 
-        public TagService(ApplicationDbContext dbContext, FileService fileService, IMapper mapper, UserService userService, UserManager<User> userManager, MailService mailService, TwilioService twilioService)
+        public TagService(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
-            _fileService = fileService;
             _mapper = mapper;
-            _userService = userService;
-            _userManager = userManager;
-            _mailService = mailService;
-            _twilioService = twilioService;
         }
 
         public async Task<List<Tag>?> Get(GetTagRequestcs request)
@@ -48,6 +38,30 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             .ToListAsync();
 
             return tags;
+        }
+
+        public async Task<Tag> Create(CreateTagRequest request)
+        {
+            try
+            {
+                var existingTag = _dbContext.Tags.FirstOrDefault(x => x.Name.Trim().ToLower() == request.Name.Trim().ToLower());
+
+                if(existingTag != null) 
+                {
+                    throw new ApiException("Tồn tại thẻ tag, vui lòng chọn tên khác!", HttpStatusCode.InternalServerError);
+                }
+
+                var tag = _mapper.Map<Tag>(request);
+
+                _dbContext.Tags.Add(tag);
+                await _dbContext.SaveChangesAsync();
+
+                return tag;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
         }
     }   
 }
