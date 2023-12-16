@@ -42,9 +42,25 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<PagingResult<QuestionDto>> Get(GetQuestionRequest request)
         {
-            var query = _dbContext.Questions.AsQueryable();
+            var query = _dbContext.Questions
+                .Include(q => q.QuestionCategory)
+                .AsQueryable();
 
-            var demo = _dbContext.Questions.ToList();
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                string search = request.Title.ToLower();
+                query = query.Where(b => b.Title.ToLower().Contains(request.Title.ToLower()));
+            }
+
+            if (request.QuestionCategoryId != null)
+            {
+                query = query.Where(b => b.QuestionCategoryId == request.QuestionCategoryId);
+            }
+
+            if (request.Type != null)
+            {
+                query = query.Where(b => b.Type == request.Type);
+            }
 
             int total = await query.CountAsync();
 
