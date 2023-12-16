@@ -98,6 +98,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 {
                     query = query.OrderByDescending(b => b.Id);
                 }
+                else if (request.OrderBy == OrderByConstant.Score && request.SortBy == SortByConstant.Asc)
+                {
+                    query = query.OrderBy(b => b.Score);
+                }
+                else if (request.OrderBy == OrderByConstant.Score && request.SortBy == SortByConstant.Desc)
+                {
+                    query = query.OrderByDescending(b => b.Score);
+                }
             }
 
             var items = await query

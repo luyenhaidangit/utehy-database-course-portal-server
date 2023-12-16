@@ -5,5 +5,7 @@
         public const string Id = "id";
 
         public const string Priority = "priority";
+
+        public const string Score = "score";
     }
 }

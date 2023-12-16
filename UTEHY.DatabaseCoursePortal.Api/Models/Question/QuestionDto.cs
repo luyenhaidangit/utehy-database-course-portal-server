@@ -18,6 +18,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public int Type { get; set; }
 
+        public string QuestionCategoryName { get; set; }
+
         public List<QuestionAnswerDto> QuestionAnswers { get; set; }
     }
 }

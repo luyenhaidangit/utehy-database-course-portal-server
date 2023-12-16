@@ -8,7 +8,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
     {
         public QuestionMapper()
         {
-            CreateMap<Question, QuestionDto>();
+            CreateMap<Question, QuestionDto>()
+            .ForMember(dest => dest.QuestionCategoryName, opt => opt.MapFrom(src => src.QuestionCategory.Name));
 
             CreateMap<QuestionDto, Question>();
 
