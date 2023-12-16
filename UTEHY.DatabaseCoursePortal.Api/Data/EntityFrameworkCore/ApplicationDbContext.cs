@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations;
+using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Initializers;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
@@ -37,10 +38,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<StepTrack> StepTracks { get; set; } = null!;
         public virtual DbSet<Question> Questions { get; set; } = null!;
         public virtual DbSet<QuestionCategory> QuestionCategories { get; set; } = null!;
+        public virtual DbSet<QuestionAnswer> QuestionAnswers { get; set; } = null!;
+        public virtual DbSet<QuestionTag> QuestionTags { get; set; } = null!;
+        public virtual DbSet<Tag> Tags { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            QuestionCategoryInitializer.Initialize(builder);
 
             //Configuration
             builder.ApplyConfiguration(new UserConfiguration());
@@ -60,6 +66,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new StepTrackConfiguration());
             builder.ApplyConfiguration(new QuestionConfiguration());
             builder.ApplyConfiguration(new QuestionCategoryConfiguration());
+            builder.ApplyConfiguration(new QuestionAnswerConfiguration());
+            builder.ApplyConfiguration(new TagConfiguration());
+            builder.ApplyConfiguration(new QuestionTagConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
@@ -74,6 +83,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
 
             //Seeder 
             builder.Seed();
+        }
+
+        public override int SaveChanges()
+        {
+            return base.SaveChanges();
         }
     }
 }

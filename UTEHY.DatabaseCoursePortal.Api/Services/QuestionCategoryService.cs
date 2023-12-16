@@ -33,14 +33,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             var query = _dbContext.QuestionCategories
                 .Where(x => x.DeletedAt == null)
+                .OrderByDescending(x => x.IsDefault)
                 .AsQueryable();
 
             var categories = await query.ToListAsync();
 
             var categoryDtos = _mapper.Map<List<QuestionCategoryDto>>(categories);
-
-            var allCategoriesDto = new QuestionCategoryDto { Id = 0, Name = "Tất cả" };
-            categoryDtos.Insert(0, allCategoriesDto);
 
             foreach (var categoryDto in categoryDtos)
             {

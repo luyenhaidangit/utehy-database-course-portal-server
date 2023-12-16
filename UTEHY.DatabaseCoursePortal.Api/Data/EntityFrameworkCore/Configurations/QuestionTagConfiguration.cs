@@ -4,11 +4,11 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
 {
-    public class QuestionCategoryConfiguration : IEntityTypeConfiguration<Question>
+    public class QuestionTagConfiguration : IEntityTypeConfiguration<QuestionTag>
     {
-        public void Configure(EntityTypeBuilder<Question> builder)
+        public void Configure(EntityTypeBuilder<QuestionTag> builder)
         {
-            builder.ToTable("Questions");
+            builder.ToTable("QuestionTags");
 
             builder.HasKey(p => p.Id);
         }

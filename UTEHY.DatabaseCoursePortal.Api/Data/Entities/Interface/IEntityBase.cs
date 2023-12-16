@@ -2,7 +2,7 @@
 {
     public interface IEntityBase
     {
-        public int? CreatedBy { get; set; }
+        public Guid? CreatedBy { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 

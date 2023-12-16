@@ -3,19 +3,21 @@ using UTEHY.DatabaseCoursePortal.Api.Configs;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
 using UTEHY.DatabaseCoursePortal.Api.Models.Post;
+using UTEHY.DatabaseCoursePortal.Api.Models.Question;
+using UTEHY.DatabaseCoursePortal.Api.Models.QuestionAnswer;
 using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
 using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
 using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Mappers
 {
-    public class QuestionCategoryMapper : Profile
+    public class QuestionAnswerMapper : Profile
     {
-        public QuestionCategoryMapper()
+        public QuestionAnswerMapper()
         {
-            CreateMap<QuestionCategory, QuestionCategoryDto>();
+            CreateMap<QuestionAnswerDto, QuestionAnswer>();
 
-            CreateMap<EditQuestionCategoryRequest, QuestionCategory>();
+            CreateMap<QuestionAnswer, QuestionAnswerDto>();
         }
     }
 }
