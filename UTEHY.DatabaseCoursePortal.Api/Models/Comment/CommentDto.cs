@@ -1,8 +1,6 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
-
-namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.Comment
 {
-    public class Comment : EntityBase
+    public class CommentDto
     {
         public int Id { get; set; }
         public string Content { get; set; }
@@ -18,6 +16,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public bool? IsRemoved { get; set; }
         public bool? IsVoted { get; set; }
         public int? VotersCount { get; set; }
-
     }
 }

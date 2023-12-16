@@ -12,7 +12,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
 
             builder.HasKey(b => b.Id);
 
+            builder.HasMany(p => p.Comments)
+            .WithOne();
+            builder.HasOne(p => p.User)
+            .WithMany();
             builder.HasQueryFilter(x => x.DeletedAt == null);
+            builder.HasQueryFilter(x => x.IsApproved == null);
+
         }
     }
 }

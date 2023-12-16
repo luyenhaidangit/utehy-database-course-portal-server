@@ -95,6 +95,51 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
                     Status = true,
                     PhoneNumber = "+84922002360"
                 },
+                 new User
+                {
+                    Id = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08A7"),
+                    UserName = "buixuanhoang",
+                    NormalizedUserName = "buixuanhoang",
+                    Email = "buixuanhoang@gmail.com",
+                    NormalizedEmail = "buixuanhoang@gmail.com",
+                    EmailConfirmed = true,
+                    PasswordHash = hasher.HashPassword(null!, "haidang106"),
+                    SecurityStamp = string.Empty,
+                    Name = "Bùi Xuân Hoàng",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true,
+                    PhoneNumber = "+84922002111"
+                },
+                  new User
+                {
+                    Id = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08A2"),
+                    UserName = "phamthanhlong",
+                    NormalizedUserName = "phamthanhlong",
+                    Email = "phamthanhlong@gmail.com",
+                    NormalizedEmail = "phamthanhlong@gmail.com",
+                    EmailConfirmed = true,
+                    PasswordHash = hasher.HashPassword(null!, "haidang106"),
+                    SecurityStamp = string.Empty,
+                    Name = "Phạm Thanh Long",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true,
+                    PhoneNumber = "+84922002222"
+                },
+                   new User
+                {
+                    Id = new Guid("D5E5B63A-53A1-4F88-A399-1F7C7F4B08B2"),
+                    UserName = "nguyendinhhung",
+                    NormalizedUserName = "nguyendinhhung",
+                    Email = "nguyendinhhung@gmail.com",
+                    NormalizedEmail = "nguyendinhhung@gmail.com",
+                    EmailConfirmed = true,
+                    PasswordHash = hasher.HashPassword(null!, "haidang106"),
+                    SecurityStamp = string.Empty,
+                    Name = "Nguyễn Đình Hùng",
+                    AvatarUrl = "/User/AvatarDefault.png",
+                    Status = true,
+                    PhoneNumber = "+84922002333"
+                },
             };
 
             return users;

@@ -11,6 +11,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
             builder.ToTable("Comment");
 
             builder.HasKey(x => x.Id);
+
+            builder.HasQueryFilter(x => x.IsApproved == null);
+
         }
     }
 }

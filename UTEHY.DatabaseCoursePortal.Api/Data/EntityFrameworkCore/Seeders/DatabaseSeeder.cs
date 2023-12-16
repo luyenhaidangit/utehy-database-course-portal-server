@@ -18,6 +18,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
             modelBuilder.Entity<Page>().HasData(PageSeeder.Data());
             modelBuilder.Entity<Post>().HasData(PostSeeder.Data());
             modelBuilder.Entity<Teacher>().HasData(TeacherSeeder.Data());
+            modelBuilder.Entity<Student>().HasData(StudentSeeder.Data());
+            modelBuilder.Entity<Comment>().HasData(CommentSeeder.Data());
+
+
         }
     }
 }

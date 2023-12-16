@@ -28,6 +28,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Config>? Configs { get; set; } = null!;
         public virtual DbSet<UserCourse> UserCourses { get; set; } = null!;
         public virtual DbSet<Page> Pages { get; set; } = null!;
+        public virtual DbSet<Student> Students { get; set; } = null!;
         public virtual DbSet<Teacher> Teachers { get; set; } = null!;
         public virtual DbSet<Track> Tracks { get; set; } = null!;
         public virtual DbSet<AssignmentCourse> AssignmentCourses { get; set; } = null!;
