@@ -98,36 +98,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                 values: new object[] { "05f05725-ae89-4c2d-8dbd-9ba6ac65b879", "AQAAAAEAACcQAAAAEOBbMsTTncqJgXXp99arFr+NoTNCPfmNetKkUGiDLyNE7R8gS2ozjdK2L3hXj67BRg==" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Questions_QuestionCategoryId",
-                table: "Questions",
-                column: "QuestionCategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Students_UserId",
                 table: "Students",
                 column: "UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Questions_QuestionCategories_QuestionCategoryId",
-                table: "Questions",
-                column: "QuestionCategoryId",
-                principalTable: "QuestionCategories",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Questions_QuestionCategories_QuestionCategoryId",
-                table: "Questions");
-
             migrationBuilder.DropTable(
                 name: "Students");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Questions_QuestionCategoryId",
-                table: "Questions");
 
             migrationBuilder.UpdateData(
                 table: "Roles",

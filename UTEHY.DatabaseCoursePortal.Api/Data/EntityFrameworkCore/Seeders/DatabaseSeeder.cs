@@ -20,8 +20,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Seeders
             modelBuilder.Entity<Teacher>().HasData(TeacherSeeder.Data());
             modelBuilder.Entity<Student>().HasData(StudentSeeder.Data());
             modelBuilder.Entity<Comment>().HasData(CommentSeeder.Data());
-
-
+            modelBuilder.Entity<QuestionCategory>().HasData(QuestionCategorySeeder.Data());
         }
     }
 }

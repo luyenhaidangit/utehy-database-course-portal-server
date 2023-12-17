@@ -46,8 +46,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         {
             base.OnModelCreating(builder);
 
-            QuestionCategoryInitializer.Initialize(builder);
-
             //Configuration
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
