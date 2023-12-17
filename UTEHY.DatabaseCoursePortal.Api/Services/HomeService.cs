@@ -88,7 +88,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var query = _dbContext.Posts.Include(post => post.User).AsQueryable();
 
             var posts = await query
-            .Where(b => b.IsPublished == BooleanConstant.True)
+            .Where(b => b.IsPublished == BooleanConstant.True && b.IsApproved == true)
             .OrderByDescending(b => b.Priority)
             .Take(maxPost)
             .ToListAsync();
