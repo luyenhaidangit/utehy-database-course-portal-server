@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using Twilio.Http;
@@ -9,13 +10,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Enums;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
-using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Mail;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
-using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
-using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -119,7 +117,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+        public async Task<QuestionDto> GetById(int id)
+        {
 
+
+            //return result;
+            var question = await _dbContext.Questions
+            .Include(x => x.QuestionAnswers)
+            .Include(x => x.QuestionCategory)  
+            .Include(x => x.QuestionTags)  
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+            var result = _mapper.Map<QuestionDto>(question);
+
+            return result;
+        }
         public async Task<QuestionDto> Create(CreateQuestionRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
@@ -169,6 +181,51 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
                 }
             }
+        }
+        public async Task<QuestionDto> Delete(int id)
+        {
+            var question = await _dbContext.Questions.FindAsync(id);
+
+            if (question == null)
+            {
+                throw new ApiException("Không tìm thấy câu hỏiu có Id hợp lệ!", HttpStatusCode.BadRequest);
+            }
+
+            question.DeletedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            //var questionAnswers = await _dbContext.QuestionAnswers.FirstOrDefaultAsync(x => x.QuestionId == question.Id);
+
+            //if (questionAnswers == null)
+            //{
+            //    throw new ApiException("Không tìm thấy câu trả lời có Id hợp lệ!", HttpStatusCode.BadRequest);
+            //}
+
+
+            var questionAnswers = await _dbContext.QuestionAnswers.Where(x => x.QuestionId == question.Id).ToListAsync();
+
+            //if (questionAnswers == null || questionAnswers.Count == 0)
+            //{
+            //    throw new ApiException("Đã xóa câu hỏi, câu hỏi này không có câu trả lời!", HttpStatusCode.BadRequest);
+            //}
+
+            if (questionAnswers != null && questionAnswers.Count > 0)
+            {
+                DateTime now = DateTime.Now;
+
+                foreach (var questionAnswer in questionAnswers)
+                {
+                    questionAnswer.DeletedAt = now;
+                }
+            }
+           
+
+            await _dbContext.SaveChangesAsync();
+
+            var result = _mapper.Map<QuestionDto>(question);
+
+            return result;
         }
     }   
 }

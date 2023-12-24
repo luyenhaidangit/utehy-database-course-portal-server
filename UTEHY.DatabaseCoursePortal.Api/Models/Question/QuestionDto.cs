@@ -1,4 +1,5 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Models.QuestionAnswer;
+﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
+using UTEHY.DatabaseCoursePortal.Api.Models.QuestionAnswer;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 {
@@ -21,5 +22,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
         public string QuestionCategoryName { get; set; }
 
         public List<QuestionAnswerDto> QuestionAnswers { get; set; }
+        //public List<QuestionTag> QuestionAnswers { get; set; }
     }
 }

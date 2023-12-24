@@ -7,6 +7,7 @@
         /// <summary>
         /// 1.Câu hỏi 2.Bài viết
         /// </summary>
+        /// 
         public int Type { get; set; }
     }
 }

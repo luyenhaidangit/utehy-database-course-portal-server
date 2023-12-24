@@ -11,11 +11,7 @@ using UTEHY.DatabaseCoursePortal.Api.Enums;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
-using UTEHY.DatabaseCoursePortal.Api.Models.Mail;
-using UTEHY.DatabaseCoursePortal.Api.Models.Question;
-using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
 using UTEHY.DatabaseCoursePortal.Api.Models.Tag;
-using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
 using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -62,6 +58,79 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
+        }
+        public async Task<Tag> Edit(EditTagRequest request)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var tag = await _dbContext.Tags.FindAsync(request.Id);
+
+                    if (tag == null)
+                    {
+                        throw new ApiException("Không tìm thấy tag có Id hợp lệ!", HttpStatusCode.BadRequest);
+                    }
+
+                    tag.Id = request.Id;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    tag.Name = request.Name;
+                    tag.Type = request.Type;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    var result = _mapper.Map<Tag>(tag);
+
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
+                }
+            }
+
+        }
+
+
+
+
+
+        public async Task<DeleteMultipleResult<int>> DeleteMultiple(List<int> tagIds)
+        {
+            var successfulIds = new List<int>();
+            var failedIds = new List<int>();
+
+            foreach (var tagId in tagIds)
+            {
+                var tag = await _dbContext.Tags.FindAsync(tagId);
+
+                if (tag == null)
+                {
+                    failedIds.Add(tagId);
+                    continue;
+                }
+
+                tag.DeletedAt = DateTime.Now;
+
+
+                successfulIds.Add(tagId);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            var result = new DeleteMultipleResult<int>
+            {
+                SuccessfulItems = successfulIds,
+                FailedItems = failedIds
+            };
+
+            return result;
         }
     }   
 }

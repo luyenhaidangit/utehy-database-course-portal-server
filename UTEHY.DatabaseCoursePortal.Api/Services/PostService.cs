@@ -130,16 +130,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             //}
 
             //user.DeletedAt = DateTime.Now;
-            var comment = await _dbContext.Comments.FirstOrDefaultAsync(x => x.PostId == post.Id);
+            var comments = await _dbContext.Comments.Where(x => x.PostId == post.Id).ToListAsync();
 
-            if (comment == null)
+            //if (comments == null || comments.Count == 0)
+            //{
+            //    throw new ApiException("Đã xóa bài viết, bài viết này không có comment!", HttpStatusCode.BadRequest);
+            //}
+            if (comments != null && comments.Count > 0)
             {
-                throw new ApiException("Không tìm thấy bài viết có Id hợp lệ!", HttpStatusCode.BadRequest);
+                DateTime now = DateTime.Now;
+                foreach (var comment in comments)
+                {
+                    comment.DeletedAt = now;
+                }
             }
 
-            comment.DeletedAt = DateTime.Now;
 
             await _dbContext.SaveChangesAsync();
+
 
             var result = _mapper.Map<PostHomeDto>(post);
 
