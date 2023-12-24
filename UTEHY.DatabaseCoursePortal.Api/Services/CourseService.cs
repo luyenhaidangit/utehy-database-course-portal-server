@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Track;
@@ -21,6 +23,46 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
             _fileService = fileService;
         }
+
+        public async Task<Course> GetDatabaseCourse()
+        {
+            try
+            {
+                var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
+
+                return course;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<Course> EditDatabaseCourse(EditDatabaseCourseRequest request)
+        {
+            try
+            {
+                var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
+
+                if (course == null)
+                {
+                    throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError, null);
+                }
+
+                _mapper.Map(request, course);
+
+                course.UpdatedAt = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+
+                return course;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
         public async Task<List<Course>> GetCourses()
         {
             var listCourses = await _dbContext.Courses.ToListAsync();

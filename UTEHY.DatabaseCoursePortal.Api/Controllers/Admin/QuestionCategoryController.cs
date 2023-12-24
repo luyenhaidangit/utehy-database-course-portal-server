@@ -7,11 +7,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
     [Route("api/admin/question-category")]
     [ApiController]
-    public class QuestionCategory : ControllerBase
+    public class QuestionCategoryController : ControllerBase
     {
         private readonly QuestionCategoryService _questionCategoryService;
 
-        public QuestionCategory(QuestionCategoryService questionCategoryService)
+        public QuestionCategoryController(QuestionCategoryService questionCategoryService)
         {
             _questionCategoryService = questionCategoryService;
         }
