@@ -42,6 +42,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<QuestionTag> QuestionTags { get; set; } = null!;
         public virtual DbSet<Tag> Tags { get; set; } = null!;
         public virtual DbSet<Lesson> Lessons { get; set; } = null!;
+        public virtual DbSet<LessonContent> LessonContents { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -69,6 +70,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new TagConfiguration());
             builder.ApplyConfiguration(new QuestionTagConfiguration());
             builder.ApplyConfiguration(new LessonConfiguration());
+            builder.ApplyConfiguration(new LessonContentConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
