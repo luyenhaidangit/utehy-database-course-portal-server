@@ -68,5 +68,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("check-answers")]
+        public async Task<ApiResult<CheckQuestionResult>> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
+        {
+            var results = await _questionService.CheckAnswers(questionsToCheck);
+
+            return new ApiResult<CheckQuestionResult>()
+            {
+                Status = true,
+                Message = "kiểm tra thành công",
+                Data = results
+            };
+        }
     }
 }
