@@ -11,5 +11,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string Content { get; set; }
 
         public bool? IsPublished { get; set; }
+
+        public int? CourseId { get; set; }
+
+        public virtual List<LessonContent> LessonContents { get; set; }
     }
 }

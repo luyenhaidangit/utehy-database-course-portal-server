@@ -28,7 +28,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             try
             {
-                var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
+                var course = await _dbContext.Courses
+                    .Include(c => c.Lessons)
+                    .ThenInclude(l => l.LessonContents)
+                    .FirstOrDefaultAsync(x => x.IsDefault == true);
 
                 return course;
             }

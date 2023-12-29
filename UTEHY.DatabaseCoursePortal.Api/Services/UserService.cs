@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using System.Security.Claims;
 using System.Xml.Linq;
+using Twilio.Rest.Api.V2010.Account;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -21,14 +23,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly FileService _fileService;
         private readonly ConfigService _configService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
-        public UserService(ApplicationDbContext dbContext, UserManager<User> userManager, FileService fileService, ConfigService configService, IHttpContextAccessor httpContextAccessor)
+        public UserService(ApplicationDbContext dbContext, UserManager<User> userManager, FileService fileService, ConfigService configService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _fileService = fileService;
             _configService = configService;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
 
         public async Task<List<string>> GetPermissionAsync(User user)
@@ -99,13 +103,31 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return newUser;
         }
 
-        public async Task<User> GetUserInfo(HttpContext httpContext)
+        public async Task<UserDto> GetUserInfo(HttpContext httpContext)
         {
-            var email = httpContext.User.Claims.First(x => x.Type == "Email").Value;
+            try
+            {
+                var email = httpContext.User.Claims.First(x => x.Type == "Email").Value;
 
-            var user = await _userManager.FindByEmailAsync(email);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
 
-            return user;
+                if (user == null)
+                {
+                    throw new ApiException("Không tìm thấy người dùng hợp lệ!", Constants.HttpStatusCode.BadRequest);
+                }
+
+                var permissions = await GetPermissionAsync(user);
+
+                var userDto = _mapper.Map<UserDto>(user);
+
+                userDto.Permissions = permissions;
+
+                return userDto;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         public async Task<User> GetUserCurrent()

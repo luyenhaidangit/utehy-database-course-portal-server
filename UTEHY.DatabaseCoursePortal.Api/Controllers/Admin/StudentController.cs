@@ -33,11 +33,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<Student>> Create([FromBody] CreateStudentRequest request)
+        public async Task<ApiResult<Data.Entities.Student>> Create([FromBody] CreateStudentRequest request)
         {
             var result = await _studentService.Create(request);
 
-            return new ApiResult<Student>()
+            return new ApiResult<Data.Entities.Student>()
             {
                 Status = true,
                 Message = "Tạo mới sinh viên thành công!",

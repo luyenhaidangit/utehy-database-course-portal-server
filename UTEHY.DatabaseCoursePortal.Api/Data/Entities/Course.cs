@@ -28,6 +28,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public bool IsDefault { get; set; }
 
         public List<UserCourse>? UserCourses { get; set; }
+
+        public virtual List<Lesson> Lessons { get; set; }
+
         //public List<Track>? Tracks { get; set; }
     }
 }

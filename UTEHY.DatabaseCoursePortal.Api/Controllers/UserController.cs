@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.User;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
@@ -57,13 +58,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 
         [HttpGet("user-info")]
         [HttpGet]
-        public async Task<ApiResult<User>> GetCurrentUser()
+        public async Task<ApiResult<UserDto>> GetCurrentUser()
         {
             var user = await _userService.GetUserInfo(HttpContext);
 
             if (user == null)
             {
-                return new ApiResult<User>()
+                return new ApiResult<UserDto>()
                 {
                     Status = false,
                     Message = "Không tìm thấy thông tin người dùng hợp lệ!",
@@ -71,7 +72,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 };
             }
 
-            return new ApiResult<User>()
+            return new ApiResult<UserDto>()
             {
                 Status = true,
                 Message = "Lấy thông tin người dùng thành công!",

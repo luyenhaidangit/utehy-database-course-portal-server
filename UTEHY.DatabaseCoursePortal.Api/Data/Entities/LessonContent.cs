@@ -21,5 +21,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string? FileUrl { get; set; }
 
         public int LessonId { get; set; }
+
+        public TimeSpan? EstimatedStudyTime { get; set; }
     }
 }

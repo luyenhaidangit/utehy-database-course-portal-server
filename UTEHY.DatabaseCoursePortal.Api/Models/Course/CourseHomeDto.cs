@@ -27,5 +27,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
         public bool? IsPublished { get; set; }
 
         public int? NumberRegistrations { get; set; }
+
+        public List<Data.Entities.Lesson> Lessons { get; set; }
     }
 }
