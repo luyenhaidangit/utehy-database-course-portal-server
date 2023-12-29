@@ -15,6 +15,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
 
             CreateMap<Course, CreateCourseRequest>();
             CreateMap<CreateCourseRequest, Course>();
+
+            CreateMap<Course, CourseLearningUser>();
+            CreateMap<CourseLearningUser, Course>();
         }
     }
 }

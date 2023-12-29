@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Student
 {
-    [Route("api/[controller]")]
+    [Route("api/student/[controller]")]
     [ApiController]
     public class CourseController : ControllerBase
     {
@@ -17,12 +18,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Student
             _courseService = courseService;
         }
 
-        [HttpGet("view-database-course")]
-        public async Task<ApiResult<Course>> ViewDatabaseCourse()
+        [HttpGet("get-course-learning-user")]
+        public async Task<ApiResult<CourseLearningUser>> GetCourseLearningUser([FromQuery] GetCourseLearningUserRequest request)
         {
-            var result = await _courseService.GetDatabaseCourse();
+            var result = await _courseService.GetCourseLearningUser(request, HttpContext);
 
-            return new ApiResult<Course>()
+            return new ApiResult<CourseLearningUser>()
             {
                 Status = true,
                 Message = "Lấy thông tin khoá học thành công!",

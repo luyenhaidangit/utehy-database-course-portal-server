@@ -16,6 +16,8 @@
 
         public bool? Status { get; set; }
 
+        public int? LessonContentCurrentId { get; set; }
+
         public User? User { get; set; }
 
         public Course? Course { get; set; }

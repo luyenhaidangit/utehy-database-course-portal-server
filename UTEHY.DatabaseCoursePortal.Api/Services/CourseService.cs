@@ -227,5 +227,46 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return assignmentCourse;
         }
+
+        public async Task<CourseLearningUser> GetCourseLearningUser(GetCourseLearningUserRequest request, HttpContext httpContext)
+        {
+            try
+            {
+                var course = await _dbContext.Courses
+                    .Include(c => c.Lessons)
+                    .ThenInclude(l => l.LessonContents)
+                    .FirstOrDefaultAsync(x => x.Slug == request.Slug);
+
+                if(course == null)
+                {
+                    throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                var result = _mapper.Map<CourseLearningUser>(course);
+
+                if(httpContext.User.Claims.FirstOrDefault() != null)
+                {
+                    var userName = httpContext.User.Claims.First(x => x.Type == "UserName").Value;
+
+                    if (userName != null)
+                    {
+                        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+
+                        if (user != null)
+                        {
+                            var isRegister = await _dbContext.UserCourses.FirstOrDefaultAsync(x => x.UserId == user.Id && x.CourseId == course.Id);
+
+                            result.IsRegister = isRegister != null ? true : false;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }
