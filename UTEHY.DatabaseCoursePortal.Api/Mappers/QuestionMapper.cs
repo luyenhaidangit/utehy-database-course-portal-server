@@ -16,7 +16,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<CreateQuestionRequest, QuestionDto>();
 
             CreateMap<CreateQuestionRequest, Question>()
-            .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.QuestionAnswers.Sum(a => a.Score)))
+            .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.QuestionAnswers.Max(a => a.Score)))
             .ForMember(dest => dest.QuestionAnswers, opt => opt.Ignore());
         }
     }

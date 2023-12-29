@@ -117,6 +117,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+
         public async Task<QuestionDto> GetById(int id)
         {
 

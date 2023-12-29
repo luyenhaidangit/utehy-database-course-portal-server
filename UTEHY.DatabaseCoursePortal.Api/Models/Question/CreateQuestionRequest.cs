@@ -6,7 +6,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
     {
         public string Title { get; set; }
 
-        public string Feedback { get; set; }
+        public string? Feedback { get; set; }
 
         public int Score { get; set; }
 

@@ -8,7 +8,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public string Title { get; set; }
 
-        public string Feedback { get; set; }
+        public string? Feedback { get; set; }
 
         public int Score { get; set; }
 
