@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
@@ -228,6 +229,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return assignmentCourse;
         }
 
+        #region Course User
         public async Task<CourseLearningUser> GetCourseLearningUser(GetCourseLearningUserRequest request, HttpContext httpContext)
         {
             try
@@ -268,5 +270,58 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
         }
+
+        public async Task<bool> RegisterCourseStudent(RegisterCourseStudentRequest request, HttpContext httpContext)
+        {
+            try
+            {
+                var course = await _dbContext.Courses
+                    .Include(c => c.Lessons)
+                    .ThenInclude(l => l.LessonContents)
+                    .FirstOrDefaultAsync(x => x.Slug == request.Slug);
+
+                if (course == null)
+                {
+                    throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                if (httpContext.User.Claims.FirstOrDefault() == null)
+                {
+                    throw new ApiException("Thông tin người dùng đăng nhập không hợp lệ!", HttpStatusCode.Unauthorized);
+                }
+
+                var userName = httpContext.User.Claims.First(x => x.Type == "UserName").Value;
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+
+                var isRegister = await _dbContext.UserCourses.FirstOrDefaultAsync(x => x.UserId == user.Id && x.CourseId == course.Id);
+
+                if(isRegister != null) 
+                {
+                    throw new ApiException("Người dùng đã đăng ký khoá học!", HttpStatusCode.BadRequest);
+                }
+
+                var contentLessonId = course.Lessons?.FirstOrDefault()?.LessonContents?.FirstOrDefault()?.Id;
+
+                var userCourse = new UserCourse()
+                {
+                    UserId = user?.Id,
+                    CourseId = course.Id,
+                    LessonContentCurrentId = contentLessonId
+                };
+
+                userCourse.RegistrationDate = DateTime.Now;
+
+                await _dbContext.UserCourses.AddAsync(userCourse);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+        #endregion
     }
 }
