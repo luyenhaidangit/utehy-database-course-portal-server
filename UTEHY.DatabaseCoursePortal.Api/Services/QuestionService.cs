@@ -135,6 +135,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+
         public async Task<QuestionDto> Create(CreateQuestionRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
@@ -185,6 +186,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
             }
         }
+
+        public async Task<Question> Edit(EditQuestionRequest request)
+        {
+            var question = await _dbContext.Questions.FindAsync(request.Id);
+
+            question.Title = request.Title;
+            question.Feedback = request.Feedback;
+
+            question.UpdatedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            return question;
+        }
+
         public async Task<QuestionDto> Delete(int id)
         {
             var question = await _dbContext.Questions.FindAsync(id);
@@ -230,8 +246,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
-
-
 
         public async Task<CheckQuestionResult> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
         {
