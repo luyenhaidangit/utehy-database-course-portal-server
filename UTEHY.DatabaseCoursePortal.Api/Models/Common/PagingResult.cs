@@ -15,7 +15,7 @@
             TotalPages = totalPages;
         }
 
-        public PagingResult(List<T>? items, int pageIndex, int pageSize,string sortBy, string orderBy , int totalRecords, int totalPages)
+        public PagingResult(List<T>? items, int pageIndex, int pageSize,string? sortBy, string? orderBy , int totalRecords, int totalPages)
         {
             Items = items;
 
