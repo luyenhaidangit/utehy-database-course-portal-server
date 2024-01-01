@@ -35,6 +35,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 query = query.Where(b => b.Place == request.Place);
             }
 
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                string search = request.Title.ToLower();
+                query = query.Where(b => b.Title.ToLower().Contains(request.Title.ToLower()));
+            }
+
             int total = await query.CountAsync();
 
             if (request.PageIndex == null) request.PageIndex = 1;
