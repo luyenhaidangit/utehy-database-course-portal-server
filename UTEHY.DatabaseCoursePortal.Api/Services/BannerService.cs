@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -87,6 +90,25 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var result = new PagingResult<Banner>(items, request.PageIndex.Value, request.PageSize.Value,request.SortBy,request.OrderBy, total, totalPages);
 
             return result;
+        }
+
+        public async Task<Banner> GetById(int id)
+        {
+            try
+            {
+                var banner = await _dbContext.Banners.FindAsync(id);
+
+                if (banner == null)
+                {
+                    throw new ApiException("Không tìm thấy banner hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                return banner;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         public async Task<Banner> Create(CreateBannerRequest request)

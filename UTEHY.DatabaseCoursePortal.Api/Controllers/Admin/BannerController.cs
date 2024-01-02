@@ -30,5 +30,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpGet("get-by-id")]
+        public async Task<ApiResult<Banner>> GetById([FromQuery] int id)
+        {
+            var result = await _bannerService.GetById(id);
+
+            return new ApiResult<Banner>()
+            {
+                Status = true,
+                Message = "Danh sách banner đã được lấy thành công!",
+                Data = result
+            };
+        }
     }
 }
