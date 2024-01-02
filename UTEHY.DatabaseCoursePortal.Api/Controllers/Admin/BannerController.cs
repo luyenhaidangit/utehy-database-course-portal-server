@@ -43,5 +43,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("create")]
+        public async Task<ApiResult<Banner>> Create([FromForm] CreateBannerRequest request)
+        {
+            var result = await _bannerService.Create(request);
+
+            return new ApiResult<Banner>()
+            {
+                Status = true,
+                Message = "Danh sách banner đã được lấy thành công!",
+                Data = result
+            };
+        }
     }
 }
