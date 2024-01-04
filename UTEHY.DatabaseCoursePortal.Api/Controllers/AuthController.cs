@@ -392,5 +392,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Data = token
             };
         }
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<ApiResult<string>> Logout()
+        {
+            await _authService.Logout();
+
+            return new ApiResult<string>()
+            {
+                Status = true,
+                Message = "Đăng xuất thành công!",
+                Data = null
+            };
+        }
     }
 }
