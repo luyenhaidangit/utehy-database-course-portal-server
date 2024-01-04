@@ -1,11 +1,11 @@
 ﻿using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 
-namespace UTEHY.DatabaseCoursePortal.Api.Models.LessonContent
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Exam
 {
-    public class GetLessonContentRequest : PagingRequest
+    public class GetExamRequest: PagingRequest
     {
-        public int? LessonId { get; set; }
         public string? Title { get; set; }
+
         public string? Description { get; set; }
     }
 }
