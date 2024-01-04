@@ -11,6 +11,7 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Account;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Post;
 using UTEHY.DatabaseCoursePortal.Api.Models.User;
 using static System.Net.WebRequestMethods;
 
@@ -150,6 +151,39 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
 
             return test;
+        }
+
+        public async Task<User> EditUserInfo(EditUserInfoRequest request)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var user = await _dbContext.Users.FindAsync(request.Id);
+
+                    if (user == null)
+                    {
+                        throw new ApiException("Không tìm thấy user có Id hợp lệ!", HttpStatusCode.BadRequest);
+                    }
+
+                    user.Name = request.Name;
+
+                    user.PhoneNumber = request.PhoneNumber;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    return user;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
+                }
+            }
+
         }
 
 
