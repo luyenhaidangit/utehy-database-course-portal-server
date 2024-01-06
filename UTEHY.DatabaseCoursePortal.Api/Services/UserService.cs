@@ -145,6 +145,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return null;
         }
 
+        public async Task<User?> GetCurrentUserAsync()
+        {
+            return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        }
+
         public async Task<List<User>> Test()
         {
             var test = await _dbContext.Users.ToListAsync();
