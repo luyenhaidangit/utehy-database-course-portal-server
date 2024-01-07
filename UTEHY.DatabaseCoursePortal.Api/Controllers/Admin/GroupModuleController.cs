@@ -110,7 +110,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
-        [HttpGet("export-students")]
+        [HttpGet("export-excel-students")]
         public async Task<IActionResult> Export([FromQuery] DeleteRequest request)
         {
             var getStudentRequest = new GetStudentsGroupModuleRequest()
