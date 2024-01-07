@@ -113,6 +113,78 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
+        public async Task<PagingResult<Student>> GetStudentsGroupModule(GetStudentsGroupModuleRequest request)
+        {
+            try
+            {
+                var query = _dbContext.GroupModules
+                .Where(x => x.DeletedAt == null && x.Id == request.GroupModuleId)
+                .Include(x => x.StudentGroupModules)
+                .ThenInclude(xs => xs.Student)
+                .ThenInclude(s => s.User)
+                .SelectMany(x => x.StudentGroupModules.Select(sm => sm.Student))
+                .Where(s => s.DeletedAt == null)
+                .AsQueryable();
+
+                if (!string.IsNullOrEmpty(request.NameOrEmail))
+                {
+                    string search = request.NameOrEmail.ToLower();
+                    query = query.Where(b => b.User.Name.ToLower().Contains(request.NameOrEmail.ToLower()) || b.User.Email.ToLower().Contains(request.NameOrEmail.ToLower()));
+                }
+
+                int total = await query.CountAsync();
+
+                if (request.PageIndex == null) request.PageIndex = 1;
+                if (request.PageSize == null) request.PageSize = total;
+
+                int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
+
+                if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.SortBy))
+                {
+                    query = query.OrderByDescending(b => b.Id);
+                }
+                else if (string.IsNullOrEmpty(request.OrderBy))
+                {
+                    if (request.SortBy == SortByConstant.Asc)
+                    {
+                        query = query.OrderBy(b => b.Id);
+                    }
+                    else
+                    {
+                        query = query.OrderByDescending(b => b.Id);
+                    }
+                }
+                else if (string.IsNullOrEmpty(request.SortBy))
+                {
+                    query = query.OrderByDescending(b => b.Id);
+                }
+                else
+                {
+                    if (request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Asc)
+                    {
+                        query = query.OrderBy(b => b.Id);
+                    }
+                    else if (request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Desc)
+                    {
+                        query = query.OrderByDescending(b => b.Id);
+                    }
+                }
+
+                var items = await query
+                .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
+                .Take(request.PageSize.Value)
+                .ToListAsync();
+
+                var result = new PagingResult<Student>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
         public async Task<GroupModule> GetById(int id)
         {
             try

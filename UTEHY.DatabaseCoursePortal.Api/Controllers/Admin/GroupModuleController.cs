@@ -30,6 +30,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
+        [HttpGet("get-students")]
+        public async Task<ApiResult<PagingResult<Data.Entities.Student>>> GetStudentGroupModule([FromQuery] GetStudentsGroupModuleRequest request)
+        {
+            var result = await _groupModuleService.GetStudentsGroupModule(request);
+
+            return new ApiResult<PagingResult<Data.Entities.Student>>()
+            {
+                Status = true,
+                Message = "Lấy thông tin danh sách sinh viên nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
         [HttpPost("create")]
         public async Task<ApiResult<GroupModule>> Create([FromBody] CreateGroupModuleRequest request)
         {
@@ -78,6 +91,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             {
                 Status = true,
                 Message = "Ẩn nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-by-id")]
+        public async Task<ApiResult<GroupModule>> GetById([FromQuery] DeleteRequest request)
+        {
+            var result = await _groupModuleService.GetById(request.Id);
+
+            return new ApiResult<GroupModule>()
+            {
+                Status = true,
+                Message = "Lấy thông tin nhóm học phần thành công!",
                 Data = result
             };
         }

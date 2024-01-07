@@ -9,5 +9,7 @@
         public int? GroupModuleId { get; set; }
 
         public int? Status { get; set; }
+
+        public virtual Student? Student { get; set; }
     }
 }
