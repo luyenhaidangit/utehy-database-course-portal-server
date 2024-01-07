@@ -22,3 +22,22 @@ VALUES
     ('125218', 'Description 18', NULL, NULL, 2023, 2, 1, 3, GETDATE(), '69BD714F-9576-45BA-B5B7-F00649BE00DE', NULL, NULL, NULL, NULL),
     ('125219', 'Description 19', NULL, NULL, 2021, 2, 1, 1, GETDATE(), '69BD714F-9576-45BA-B5B7-F00649BE00DE', NULL, NULL, NULL, NULL),
     ('125220', 'Description 20', NULL, NULL, 2023, 1, 1, 2, GETDATE(), '69BD714F-9576-45BA-B5B7-F00649BE00DE', NULL, NULL, NULL, NULL);
+
+
+-- UserGroupModules
+INSERT INTO StudentGroupModules (StudentId, GroupModuleId, Status)
+VALUES
+    (1, 1, 1),  -- Group 1, 1 Student
+    (1, 2, 1),  -- Group 2, 1 Student
+    (2, 2, 1),  -- Group 2, 1 Student
+    (1, 3, 1),  -- Group 3, 1 Student
+    (2, 3, 1),  -- Group 3, 1 Student
+    (3, 3, 1),  -- Group 3, 1 Student
+    (1, 4, 1),  -- Group 4, 1 Student
+    (2, 4, 1),  -- Group 4, 1 Student
+    (3, 4, 1),  -- Group 4, 1 Student
+    (1, 5, 1),  -- Group 5, 1 Student
+    (2, 5, 1),  -- Group 5, 1 Student
+    (3, 5, 1),  -- Group 5, 1 Student
+    (4, 5, 1),  -- Group 5, 1 Student
+    (5, 5, 1);  -- Group 5, 1 Student

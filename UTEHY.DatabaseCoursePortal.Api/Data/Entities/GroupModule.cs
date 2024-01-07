@@ -21,5 +21,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public bool? Status { get; set; }
 
         public int? TeacherId { get; set; }
+
+        public virtual List<StudentGroupModule> StudentGroupModules { get; set; }
+
+        public virtual Teacher Teacher { get; set; }
     }
 }

@@ -30,7 +30,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             try
             {
-                var query = _dbContext.GroupModules.Where(x => x.DeletedAt == null).AsQueryable();
+                var query = _dbContext.GroupModules.Where(x => x.DeletedAt == null)
+                    .Include(x => x.StudentGroupModules)
+                    .Include(x => x.Teacher).ThenInclude(t => t.User).Where(t => t.DeletedAt == null)
+                    .AsQueryable();
 
                 if (!string.IsNullOrEmpty(request.Name))
                 {
@@ -133,6 +136,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             try
             {
+                //Validate lớp trùng năm, kỳ
+                //...
+
                 var groupModule = _mapper.Map<GroupModule>(request);
 
                 var userCurrent = await _userService.GetCurrentUserAsync();
@@ -154,6 +160,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             try
             {
+                //Validate lớp trùng năm, kỳ
+                //...
+
                 var groupModule = await _dbContext.GroupModules.FindAsync(request.Id);
 
                 if (groupModule == null)

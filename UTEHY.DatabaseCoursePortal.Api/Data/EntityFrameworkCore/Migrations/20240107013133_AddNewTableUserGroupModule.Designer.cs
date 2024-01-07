@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -11,9 +12,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240107013133_AddNewTableUserGroupModule")]
+    partial class AddNewTableUserGroupModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1634,7 +1636,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "e4254d11-389d-478e-ae75-8192780a8d12",
+                            ConcurrencyStamp = "64edc58e-d01b-46eb-9e6e-44afa4f7f755",
                             Description = "Admin Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -1642,7 +1644,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("c3f087a2-48d5-4e09-8a63-8830a7b5b4e3"),
-                            ConcurrencyStamp = "080c6bd1-9e27-4dc3-aa0b-bbb8afdbe545",
+                            ConcurrencyStamp = "df870cf7-50d0-4765-9364-aad86c3934e7",
                             Description = "Student Role",
                             Name = "student",
                             NormalizedName = "student"
@@ -1650,7 +1652,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd"),
-                            ConcurrencyStamp = "5dc070f0-e6a7-4026-ad7f-4c6484d8818b",
+                            ConcurrencyStamp = "f7f36c58-7a58-4aee-9404-a2a79cc111e1",
                             Description = "Teacher Role",
                             Name = "teacher",
                             NormalizedName = "teacher"
@@ -1784,30 +1786,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             StudentId = "10121912",
                             UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b2")
                         });
-                });
-
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.StudentGroupModule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("GroupModuleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupModuleId");
-
-                    b.ToTable("StudentGroupModules", (string)null);
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Tag", b =>
@@ -2070,14 +2048,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "aeb49b03-a216-40df-acc6-d879f0eb634f",
+                            ConcurrencyStamp = "fb16ba53-9852-4a5e-ad66-a8b40a6200a8",
                             Email = "luyenhaidangit@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Luyện Hải Đăng",
                             NormalizedEmail = "luyenhaidangit@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJ8KHx3w97xiP7gkv6L3t3PzOvr1OZwHEKa6ypsHqb+Mg2bgUIibkjOflwUnGz9UaA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJCMUrcUtODURPvASxb2PO2J+/plVT2dcc+IRm9LIBOfS1xJ5kMg6cLsN7xMmwHhDw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             Status = true,
@@ -2089,14 +2067,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "a2a00864-814d-487e-b9cc-0435be6fb19e",
+                            ConcurrencyStamp = "14a5d871-da98-4dde-b1f0-87c8c51fbe3d",
                             Email = "caovandan@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Cao Văn Dân",
                             NormalizedEmail = "caovandan@gmail.com",
                             NormalizedUserName = "caovandan",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE6X+6b9SXCkZQcpFqbokWZtyWxSBdSLdLFWah0XN8R6rFk/URAURmWf+2+j1fgafg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEd2wATEYB2zxvzOFDMhRQpA9qq9ijBFwTv/tbNBJMr1jx7moV5yJoh0gUkqbZ06hg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             Status = true,
@@ -2108,14 +2086,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "0912e0df-8834-46c9-b063-24de528e0692",
+                            ConcurrencyStamp = "5078a4e6-4836-41c6-8841-50c2788cfe44",
                             Email = "nguyenvanthang@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Nguyễn Văn Thắng",
                             NormalizedEmail = "nguyenvanthang@gmail.com",
                             NormalizedUserName = "nguyenvanthang",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDeYcbPVZz7TZa4xqpjJuydH7t2UjqJgvGei/FZuYHR1W8HrWg6XMaLTtB4pHHb96g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEE5nX50qjVfzM7/Drr1XtfldCthqaUwQdeWBgaETyj9pZ/KABmyn4w8M1SrwoLsAzg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             Status = true,
@@ -2127,14 +2105,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a6"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "b0e15537-1a2d-4462-8ee5-87ca1e6285be",
+                            ConcurrencyStamp = "bd8ae3a6-e506-41c3-98e7-32393e5e3a38",
                             Email = "phamxuantuyen@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Phạm Xuân Tuyển",
                             NormalizedEmail = "phamxuantuyen@gmail.com",
                             NormalizedUserName = "phamxuantuyen",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJEAs3fAoapIU/qs2k4hF8sBaVMLthe8rRufiwQ7VUF2nBTYtHUaPKM6FN9j5lHaUQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEONmJDZoXNoeBihk8ELncIJ4oJbsOUXRUwILEWDzT3ibNmtDR9a0laEMKYZjAHbx9w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             Status = true,
@@ -2146,14 +2124,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a1"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "a741aa45-e18c-495e-850a-63d54e1781de",
+                            ConcurrencyStamp = "bfc53b9a-63d4-4fc2-a6c1-bdad75925cf1",
                             Email = "daoxuanduc@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Đào Xuân Đức",
                             NormalizedEmail = "daoxuanduc@gmail.com",
                             NormalizedUserName = "daoxuanduc",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPWRzlRisHFZxLYy+dgTVg0COQwbKaE1khVO2npSI8bKSxmN8ZO6SU1Rh35k7Sl09g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMQ2RWHszedDjch4rxNEhKMEOuVEZESwRaxvcbNXltm5e4F8GnQLQBVucuvyz8oEMg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             Status = true,
@@ -2165,14 +2143,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b1"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "d39c2faf-0890-4840-84d9-50b458a90eda",
+                            ConcurrencyStamp = "9cc1e088-03a9-4ce3-ab88-42662626f19c",
                             Email = "hoanggiabao@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Hoàng Gia Bảo",
                             NormalizedEmail = "hoanggiabao@gmail.com",
                             NormalizedUserName = "hoanggiabao",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMlrSqKgEhN1J+rrbt6bsU0q7oXmqWztlU8bjoXyfsHkjEeWz5gaj0BYb1RtEZwi2w==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGB0lwQNKAdapUXN4gMx5QItzJFZZ1E+NuD/McZczS3ft9uFlte2mJLfz1i/4cU7Mg==",
                             PhoneNumber = "+84922002360",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
@@ -2185,14 +2163,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a7"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "67d6e05a-7779-40d4-9884-a6066bec9e31",
+                            ConcurrencyStamp = "49fb9532-2b5f-4c1d-a8c0-73a0fb74ea87",
                             Email = "buixuanhoang@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Bùi Xuân Hoàng",
                             NormalizedEmail = "buixuanhoang@gmail.com",
                             NormalizedUserName = "buixuanhoang",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJrBvvPrhIyVpKh3JKBwZ90OEBpyCKZzNRYnHgk8XeISyf5uCsjmEurY8jeS84+BpA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDyXz3YwU6/txan2ODgl+RV0f+DbZAXv9zIoJ8Lp5/VxkoJUfJxh3CUUmUYXZb9hZA==",
                             PhoneNumber = "+84922002111",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
@@ -2205,14 +2183,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a2"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "0eab852e-e040-4407-b982-e6493b8e9c5e",
+                            ConcurrencyStamp = "63352d4b-7c71-461b-a291-21be8fe82456",
                             Email = "phamthanhlong@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Phạm Thanh Long",
                             NormalizedEmail = "phamthanhlong@gmail.com",
                             NormalizedUserName = "phamthanhlong",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJN6knEqgVDxe/QBsbB1/UpOKAaCzj3bXe1KWEbyRiwdGwM5mw5Th9+CtC7a/g+6xw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGWlj9WhGIRA7+dk2YEQspAE2w7fl79l3S1fjc7O7djxYJi9uO3P49iTUFRblCwFSw==",
                             PhoneNumber = "+84922002222",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
@@ -2225,14 +2203,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                             Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b2"),
                             AccessFailedCount = 0,
                             AvatarUrl = "/User/AvatarDefault.png",
-                            ConcurrencyStamp = "8697a42c-d9b7-49d0-a149-07abb70b966e",
+                            ConcurrencyStamp = "311c748d-3a35-4728-813e-3aa473ac23c3",
                             Email = "nguyendinhhung@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Nguyễn Đình Hùng",
                             NormalizedEmail = "nguyendinhhung@gmail.com",
                             NormalizedUserName = "nguyendinhhung",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIyC0ReQNiC4jaFSQB4mI9iOxaQwfV4krw5LazDaUoqAbeBUiZutp9ZHYLw52oqwqQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGSyu1AEyaP4eNobK2N2gWpaeQcYI27o8MhiNDv/8xFkFTwB/yUnCzBLMB3OJx0yNA==",
                             PhoneNumber = "+84922002333",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
@@ -2331,6 +2309,33 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("UserGroups", (string)null);
+                });
+
+            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.UserGroupModule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GroupModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupModuleId");
+
+                    b.ToTable("UserGroupModules", (string)null);
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.VideoCourse", b =>
@@ -2611,13 +2616,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.StudentGroupModule", b =>
-                {
-                    b.HasOne("UTEHY.DatabaseCoursePortal.Api.Data.Entities.GroupModule", null)
-                        .WithMany("StudentGroupModules")
-                        .HasForeignKey("GroupModuleId");
-                });
-
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Teacher", b =>
                 {
                     b.HasOne("UTEHY.DatabaseCoursePortal.Api.Data.Entities.User", "User")
@@ -2649,6 +2647,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         .HasForeignKey("GroupId");
                 });
 
+            modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.UserGroupModule", b =>
+                {
+                    b.HasOne("UTEHY.DatabaseCoursePortal.Api.Data.Entities.GroupModule", null)
+                        .WithMany("UserGroupModules")
+                        .HasForeignKey("GroupModuleId");
+                });
+
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.UserRole", b =>
                 {
                     b.HasOne("UTEHY.DatabaseCoursePortal.Api.Data.Entities.User", null)
@@ -2675,7 +2680,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.GroupModule", b =>
                 {
-                    b.Navigation("StudentGroupModules");
+                    b.Navigation("UserGroupModules");
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Lesson", b =>

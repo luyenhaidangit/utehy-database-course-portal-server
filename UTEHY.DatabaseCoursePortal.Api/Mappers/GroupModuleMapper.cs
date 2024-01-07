@@ -10,7 +10,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
     {
         public GroupModuleMapper()
         {
-            CreateMap<CreateLessonRequest, GroupModule>();
+            CreateMap<CreateGroupModuleRequest, GroupModule>();
 
             CreateMap<EditGroupModuleRequest, GroupModule>();
         }
