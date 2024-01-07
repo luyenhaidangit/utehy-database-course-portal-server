@@ -209,5 +209,32 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
         }
+
+        public async Task<GroupModule> Hide(int id)
+        {
+            try
+            {
+                var groupModule = await _dbContext.GroupModules.FindAsync(id);
+
+                if (groupModule == null)
+                {
+                    throw new ApiException("Không tìm thấy nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                groupModule.Status = false;
+
+                var userCurrent = await _userService.GetCurrentUserAsync();
+                groupModule.UpdatedAt = DateTime.Now;
+                groupModule.UpdatedBy = userCurrent?.Id;
+
+                await _dbContext.SaveChangesAsync();
+
+                return groupModule;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }

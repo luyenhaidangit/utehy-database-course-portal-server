@@ -57,14 +57,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("delete")]
-        public async Task<ApiResult<GroupModule>> Delete([FromBody] int id)
+        public async Task<ApiResult<GroupModule>> Delete([FromBody] DeleteRequest request)
         {
-            var result = await _groupModuleService.Delete(id);
+            var result = await _groupModuleService.Delete(request.Id);
 
             return new ApiResult<GroupModule>()
             {
                 Status = true,
                 Message = "Xoá nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("hide")]
+        public async Task<ApiResult<GroupModule>> Hide([FromBody] DeleteRequest request)
+        {
+            var result = await _groupModuleService.Hide(request.Id);
+
+            return new ApiResult<GroupModule>()
+            {
+                Status = true,
+                Message = "Ẩn nhóm học phần thành công!",
                 Data = result
             };
         }
