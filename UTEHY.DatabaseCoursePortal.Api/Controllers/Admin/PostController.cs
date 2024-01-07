@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using UTEHY.DatabaseCoursePortal.Api.Attributes;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
@@ -113,6 +114,32 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Message = "Lấy thông tin bài viết thành công!",
                 Data = result
             };
+        }
+
+        [HttpPost("import-posts")]
+        public async Task<bool> Import([FromForm] IFormFile formFile)
+        {
+            using var stream = new MemoryStream();
+            await formFile.CopyToAsync(stream);
+            using var package = new ExcelPackage(stream);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+            var rowcount = worksheet.Dimension.Rows;
+
+            for (int row = 2; row <= rowcount; row++)
+            {
+                CreatePostRequest teacher = new CreatePostRequest
+                {
+                    Title = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                    Description = worksheet.Cells[row, 2].Value.ToString().Trim(),
+                    Content = worksheet.Cells[row, 3].Value.ToString().Trim(),
+                    Priority = 1,
+                    IsPublished = true,
+                };
+
+                await _postService.Create(teacher);
+            }
+
+            return true;
         }
 
     }

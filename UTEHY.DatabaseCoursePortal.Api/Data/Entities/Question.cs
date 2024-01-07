@@ -6,9 +6,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
     {
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public string Feedback { get; set; }
+        public string? Feedback { get; set; }
 
         public int Score { get; set; }
 
@@ -23,5 +23,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual List<QuestionAnswer> QuestionAnswers { get; set; }
 
         public virtual List<QuestionTag> QuestionTags { get; set; }
+
+        public virtual List<ExamQuestion> ExamQuestions { get; set; }
+
     }
 }

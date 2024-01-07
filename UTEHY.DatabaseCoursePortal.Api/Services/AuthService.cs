@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,6 +20,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly IConfiguration _config;
         private readonly UserService _userService;
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly TwilioService _twilioService;
         private readonly MailService _mailService;
 
@@ -66,6 +68,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var token = tokenHandler.WriteToken(securityToken);
 
             return token;
+        }
+
+        public async Task<bool> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return true;
         }
 
         public async Task<bool> SendOtpLoginPhone(SendOtpLoginPhoneRequest request)

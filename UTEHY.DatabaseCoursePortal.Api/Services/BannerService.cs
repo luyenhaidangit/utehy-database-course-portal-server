@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -35,6 +38,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 query = query.Where(b => b.Place == request.Place);
             }
 
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                string search = request.Title.ToLower();
+                query = query.Where(b => b.Title.ToLower().Contains(request.Title.ToLower()));
+            }
+
             int total = await query.CountAsync();
 
             if (request.PageIndex == null) request.PageIndex = 1;
@@ -42,15 +51,64 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
 
+            if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.SortBy))
+            {
+                query = query.OrderByDescending(b => b.Id);
+            }
+            else if (string.IsNullOrEmpty(request.OrderBy))
+            {
+                if (request.SortBy == SortByConstant.Asc)
+                {
+                    query = query.OrderBy(b => b.Id);
+                }
+                else
+                {
+                    query = query.OrderByDescending(b => b.Id);
+                }
+            }
+            else if (string.IsNullOrEmpty(request.SortBy))
+            {
+                query = query.OrderByDescending(b => b.Id);
+            }
+            else
+            {
+                if (request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Asc)
+                {
+                    query = query.OrderBy(b => b.Id);
+                }
+                else if (request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Desc)
+                {
+                    query = query.OrderByDescending(b => b.Id);
+                }
+            }
+
             var items = await query
-            .OrderByDescending(b => b.Priority)
             .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
             .Take(request.PageSize.Value)
             .ToListAsync();
 
-            var result = new PagingResult<Banner>(items, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
+            var result = new PagingResult<Banner>(items, request.PageIndex.Value, request.PageSize.Value,request.SortBy,request.OrderBy, total, totalPages);
 
             return result;
+        }
+
+        public async Task<Banner> GetById(int id)
+        {
+            try
+            {
+                var banner = await _dbContext.Banners.FindAsync(id);
+
+                if (banner == null)
+                {
+                    throw new ApiException("Không tìm thấy banner hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                return banner;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         public async Task<Banner> Create(CreateBannerRequest request)

@@ -44,6 +44,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
         [HttpPost("create")]
         public async Task<ApiResult<QuestionDto>> Create([FromBody] CreateQuestionRequest request)
         {
@@ -56,6 +57,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("edit")]
+        public async Task<ApiResult<Question>> Edit([FromBody] EditQuestionRequest request)
+        {
+            var result = await _questionService.Edit(request);
+
+            return new ApiResult<Question>()
+            {
+                Status = true,
+                Message = "Cập nhật mới câu hỏi thành công!",
+                Data = result
+            };
+        }
+
         [HttpPost("delete")]
         public async Task<ApiResult<QuestionDto>> Delete([FromBody] DeleteQuestionRequest request)
         {
@@ -66,6 +81,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Status = true,
                 Message = "Xoá câu hỏi thành công!",
                 Data = result
+            };
+        }
+
+        [HttpPost("check-answers")]
+        public async Task<ApiResult<CheckQuestionResult>> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
+        {
+            var results = await _questionService.CheckAnswers(questionsToCheck);
+
+            return new ApiResult<CheckQuestionResult>()
+            {
+                Status = true,
+                Message = "kiểm tra thành công",
+                Data = results
             };
         }
     }

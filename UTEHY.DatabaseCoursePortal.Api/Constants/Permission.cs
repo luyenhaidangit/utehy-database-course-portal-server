@@ -13,5 +13,7 @@
         public const string ManageBannerDelete = "ManageBanner.Delete";
 
         public const string Student = "Student";
+
+        public const string Admin = "Admin";
     }
 }

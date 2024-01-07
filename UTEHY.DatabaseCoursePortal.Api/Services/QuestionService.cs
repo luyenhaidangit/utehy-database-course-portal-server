@@ -42,6 +42,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             var query = _dbContext.Questions
                 .Include(q => q.QuestionCategory)
+                .Include(q => q.QuestionAnswers)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Title))
@@ -54,6 +55,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 query = query.Where(b => b.QuestionCategoryId == request.QuestionCategoryId);
             }
+
 
             if (request.Type != null)
             {
@@ -117,6 +119,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+
         public async Task<QuestionDto> GetById(int id)
         {
 
@@ -132,6 +135,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+
         public async Task<QuestionDto> Create(CreateQuestionRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
@@ -182,6 +186,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
             }
         }
+
+        public async Task<Question> Edit(EditQuestionRequest request)
+        {
+            var question = await _dbContext.Questions.FindAsync(request.Id);
+
+            question.Title = request.Title;
+            question.Feedback = request.Feedback;
+
+            question.UpdatedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            return question;
+        }
+
         public async Task<QuestionDto> Delete(int id)
         {
             var question = await _dbContext.Questions.FindAsync(id);
@@ -226,6 +245,60 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var result = _mapper.Map<QuestionDto>(question);
 
             return result;
+        }
+
+        public async Task<CheckQuestionResult> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
+        {
+            var result = new CheckQuestionResult
+            {
+                CheckQuestions = new List<CheckQuestions>(),
+                TotalScore = 0,
+                TotalCountFalse = 0,
+                TotalCountTrue = 0
+            };
+
+            foreach (var request in questionsToCheck)
+            {
+                var question = await _dbContext.Questions
+                    .Include(q => q.QuestionAnswers)
+                    .FirstOrDefaultAsync(q => q.Id == request.QuestionId);
+
+                if (question != null)
+                {
+                    var correctAnswers = question.QuestionAnswers
+                        .Where(a => a.IsCorrect);
+
+                    var totalScore = correctAnswers.Sum(a => a.Score);
+                    var isCorrect = correctAnswers.Any(a => a.Id == request.QuestionAnswerId);
+
+                    var checkQuestion = new CheckQuestions
+                    {
+                        QuestionId = question.Id,
+                        QuestionAnswerId = request.QuestionAnswerId,
+                        QuestionAnswerCorrectId = correctAnswers.FirstOrDefault(a => a.IsCorrect)?.Id ?? 0,
+                        QuestionTitle = question.Title,
+                        QuestionAnswerContent = GetAnswerContent(question.QuestionAnswers, request.QuestionAnswerId),
+                        QuestionAnswerCorrectContent = GetCorrectAnswerContent(correctAnswers),
+                    };
+
+                    result.CheckQuestions.Add(checkQuestion);
+                    result.TotalScore += isCorrect ? totalScore : 0;
+                    result.TotalCountFalse += isCorrect ? 0 : 1;
+                    result.TotalCountTrue += isCorrect ? 1 : 0;
+                }
+            }
+
+            return result;
+        }
+
+        private string GetAnswerContent(List<QuestionAnswer> answers, int answerId)
+        {
+            return answers.FirstOrDefault(a => a.Id == answerId)?.Content ?? "";
+        }
+
+        private string GetCorrectAnswerContent(IEnumerable<QuestionAnswer> correctAnswers)
+        {
+            return correctAnswers.FirstOrDefault()?.Content ?? "";
         }
     }   
 }

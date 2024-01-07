@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.User;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
@@ -92,6 +93,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
                 Status = true,
                 Message = "Lấy thông tin người dùng thành công!",
                 Data = user
+            };
+        }
+
+        [HttpPost("edit-user-info")]
+        public async Task<ApiResult<User>> EditUserInfo([FromBody] EditUserInfoRequest request)
+        {
+            var result = await _userService.EditUserInfo(request);
+
+            return new ApiResult<User>()
+            {
+                Status = true,
+                Message = "Cập nhật thông tin người dùng thành công!",
+                Data = result
             };
         }
     }
