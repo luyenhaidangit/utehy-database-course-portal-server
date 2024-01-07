@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
@@ -10,6 +13,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using UTEHY.DatabaseCoursePortal.Api.Models.Student;
+using System.Drawing;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -189,7 +193,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             try
             {
-                var banner = await _dbContext.GroupModules.FindAsync(id);
+                var banner = await _dbContext.GroupModules.Include(x => x.StudentGroupModules).FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null);
 
                 if (banner == null)
                 {
@@ -302,6 +306,56 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 await _dbContext.SaveChangesAsync();
 
                 return groupModule;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public byte[] ExportStudents(List<Student> students)
+        {
+            try
+            {
+                using (var package = new ExcelPackage())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add(ExportFile.ListStudentExcelTab);
+
+                    worksheet.Cells[1, 1, 1, 5].Style.Font.Bold = true;
+                    worksheet.Cells[1, 1, 1, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, 1, 1, 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189)); // Màu xanh dương
+                    worksheet.Cells[1, 1, 1, 5].Style.Font.Color.SetColor(Color.White);
+
+                    worksheet.Cells[1, 1].Value = "MSSV";
+                    worksheet.Cells[1, 2].Value = "Họ và tên";
+                    worksheet.Cells[1, 3].Value = "Email";
+                    worksheet.Cells[1, 4].Value = "Số điện thoại";
+                    worksheet.Cells[1, 5].Value = "Ngày tham gia";
+
+
+                    int row = 2;
+                    foreach (var student in students)
+                    {
+                        worksheet.Cells[row, 1].Value = student.StudentId;
+                        worksheet.Cells[row, 2].Value = student.User.Name;
+                        worksheet.Cells[row, 3].Value = student.User.Email;
+                        worksheet.Cells[row, 4].Value = student.User.PhoneNumber;
+                        worksheet.Cells[row, 5].Value = student.CreatedAt != null ? student.CreatedAt.Value.ToString("dd/MM/yyyy") : "";
+
+                        row++;
+                    }
+
+                    worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                    using (var stream = new MemoryStream())
+                    {
+                        package.SaveAs(stream);
+
+                        stream.Position = 0;
+
+                        return stream.ToArray();
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
@@ -106,6 +108,23 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Message = "Lấy thông tin nhóm học phần thành công!",
                 Data = result
             };
+        }
+
+        [HttpGet("export-students")]
+        public async Task<IActionResult> Export([FromQuery] DeleteRequest request)
+        {
+            var getStudentRequest = new GetStudentsGroupModuleRequest()
+            {
+                GroupModuleId = request.Id,
+            };
+
+            var studentPaging = await _groupModuleService.GetStudentsGroupModule(getStudentRequest);
+
+            var students = studentPaging.Items;
+
+            var excelBytes = _groupModuleService.ExportStudents(students);
+
+            return File(excelBytes, Constants.File.ExcelMime, ExportFile.ListStudentExcel);
         }
     }
 }
