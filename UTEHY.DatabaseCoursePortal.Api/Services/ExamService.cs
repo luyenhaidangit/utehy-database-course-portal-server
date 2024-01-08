@@ -47,7 +47,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         //        query = query.Where(b => b.Description == request.Description);
         //    }
 
-           
+
 
         //    // Các điều kiện lọc tại đây
 
@@ -101,7 +101,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         //        // Các tùy chọn khác nếu cần thiết
         //    };
 
-           
+
 
         //    var exam = await _dbContext.Exams
         //        .Include(e => e.ExamQuestions)
@@ -164,7 +164,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         //        {
         //            ExamId = newExam.Id,
         //            QuestionId = questionDto.Id 
-                                                
+
         //        };
 
         //        _dbContext.ExamQuestions.Add(newExamQuestion);
@@ -175,5 +175,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         //    return exam;
         //}
 
+        public async Task<ExamResult?> GetScoreExamStudent(int studentId, int examId)
+        {
+            try
+            {
+                var result = await _dbContext.ExamResults.FirstOrDefaultAsync(x => x.StudentId == studentId && x.ExamId == examId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }

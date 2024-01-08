@@ -7,5 +7,7 @@
         public int? GroupModuleId { get; set; }
 
         public int? ExamId { get; set; }
+
+        public virtual Exam Exam { get; set; }
     }
 }

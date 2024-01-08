@@ -4,6 +4,10 @@
     {
         public const string ListStudentExcel = "DanhSachSinhVien.xlsx";
 
-        public const string ListStudentExcelTab = "Danh sách";
+        public const string ListScoreStudentExcel = "BangDiemSinhVien.xlsx";
+
+        public const string ListStudentExcelTab = "Danh sách sinh viên";
+
+        public const string ListScoreStudentExcelTab = "Danh sách điểm thi sinh viên";
     }
 }

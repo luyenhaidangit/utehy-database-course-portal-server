@@ -14,6 +14,8 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using System.Drawing;
+using DocumentFormat.OpenXml.Office2016.Excel;
+using UTEHY.DatabaseCoursePortal.Api.Helpers;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -21,13 +23,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserService _userService;
+        private readonly ExamService _examService;
         private readonly IMapper _mapper;
 
-        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService)
+        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, ExamService examService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userService = userService;
+            _examService = examService;
         }
 
         public async Task<PagingResult<GroupModule>> Get(GetGroupModuleRequest request)
@@ -339,8 +343,86 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         worksheet.Cells[row, 1].Value = student.StudentId;
                         worksheet.Cells[row, 2].Value = student.User.Name;
                         worksheet.Cells[row, 3].Value = student.User.Email;
-                        worksheet.Cells[row, 4].Value = student.User.PhoneNumber;
+                        worksheet.Cells[row, 4].Value = PhoneHelper.FormatPhoneNumber(student.User.PhoneNumber);
                         worksheet.Cells[row, 5].Value = student.CreatedAt != null ? student.CreatedAt.Value.ToString("dd/MM/yyyy") : "";
+
+                        row++;
+                    }
+
+                    worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                    using (var stream = new MemoryStream())
+                    {
+                        package.SaveAs(stream);
+
+                        stream.Position = 0;
+
+                        return stream.ToArray();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<byte[]> ExportScoreStudents(int groupModuleId)
+        {
+            var students = await _dbContext.StudentGroupModules
+            .Include(sgm => sgm.Student)
+            .ThenInclude(s => s.User)
+            .Where(sgm => sgm.GroupModuleId == groupModuleId && sgm.Student.DeletedAt == null)
+            .Select(sgm => sgm.Student)
+            .ToListAsync();
+
+            var exams = _dbContext.ExamGroupModules
+            .Include(egm => egm.Exam)
+            .ThenInclude(er => er.ExamResults)
+            .Where(egm => egm.GroupModuleId == groupModuleId && egm.Exam.DeletedAt == null)
+            .Select(egm => egm.Exam)
+            .ToList();
+
+            try
+            {
+                using (var package = new ExcelPackage())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add(ExportFile.ListScoreStudentExcelTab);
+
+                    worksheet.Cells[1, 1].Value = "MSSV";
+                    worksheet.Cells[1, 2].Value = "Họ và tên";
+                    worksheet.Cells[1, 3].Value = "Email";
+                    worksheet.Cells[1, 4].Value = "Số điện thoại";
+                    worksheet.Cells[1, 5].Value = "Ngày tham gia";
+
+                    int examColumnIndex = 6;
+                    foreach (var exam in exams)
+                    {
+                        worksheet.Cells[1, examColumnIndex].Value = exam.Title;
+                        examColumnIndex++;
+                    }
+
+                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Font.Bold = true;
+                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189)); // Màu xanh dương
+                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Font.Color.SetColor(Color.White);
+
+                    int row = 2;
+                    foreach (var student in students)
+                    {
+                        worksheet.Cells[row, 1].Value = student.StudentId;
+                        worksheet.Cells[row, 2].Value = student.User.Name;
+                        worksheet.Cells[row, 3].Value = student.User.Email;
+                        worksheet.Cells[row, 4].Value = PhoneHelper.FormatPhoneNumber(student.User.PhoneNumber);
+                        worksheet.Cells[row, 5].Value = student.CreatedAt != null ? student.CreatedAt.Value.ToString("dd/MM/yyyy") : "";
+
+                        examColumnIndex = 6;
+                        foreach (var exam in exams)
+                        {
+                            var examScore = exam.ExamResults.FirstOrDefault(x => x.StudentId == student.Id) != null ? exam.ExamResults.FirstOrDefault(x => x.StudentId == student.Id).Score : 0;
+                            worksheet.Cells[row, examColumnIndex].Value = examScore;
+                            examColumnIndex++;
+                        }
 
                         row++;
                     }

@@ -126,5 +126,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 
             return File(excelBytes, Constants.File.ExcelMime, ExportFile.ListStudentExcel);
         }
+
+        [HttpGet("export-excel-score-students")]
+        public async Task<IActionResult> ExportExcelScoreStudent([FromQuery] DeleteRequest request)
+        {
+            var excelBytes = await _groupModuleService.ExportScoreStudents(request.Id);
+
+            return File(excelBytes, Constants.File.ExcelMime, ExportFile.ListScoreStudentExcel);
+        }
     }
 }
