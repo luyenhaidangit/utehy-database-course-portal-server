@@ -134,5 +134,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 
             return File(excelBytes, Constants.File.ExcelMime, ExportFile.ListScoreStudentExcel);
         }
+
+        [HttpPost("add-student")]
+        public async Task<ApiResult<StudentGroupModule>> AddStudentGroupModule([FromBody] AddStudentGroupModuleRequest request)
+        {
+            var result = await _groupModuleService.AddStudentGroupModule(request);
+
+            return new ApiResult<StudentGroupModule>()
+            {
+                Status = true,
+                Message = "Thêm sinh viên vào nhóm học phần thành công!",
+                Data = result
+            };
+        }
     }
 }

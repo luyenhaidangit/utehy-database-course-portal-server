@@ -444,5 +444,49 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
         }
+
+        public async Task<StudentGroupModule> AddStudentGroupModule(AddStudentGroupModuleRequest request)
+        {
+            try
+            {
+                //Validate
+                var student = await _dbContext.Students.FirstOrDefaultAsync(x => x.StudentId == request.StudentId);
+
+                if (student == null)
+                {
+                    throw new ApiException("Mã sinh viên không tồn tại trong hệ thống!", HttpStatusCode.InternalServerError);
+                }
+
+                var groupModule = await _dbContext.GroupModules.FindAsync(request.GroupModuleId);
+
+                if (groupModule == null)
+                {
+                    throw new ApiException("Mã nhóm học phần không tồn tại trong hệ thống!", HttpStatusCode.InternalServerError);
+                }
+
+                var studentGroupModule = await _dbContext.StudentGroupModules.FirstOrDefaultAsync(x => x.GroupModuleId == request.GroupModuleId && x.StudentId == student.Id);
+
+                if (studentGroupModule != null)
+                {
+                    throw new ApiException("Sinh viên đã tham gia lớp học!", HttpStatusCode.InternalServerError);
+                }
+
+                //Add student
+                var studentGroupModuleCreate = new StudentGroupModule()
+                {
+                    StudentId = student.Id,
+                    GroupModuleId = request.GroupModuleId
+                };
+
+                await _dbContext.StudentGroupModules.AddAsync(studentGroupModuleCreate);
+                await _dbContext.SaveChangesAsync();
+
+                return studentGroupModuleCreate;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }
