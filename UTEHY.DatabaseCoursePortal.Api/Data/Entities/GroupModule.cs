@@ -24,6 +24,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public virtual List<StudentGroupModule> StudentGroupModules { get; set; }
 
+        public virtual List<ExamGroupModule> ExamGroupModules { get; set; }
+
         public virtual Teacher Teacher { get; set; }
     }
 }

@@ -49,6 +49,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<ExamQuestion> ExamQuestions { get; set; } = null!;
         public virtual DbSet<GroupModule> GroupModules { get; set; } = null!;
         public virtual DbSet<StudentGroupModule> StudentGroupModules { get; set; } = null!;
+        public virtual DbSet<ExamGroupModule> ExamGroupModules { get; set; } = null!;
+        public virtual DbSet<ExamResult> ExamResults { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -83,6 +85,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new ExamQuestionConfiguration());
             builder.ApplyConfiguration(new GroupModuleConfiguration());
             builder.ApplyConfiguration(new StudentGroupModuleConfiguration());
+            builder.ApplyConfiguration(new ExamGroupModuleConfiguration());
+            builder.ApplyConfiguration(new ExamResultConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");

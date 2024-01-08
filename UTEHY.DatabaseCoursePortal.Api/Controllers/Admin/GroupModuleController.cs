@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
@@ -30,6 +32,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
+        [HttpGet("get-students")]
+        public async Task<ApiResult<PagingResult<Data.Entities.Student>>> GetStudentGroupModule([FromQuery] GetStudentsGroupModuleRequest request)
+        {
+            var result = await _groupModuleService.GetStudentsGroupModule(request);
+
+            return new ApiResult<PagingResult<Data.Entities.Student>>()
+            {
+                Status = true,
+                Message = "Lấy thông tin danh sách sinh viên nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
         [HttpPost("create")]
         public async Task<ApiResult<GroupModule>> Create([FromBody] CreateGroupModuleRequest request)
         {
@@ -57,14 +72,78 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("delete")]
-        public async Task<ApiResult<GroupModule>> Delete([FromBody] int id)
+        public async Task<ApiResult<GroupModule>> Delete([FromBody] DeleteRequest request)
         {
-            var result = await _groupModuleService.Delete(id);
+            var result = await _groupModuleService.Delete(request.Id);
 
             return new ApiResult<GroupModule>()
             {
                 Status = true,
                 Message = "Xoá nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("hide")]
+        public async Task<ApiResult<GroupModule>> Hide([FromBody] DeleteRequest request)
+        {
+            var result = await _groupModuleService.Hide(request.Id);
+
+            return new ApiResult<GroupModule>()
+            {
+                Status = true,
+                Message = "Ẩn nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-by-id")]
+        public async Task<ApiResult<GroupModule>> GetById([FromQuery] DeleteRequest request)
+        {
+            var result = await _groupModuleService.GetById(request.Id);
+
+            return new ApiResult<GroupModule>()
+            {
+                Status = true,
+                Message = "Lấy thông tin nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("export-excel-students")]
+        public async Task<IActionResult> Export([FromQuery] DeleteRequest request)
+        {
+            var getStudentRequest = new GetStudentsGroupModuleRequest()
+            {
+                GroupModuleId = request.Id,
+            };
+
+            var studentPaging = await _groupModuleService.GetStudentsGroupModule(getStudentRequest);
+
+            var students = studentPaging.Items;
+
+            var excelBytes = _groupModuleService.ExportStudents(students);
+
+            return File(excelBytes, Constants.File.ExcelMime, ExportFile.ListStudentExcel);
+        }
+
+        [HttpGet("export-excel-score-students")]
+        public async Task<IActionResult> ExportExcelScoreStudent([FromQuery] DeleteRequest request)
+        {
+            var excelBytes = await _groupModuleService.ExportScoreStudents(request.Id);
+
+            return File(excelBytes, Constants.File.ExcelMime, ExportFile.ListScoreStudentExcel);
+        }
+
+        [HttpPost("add-student")]
+        public async Task<ApiResult<StudentGroupModule>> AddStudentGroupModule([FromBody] AddStudentGroupModuleRequest request)
+        {
+            var result = await _groupModuleService.AddStudentGroupModule(request);
+
+            return new ApiResult<StudentGroupModule>()
+            {
+                Status = true,
+                Message = "Thêm sinh viên vào nhóm học phần thành công!",
                 Data = result
             };
         }
