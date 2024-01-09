@@ -34,7 +34,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _examService = examService;
         }
 
-        public async Task<PagingResult<GroupModule>> Get(GetGroupModuleRequest request)
+        public async Task<PagingResult<Data.Entities.GroupModule>> Get(GetGroupModuleRequest request)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 .Take(request.PageSize.Value)
                 .ToListAsync();
 
-                var result = new PagingResult<GroupModule>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
+                var result = new PagingResult<Data.Entities.GroupModule>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
 
                 return result;
             }
@@ -193,7 +193,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> GetById(int id)
+        public async Task<Data.Entities.GroupModule> GetById(int id)
         {
             try
             {
@@ -212,14 +212,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Create(CreateGroupModuleRequest request)
+        public async Task<Data.Entities.GroupModule> Create(CreateGroupModuleRequest request)
         {
             try
             {
                 //Validate lớp trùng năm, kỳ
                 //...
 
-                var groupModule = _mapper.Map<GroupModule>(request);
+                var groupModule = _mapper.Map<Data.Entities.GroupModule>(request);
 
                 var userCurrent = await _userService.GetCurrentUserAsync();
                 groupModule.CreatedAt = DateTime.Now;
@@ -236,7 +236,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Edit(EditGroupModuleRequest request)
+        public async Task<Data.Entities.GroupModule> Edit(EditGroupModuleRequest request)
         {
             try
             {
@@ -265,7 +265,51 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Delete(int id)
+        public async Task<Data.Entities.GroupModule> GenerateInvitationCode(GenerateInvitationCodeRequest request)
+        {
+            try
+            {
+                var groupModule = await _dbContext.GroupModules.FindAsync(request.Id);
+
+                if (groupModule == null)
+                {
+                    throw new ApiException("Không tìm thấy nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                var currentTime = DateTime.Now;
+
+                if(request.Type == Constants.GroupModule.GetCode)
+                {
+                    if (groupModule.ExpiryTimeInvitation <= currentTime || groupModule.ExpiryTimeInvitation == null)
+                    {
+                        groupModule.InvitationCode = StringHelper.GenerateRandomCode(8);
+                        groupModule.ExpiryTimeInvitation = currentTime.AddMinutes(15);
+
+                        var userCurrent = await _userService.GetCurrentUserAsync();
+                        groupModule.UpdatedAt = DateTime.Now;
+                        groupModule.CreatedBy = userCurrent?.Id;
+                    }
+                }
+                else
+                {
+                    groupModule.InvitationCode = StringHelper.GenerateRandomCode(8);
+                    groupModule.ExpiryTimeInvitation = currentTime.AddMinutes(15);
+                    var userCurrent = await _userService.GetCurrentUserAsync();
+                    groupModule.UpdatedAt = DateTime.Now;
+                    groupModule.CreatedBy = userCurrent?.Id;
+                }
+
+                await _dbContext.SaveChangesAsync();
+
+                return groupModule;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<Data.Entities.GroupModule> Delete(int id)
         {
             try
             {
@@ -290,7 +334,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Hide(int id)
+        public async Task<Data.Entities.GroupModule> Hide(int id)
         {
             try
             {
