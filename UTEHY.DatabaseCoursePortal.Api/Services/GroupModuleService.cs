@@ -16,6 +16,8 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using System.Drawing;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
+using UTEHY.DatabaseCoursePortal.Api.Enums;
+using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -24,17 +26,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserService _userService;
         private readonly ExamService _examService;
+        private readonly UserManager<User> _userManager;
+        private readonly ConfigService _configService;
         private readonly IMapper _mapper;
 
-        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, ExamService examService)
+        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, ExamService examService, UserManager<User> userManager, ConfigService configService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userService = userService;
             _examService = examService;
+            _userManager = userManager;
+            _configService = configService;
         }
 
-        public async Task<PagingResult<GroupModule>> Get(GetGroupModuleRequest request)
+        public async Task<PagingResult<Data.Entities.GroupModule>> Get(GetGroupModuleRequest request)
         {
             try
             {
@@ -111,7 +117,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 .Take(request.PageSize.Value)
                 .ToListAsync();
 
-                var result = new PagingResult<GroupModule>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
+                var result = new PagingResult<Data.Entities.GroupModule>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
 
                 return result;
             }
@@ -193,7 +199,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> GetById(int id)
+        public async Task<Data.Entities.GroupModule> GetById(int id)
         {
             try
             {
@@ -212,14 +218,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Create(CreateGroupModuleRequest request)
+        public async Task<Data.Entities.GroupModule> Create(CreateGroupModuleRequest request)
         {
             try
             {
                 //Validate lớp trùng năm, kỳ
                 //...
 
-                var groupModule = _mapper.Map<GroupModule>(request);
+                var groupModule = _mapper.Map<Data.Entities.GroupModule>(request);
 
                 var userCurrent = await _userService.GetCurrentUserAsync();
                 groupModule.CreatedAt = DateTime.Now;
@@ -236,7 +242,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Edit(EditGroupModuleRequest request)
+        public async Task<Data.Entities.GroupModule> Edit(EditGroupModuleRequest request)
         {
             try
             {
@@ -265,7 +271,51 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Delete(int id)
+        public async Task<Data.Entities.GroupModule> GenerateInvitationCode(GenerateInvitationCodeRequest request)
+        {
+            try
+            {
+                var groupModule = await _dbContext.GroupModules.FindAsync(request.Id);
+
+                if (groupModule == null)
+                {
+                    throw new ApiException("Không tìm thấy nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                var currentTime = DateTime.Now;
+
+                if(request.Type == Constants.GroupModule.GetCode)
+                {
+                    if (groupModule.ExpiryTimeInvitation <= currentTime || groupModule.ExpiryTimeInvitation == null)
+                    {
+                        groupModule.InvitationCode = StringHelper.GenerateRandomCode(8);
+                        groupModule.ExpiryTimeInvitation = currentTime.AddMinutes(15);
+
+                        var userCurrent = await _userService.GetCurrentUserAsync();
+                        groupModule.UpdatedAt = DateTime.Now;
+                        groupModule.CreatedBy = userCurrent?.Id;
+                    }
+                }
+                else
+                {
+                    groupModule.InvitationCode = StringHelper.GenerateRandomCode(8);
+                    groupModule.ExpiryTimeInvitation = currentTime.AddMinutes(15);
+                    var userCurrent = await _userService.GetCurrentUserAsync();
+                    groupModule.UpdatedAt = DateTime.Now;
+                    groupModule.CreatedBy = userCurrent?.Id;
+                }
+
+                await _dbContext.SaveChangesAsync();
+
+                return groupModule;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<Data.Entities.GroupModule> Delete(int id)
         {
             try
             {
@@ -290,7 +340,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<GroupModule> Hide(int id)
+        public async Task<Data.Entities.GroupModule> Hide(int id)
         {
             try
             {
@@ -482,6 +532,95 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 await _dbContext.SaveChangesAsync();
 
                 return studentGroupModuleCreate;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task ImportStudentsExcel(ImportStudentsGroupModuleRequest request)
+        {
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await request.File.CopyToAsync(stream);
+
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var studentId = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                            var name = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                            var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                            var numberPhone = worksheet.Cells[row, 4].Value?.ToString().Trim();
+
+                            if (string.IsNullOrEmpty(studentId))
+                            {
+                                throw new ApiException("Dữ liệu trường mã sinh viên không được để trống!", HttpStatusCode.BadRequest);
+                            }
+
+                            if (string.IsNullOrEmpty(email))
+                            {
+                                throw new ApiException("Dữ liệu trường email không được để trống!", HttpStatusCode.BadRequest);
+                            }
+
+                            if (string.IsNullOrEmpty(numberPhone))
+                            {
+                                throw new ApiException("Dữ liệu trường số diẹn thoại không được để trống!", HttpStatusCode.BadRequest);
+                            }
+
+                            var existingUser = _dbContext.Users.FirstOrDefault(user =>
+                            (user.PhoneNumber == numberPhone && user.PhoneNumberConfirmed && !string.IsNullOrEmpty(numberPhone)) ||
+                            (user.Email == email && user.EmailConfirmed && !string.IsNullOrEmpty(email)));
+
+                            if (existingUser != null)
+                            {
+                                string duplicateField = existingUser.PhoneNumber == numberPhone ? "Số điện thoại" : "Email";
+                                throw new ApiException($"{duplicateField} đã tồn tại trong hệ thống!", HttpStatusCode.BadRequest);
+                            }
+
+                            var user = new User()
+                            {
+                                Name = name,
+                                Status = true,
+                                UserName = studentId,
+                                NormalizedUserName = studentId.ToUpper(),
+                                Email = email,
+                                NormalizedEmail = email.ToUpper(),
+                                EmailConfirmed = false,
+                                PhoneNumber = string.IsNullOrEmpty(numberPhone) ? null : numberPhone,
+                                PhoneNumberConfirmed = false
+                            };
+
+                            var result = await _userManager.CreateAsync(user, request.PasswordStudent);
+
+                            if (!result.Succeeded)
+                            {
+                                throw new ApiException($"Không thể tạo người dùng. Lỗi: {string.Join(", ", result.Errors)}", HttpStatusCode.BadRequest);
+                            }
+
+                            await _userManager.AddToRoleAsync(user, Constants.Role.Student);
+
+                            var student = new Student()
+                            {
+                                StudentId = studentId,
+                                UserId = user.Id
+                            };
+
+                            await _dbContext.Students.AddAsync(student);
+                            await _dbContext.SaveChangesAsync();
+
+                            var userCreationCountConfig = await _configService.GetConfigValue(ConfigConstant.UserCreationCount);
+                            var userCreationCount = int.Parse(userCreationCountConfig);
+                            await _configService.UpdateConfigValue(ConfigConstant.UserCreationCount, (userCreationCount + 1).ToString());
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

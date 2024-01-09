@@ -20,11 +20,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpGet("get")]
-        public async Task<ApiResult<PagingResult<GroupModule>>> Get([FromQuery] GetGroupModuleRequest request)
+        public async Task<ApiResult<PagingResult<Data.Entities.GroupModule>>> Get([FromQuery] GetGroupModuleRequest request)
         {
             var result = await _groupModuleService.Get(request);
 
-            return new ApiResult<PagingResult<GroupModule>>()
+            return new ApiResult<PagingResult<Data.Entities.GroupModule>>()
             {
                 Status = true,
                 Message = "Lấy thông tin danh sách nhóm học phần thành công!",
@@ -46,11 +46,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<GroupModule>> Create([FromBody] CreateGroupModuleRequest request)
+        public async Task<ApiResult<Data.Entities.GroupModule>> Create([FromBody] CreateGroupModuleRequest request)
         {
             var result = await _groupModuleService.Create(request);
 
-            return new ApiResult<GroupModule>()
+            return new ApiResult<Data.Entities.GroupModule>()
             {
                 Status = true,
                 Message = "Tạo mới nhóm học phần thành công!",
@@ -59,11 +59,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("edit")]
-        public async Task<ApiResult<GroupModule>> Edit([FromBody] EditGroupModuleRequest request)
+        public async Task<ApiResult<Data.Entities.GroupModule>> Edit([FromBody] EditGroupModuleRequest request)
         {
             var result = await _groupModuleService.Edit(request);
 
-            return new ApiResult<GroupModule>()
+            return new ApiResult<Data.Entities.GroupModule>()
             {
                 Status = true,
                 Message = "Cập nhật nhóm học phần thành công!",
@@ -72,11 +72,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("delete")]
-        public async Task<ApiResult<GroupModule>> Delete([FromBody] DeleteRequest request)
+        public async Task<ApiResult<Data.Entities.GroupModule>> Delete([FromBody] DeleteRequest request)
         {
             var result = await _groupModuleService.Delete(request.Id);
 
-            return new ApiResult<GroupModule>()
+            return new ApiResult<Data.Entities.GroupModule>()
             {
                 Status = true,
                 Message = "Xoá nhóm học phần thành công!",
@@ -85,11 +85,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("hide")]
-        public async Task<ApiResult<GroupModule>> Hide([FromBody] DeleteRequest request)
+        public async Task<ApiResult<Data.Entities.GroupModule>> Hide([FromBody] DeleteRequest request)
         {
             var result = await _groupModuleService.Hide(request.Id);
 
-            return new ApiResult<GroupModule>()
+            return new ApiResult<Data.Entities.GroupModule>()
             {
                 Status = true,
                 Message = "Ẩn nhóm học phần thành công!",
@@ -98,11 +98,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpGet("get-by-id")]
-        public async Task<ApiResult<GroupModule>> GetById([FromQuery] DeleteRequest request)
+        public async Task<ApiResult<Data.Entities.GroupModule>> GetById([FromQuery] DeleteRequest request)
         {
             var result = await _groupModuleService.GetById(request.Id);
 
-            return new ApiResult<GroupModule>()
+            return new ApiResult<Data.Entities.GroupModule>()
             {
                 Status = true,
                 Message = "Lấy thông tin nhóm học phần thành công!",
@@ -145,6 +145,32 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Status = true,
                 Message = "Thêm sinh viên vào nhóm học phần thành công!",
                 Data = result
+            };
+        }
+
+        [HttpPost("generate-invitation-code")]
+        public async Task<ApiResult<Data.Entities.GroupModule>> GenerateInvitationCode([FromBody] GenerateInvitationCodeRequest request)
+        {
+            var result = await _groupModuleService.GenerateInvitationCode(request);
+
+            return new ApiResult<Data.Entities.GroupModule>()
+            {
+                Status = true,
+                Message = "Lấy thông tin mã mời thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("import-students-excel")]
+        public async Task<ApiResult<bool>> ImportStudentsExcel([FromForm] ImportStudentsGroupModuleRequest request)
+        {
+            await _groupModuleService.ImportStudentsExcel(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Import file thành công!",
+                Data = true
             };
         }
     }
