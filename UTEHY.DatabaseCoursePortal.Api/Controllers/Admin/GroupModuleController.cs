@@ -160,5 +160,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("import-students-excel")]
+        public async Task<ApiResult<bool>> ImportStudentsExcel([FromForm] ImportStudentsGroupModuleRequest request)
+        {
+            await _groupModuleService.ImportStudentsExcel(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Import file thành công!",
+                Data = true
+            };
+        }
     }
 }

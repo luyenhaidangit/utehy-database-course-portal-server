@@ -16,6 +16,8 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using System.Drawing;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
+using UTEHY.DatabaseCoursePortal.Api.Enums;
+using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -24,14 +26,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserService _userService;
         private readonly ExamService _examService;
+        private readonly UserManager<User> _userManager;
+        private readonly ConfigService _configService;
         private readonly IMapper _mapper;
 
-        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, ExamService examService)
+        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, ExamService examService, UserManager<User> userManager, ConfigService configService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userService = userService;
             _examService = examService;
+            _userManager = userManager;
+            _configService = configService;
         }
 
         public async Task<PagingResult<Data.Entities.GroupModule>> Get(GetGroupModuleRequest request)
@@ -526,6 +532,95 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 await _dbContext.SaveChangesAsync();
 
                 return studentGroupModuleCreate;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task ImportStudentsExcel(ImportStudentsGroupModuleRequest request)
+        {
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await request.File.CopyToAsync(stream);
+
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var studentId = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                            var name = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                            var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                            var numberPhone = worksheet.Cells[row, 4].Value?.ToString().Trim();
+
+                            if (string.IsNullOrEmpty(studentId))
+                            {
+                                throw new ApiException("Dữ liệu trường mã sinh viên không được để trống!", HttpStatusCode.BadRequest);
+                            }
+
+                            if (string.IsNullOrEmpty(email))
+                            {
+                                throw new ApiException("Dữ liệu trường email không được để trống!", HttpStatusCode.BadRequest);
+                            }
+
+                            if (string.IsNullOrEmpty(numberPhone))
+                            {
+                                throw new ApiException("Dữ liệu trường số diẹn thoại không được để trống!", HttpStatusCode.BadRequest);
+                            }
+
+                            var existingUser = _dbContext.Users.FirstOrDefault(user =>
+                            (user.PhoneNumber == numberPhone && user.PhoneNumberConfirmed && !string.IsNullOrEmpty(numberPhone)) ||
+                            (user.Email == email && user.EmailConfirmed && !string.IsNullOrEmpty(email)));
+
+                            if (existingUser != null)
+                            {
+                                string duplicateField = existingUser.PhoneNumber == numberPhone ? "Số điện thoại" : "Email";
+                                throw new ApiException($"{duplicateField} đã tồn tại trong hệ thống!", HttpStatusCode.BadRequest);
+                            }
+
+                            var user = new User()
+                            {
+                                Name = name,
+                                Status = true,
+                                UserName = studentId,
+                                NormalizedUserName = studentId.ToUpper(),
+                                Email = email,
+                                NormalizedEmail = email.ToUpper(),
+                                EmailConfirmed = false,
+                                PhoneNumber = string.IsNullOrEmpty(numberPhone) ? null : numberPhone,
+                                PhoneNumberConfirmed = false
+                            };
+
+                            var result = await _userManager.CreateAsync(user, request.PasswordStudent);
+
+                            if (!result.Succeeded)
+                            {
+                                throw new ApiException($"Không thể tạo người dùng. Lỗi: {string.Join(", ", result.Errors)}", HttpStatusCode.BadRequest);
+                            }
+
+                            await _userManager.AddToRoleAsync(user, Constants.Role.Student);
+
+                            var student = new Student()
+                            {
+                                StudentId = studentId,
+                                UserId = user.Id
+                            };
+
+                            await _dbContext.Students.AddAsync(student);
+                            await _dbContext.SaveChangesAsync();
+
+                            var userCreationCountConfig = await _configService.GetConfigValue(ConfigConstant.UserCreationCount);
+                            var userCreationCount = int.Parse(userCreationCountConfig);
+                            await _configService.UpdateConfigValue(ConfigConstant.UserCreationCount, (userCreationCount + 1).ToString());
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
