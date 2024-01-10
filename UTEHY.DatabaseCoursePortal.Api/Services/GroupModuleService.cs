@@ -739,5 +739,42 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
             }
         }
+
+        public async Task<List<Exam>> GetExamsByGroupModule(int groupModuleId)
+        {
+            try
+            {
+                var exams = await _dbContext.ExamGroupModules
+                .Include(egm => egm.Exam)
+                .ThenInclude(er => er.ExamResults)
+                .Where(egm => egm.GroupModuleId == groupModuleId && egm.Exam.DeletedAt == null)
+                .Select(egm => egm.Exam)
+                .ToListAsync();
+
+                return exams;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<List<Notification>> GetNotificationsByGroupModule(int groupModuleId)
+        {
+            try
+            {
+                var notifications = await _dbContext.NotificationGroupModules
+                .Include(egm => egm.Notification)
+                .Where(egm => egm.GroupModuleId == groupModuleId && egm.Notification.DeletedAt == null)
+                .Select(egm => egm.Notification)
+                .ToListAsync();
+
+                return notifications;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }
