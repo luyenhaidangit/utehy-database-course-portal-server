@@ -173,5 +173,31 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = true
             };
         }
+
+        [HttpPost("remove-student")]
+        public async Task<ApiResult<bool>> RemoveStudentGroupModule([FromBody] RemoveStudentRequest request)
+        {
+            await _groupModuleService.RemoveStudentGroupModule(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Xoá sinh viên khỏi nhóm thành công!",
+                Data = true
+            };
+        }
+
+        [HttpPost("remove-students")]
+        public async Task<ApiResult<bool>> RemoveMultipleStudentsFromGroupModule([FromBody] RemoveMultipleStudentsRequest request)
+        {
+            await _groupModuleService.RemoveMultipleStudentsFromGroupModule(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Xoá sinh viên khỏi nhóm thành công!",
+                Data = true
+            };
+        }
     }
 }

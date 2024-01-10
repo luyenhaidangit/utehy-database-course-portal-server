@@ -687,5 +687,57 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
+        public async Task<bool> RemoveStudentGroupModule(RemoveStudentRequest request)
+        {
+            try
+            {
+                var groupModuleStudent = await _dbContext.StudentGroupModules.FirstOrDefaultAsync(x => x.StudentId == request.StudentId && x.GroupModuleId == request.GroupModuleId);
+
+                if (groupModuleStudent == null)
+                {
+                    throw new ApiException("Không tìm thấy nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                _dbContext.StudentGroupModules.Remove(groupModuleStudent);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<bool> RemoveMultipleStudentsFromGroupModule(RemoveMultipleStudentsRequest request)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var studentsToRemove = await _dbContext.StudentGroupModules
+                        .Where(x => x.GroupModuleId == request.GroupModuleId && request.StudentIds.Contains(x.StudentId))
+                        .ToListAsync();
+
+                    if (studentsToRemove == null || !studentsToRemove.Any())
+                    {
+                        throw new ApiException("Không tìm thấy sinh viên trong nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                    }
+
+                    _dbContext.StudentGroupModules.RemoveRange(studentsToRemove);
+                    await _dbContext.SaveChangesAsync();
+
+                    await transaction.CommitAsync(); 
+
+                    return true; 
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync(); 
+                                                      
+                    throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+                }
+            }
+        }
     }
 }
