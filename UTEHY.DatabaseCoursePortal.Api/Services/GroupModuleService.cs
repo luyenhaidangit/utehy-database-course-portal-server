@@ -375,16 +375,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 {
                     var worksheet = package.Workbook.Worksheets.Add(ExportFile.ListStudentExcelTab);
 
-                    worksheet.Cells[1, 1, 1, 5].Style.Font.Bold = true;
-                    worksheet.Cells[1, 1, 1, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[1, 1, 1, 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189)); // Màu xanh dương
-                    worksheet.Cells[1, 1, 1, 5].Style.Font.Color.SetColor(Color.White);
+                    worksheet.Cells[1, 1, 1, 7].Style.Font.Bold = true;
+                    worksheet.Cells[1, 1, 1, 7].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, 1, 1, 7].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189)); // Màu xanh dương
+                    worksheet.Cells[1, 1, 1, 7].Style.Font.Color.SetColor(Color.White);
 
                     worksheet.Cells[1, 1].Value = "MSSV";
                     worksheet.Cells[1, 2].Value = "Họ và tên";
                     worksheet.Cells[1, 3].Value = "Email";
                     worksheet.Cells[1, 4].Value = "Số điện thoại";
-                    worksheet.Cells[1, 5].Value = "Ngày tham gia";
+                    worksheet.Cells[1, 5].Value = "Giới tính";
+                    worksheet.Cells[1, 6].Value = "Ngày sinh";
+                    worksheet.Cells[1, 7].Value = "Địa chỉ";
 
 
                     int row = 2;
@@ -394,7 +396,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         worksheet.Cells[row, 2].Value = student.User.Name;
                         worksheet.Cells[row, 3].Value = student.User.Email;
                         worksheet.Cells[row, 4].Value = PhoneHelper.FormatPhoneNumber(student.User.PhoneNumber);
-                        worksheet.Cells[row, 5].Value = student.CreatedAt != null ? student.CreatedAt.Value.ToString("dd/MM/yyyy") : "";
+                        worksheet.Cells[row, 5].Value = student.User.Sex != null ? (student.User.Sex == Constants.UserInfo.MaleKey ? Constants.UserInfo.MaleValue : Constants.UserInfo.FemaleValue) : "";
+                        worksheet.Cells[row, 6].Value = student.User.BirthDay != null ? student.User.BirthDay.Value.ToString("dd/MM/yyyy") : "";
+                        worksheet.Cells[row, 7].Value = student.User.Address != null ? student.User.Address : "";
 
                         row++;
                     }
@@ -441,32 +445,26 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                     worksheet.Cells[1, 1].Value = "MSSV";
                     worksheet.Cells[1, 2].Value = "Họ và tên";
-                    worksheet.Cells[1, 3].Value = "Email";
-                    worksheet.Cells[1, 4].Value = "Số điện thoại";
-                    worksheet.Cells[1, 5].Value = "Ngày tham gia";
 
-                    int examColumnIndex = 6;
+                    int examColumnIndex = 3;
                     foreach (var exam in exams)
                     {
                         worksheet.Cells[1, examColumnIndex].Value = exam.Title;
                         examColumnIndex++;
                     }
 
-                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Font.Bold = true;
-                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189)); // Màu xanh dương
-                    worksheet.Cells[1, 1, 1, exams.Count + 5].Style.Font.Color.SetColor(Color.White);
+                    worksheet.Cells[1, 1, 1, exams.Count + 2].Style.Font.Bold = true;
+                    worksheet.Cells[1, 1, 1, exams.Count + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, 1, 1, exams.Count + 2].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189)); // Màu xanh dương
+                    worksheet.Cells[1, 1, 1, exams.Count + 2].Style.Font.Color.SetColor(Color.White);
 
                     int row = 2;
                     foreach (var student in students)
                     {
                         worksheet.Cells[row, 1].Value = student.StudentId;
                         worksheet.Cells[row, 2].Value = student.User.Name;
-                        worksheet.Cells[row, 3].Value = student.User.Email;
-                        worksheet.Cells[row, 4].Value = PhoneHelper.FormatPhoneNumber(student.User.PhoneNumber);
-                        worksheet.Cells[row, 5].Value = student.CreatedAt != null ? student.CreatedAt.Value.ToString("dd/MM/yyyy") : "";
 
-                        examColumnIndex = 6;
+                        examColumnIndex = 3;
                         foreach (var exam in exams)
                         {
                             var examScore = exam.ExamResults.FirstOrDefault(x => x.StudentId == student.Id) != null ? exam.ExamResults.FirstOrDefault(x => x.StudentId == student.Id).Score : 0;
@@ -525,7 +523,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 var studentGroupModuleCreate = new StudentGroupModule()
                 {
                     StudentId = student.Id,
-                    GroupModuleId = request.GroupModuleId
+                    GroupModuleId = request.GroupModuleId,
+                    JoinDate = DateTime.Now
                 };
 
                 await _dbContext.StudentGroupModules.AddAsync(studentGroupModuleCreate);
