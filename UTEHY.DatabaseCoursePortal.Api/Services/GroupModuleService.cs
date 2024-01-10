@@ -18,6 +18,7 @@ using DocumentFormat.OpenXml.Office2016.Excel;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
 using UTEHY.DatabaseCoursePortal.Api.Enums;
 using UTEHY.DatabaseCoursePortal.Api.Models.User;
+using System.Globalization;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -540,91 +541,151 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task ImportStudentsExcel(ImportStudentsGroupModuleRequest request)
         {
-            try
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-                using (var stream = new MemoryStream())
+                try
                 {
-                    await request.File.CopyToAsync(stream);
-
-                    using (var package = new ExcelPackage(stream))
+                    using (var stream = new MemoryStream())
                     {
-                        var worksheet = package.Workbook.Worksheets[0];
-                        var rowCount = worksheet.Dimension.Rows;
+                        await request.File.CopyToAsync(stream);
 
-                        for (int row = 2; row <= rowCount; row++)
+                        using (var package = new ExcelPackage(stream))
                         {
-                            var studentId = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                            var name = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                            var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
-                            var numberPhone = worksheet.Cells[row, 4].Value?.ToString().Trim();
+                            var worksheet = package.Workbook.Worksheets[0];
+                            var rowCount = worksheet.Dimension.Rows;
 
-                            if (string.IsNullOrEmpty(studentId))
+                            for (int row = 2; row <= rowCount; row++)
                             {
-                                throw new ApiException("Dữ liệu trường mã sinh viên không được để trống!", HttpStatusCode.BadRequest);
+                                var studentId = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                                var name = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                                var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                                var numberPhone = worksheet.Cells[row, 4].Value?.ToString().Trim();
+                                var sexStr = worksheet.Cells[row, 4].Value?.ToString().Trim();
+                                int? sex = null;
+                                if (!string.IsNullOrWhiteSpace(sexStr))
+                                {
+                                    sex = sexStr == Constants.UserInfo.MaleValue ? Constants.UserInfo.MaleKey : Constants.UserInfo.FemaleKey;
+                                }
+                                var birthdayStr = worksheet.Cells[row, 5].Value?.ToString().Trim();
+                                DateTime? birthday = null;
+                                if (!string.IsNullOrWhiteSpace(birthdayStr))
+                                {
+                                    birthday = DateTime.TryParseExact(birthdayStr, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
+                                               ? parsedDate
+                                               : (DateTime?)null;
+                                };
+                                var address = worksheet.Cells[row, 6].Value?.ToString().Trim();
+
+                                if (string.IsNullOrEmpty(studentId))
+                                {
+                                    throw new ApiException("Dữ liệu trường mã sinh viên dòng" + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                }
+
+                                if (string.IsNullOrEmpty(email))
+                                {
+                                    throw new ApiException("Dữ liệu trường email dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                }
+
+                                if (string.IsNullOrEmpty(numberPhone))
+                                {
+                                    throw new ApiException("Dữ liệu trường số điện thoại " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                }
+
+                                var student = await _dbContext.Students.FirstOrDefaultAsync(x => x.StudentId == studentId);
+
+                                if (student != null)
+                                {
+                                    var studentGroupModule = await _dbContext.StudentGroupModules.FirstOrDefaultAsync(x => x.GroupModuleId == request.GroupModuleId && x.StudentId == student.Id);
+
+                                    if (studentGroupModule != null)
+                                    {
+                                        throw new ApiException("Sinh viên có mã " + student.StudentId + " đã tham gia lớp học!", HttpStatusCode.InternalServerError);
+                                    }
+                                    else
+                                    {
+                                        studentGroupModule = new StudentGroupModule()
+                                        {
+                                            StudentId = student.Id,
+                                            GroupModuleId = request.GroupModuleId,
+                                            JoinDate = DateTime.Now
+                                        };
+                                    }
+
+                                    await _dbContext.StudentGroupModules.AddAsync(studentGroupModule);
+                                }
+                                else
+                                {
+                                    var existingUser = _dbContext.Users.FirstOrDefault(user =>
+                                    (user.PhoneNumber == numberPhone && user.PhoneNumberConfirmed && !string.IsNullOrEmpty(numberPhone)) ||
+                                    (user.Email == email && user.EmailConfirmed && !string.IsNullOrEmpty(email)));
+
+                                    if (existingUser != null)
+                                    {
+                                        string duplicateField = existingUser.PhoneNumber == numberPhone ? "Số điện thoại" : "Email";
+                                        throw new ApiException($"{duplicateField} tại dòng {row} đã tồn tại trong hệ thống!", HttpStatusCode.BadRequest);
+                                    }
+
+                                    var user = new User()
+                                    {
+                                        Name = name,
+                                        Status = true,
+                                        UserName = studentId,
+                                        NormalizedUserName = studentId.ToUpper(),
+                                        Email = email,
+                                        NormalizedEmail = email.ToUpper(),
+                                        EmailConfirmed = false,
+                                        PhoneNumber = string.IsNullOrEmpty(numberPhone) ? null : numberPhone,
+                                        PhoneNumberConfirmed = false,
+                                        BirthDay = birthday,
+                                        Sex = sex,
+                                        Address = address,
+                                        AvatarUrl = ResourceConstant.DefaultAvatarUrl,
+                                    };
+
+                                    var result = await _userManager.CreateAsync(user, request.PasswordStudent);
+
+                                    if (!result.Succeeded)
+                                    {
+                                        throw new ApiException($"Không thể tạo người dùng dòng {row}. Lỗi: {string.Join(", ", result.Errors)}", HttpStatusCode.BadRequest);
+                                    }
+
+                                    await _userManager.AddToRoleAsync(user, Constants.Role.Student);
+
+                                    student = new Student()
+                                    {
+                                        StudentId = studentId,
+                                        UserId = user.Id
+                                    };
+
+                                    await _dbContext.Students.AddAsync(student);
+
+                                    var studentGroupModule = new StudentGroupModule()
+                                    {
+                                        StudentId = student.Id,
+                                        GroupModuleId = request.GroupModuleId,
+                                        JoinDate = DateTime.Now
+                                    };
+
+                                    await _dbContext.StudentGroupModules.AddAsync(studentGroupModule);
+
+                                    var userCreationCountConfig = await _configService.GetConfigValue(ConfigConstant.UserCreationCount);
+                                    var userCreationCount = int.Parse(userCreationCountConfig);
+                                    await _configService.UpdateConfigValue(ConfigConstant.UserCreationCount, (userCreationCount + 1).ToString());
+                                }
                             }
-
-                            if (string.IsNullOrEmpty(email))
-                            {
-                                throw new ApiException("Dữ liệu trường email không được để trống!", HttpStatusCode.BadRequest);
-                            }
-
-                            if (string.IsNullOrEmpty(numberPhone))
-                            {
-                                throw new ApiException("Dữ liệu trường số diẹn thoại không được để trống!", HttpStatusCode.BadRequest);
-                            }
-
-                            var existingUser = _dbContext.Users.FirstOrDefault(user =>
-                            (user.PhoneNumber == numberPhone && user.PhoneNumberConfirmed && !string.IsNullOrEmpty(numberPhone)) ||
-                            (user.Email == email && user.EmailConfirmed && !string.IsNullOrEmpty(email)));
-
-                            if (existingUser != null)
-                            {
-                                string duplicateField = existingUser.PhoneNumber == numberPhone ? "Số điện thoại" : "Email";
-                                throw new ApiException($"{duplicateField} đã tồn tại trong hệ thống!", HttpStatusCode.BadRequest);
-                            }
-
-                            var user = new User()
-                            {
-                                Name = name,
-                                Status = true,
-                                UserName = studentId,
-                                NormalizedUserName = studentId.ToUpper(),
-                                Email = email,
-                                NormalizedEmail = email.ToUpper(),
-                                EmailConfirmed = false,
-                                PhoneNumber = string.IsNullOrEmpty(numberPhone) ? null : numberPhone,
-                                PhoneNumberConfirmed = false
-                            };
-
-                            var result = await _userManager.CreateAsync(user, request.PasswordStudent);
-
-                            if (!result.Succeeded)
-                            {
-                                throw new ApiException($"Không thể tạo người dùng. Lỗi: {string.Join(", ", result.Errors)}", HttpStatusCode.BadRequest);
-                            }
-
-                            await _userManager.AddToRoleAsync(user, Constants.Role.Student);
-
-                            var student = new Student()
-                            {
-                                StudentId = studentId,
-                                UserId = user.Id
-                            };
-
-                            await _dbContext.Students.AddAsync(student);
-                            await _dbContext.SaveChangesAsync();
-
-                            var userCreationCountConfig = await _configService.GetConfigValue(ConfigConstant.UserCreationCount);
-                            var userCreationCount = int.Parse(userCreationCountConfig);
-                            await _configService.UpdateConfigValue(ConfigConstant.UserCreationCount, (userCreationCount + 1).ToString());
                         }
                     }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
                 }
             }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
         }
+
     }
 }
