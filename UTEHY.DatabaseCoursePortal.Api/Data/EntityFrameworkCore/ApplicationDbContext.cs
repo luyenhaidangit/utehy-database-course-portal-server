@@ -53,6 +53,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<ExamResult> ExamResults { get; set; } = null!;
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<NotificationGroupModule> NotificationGroupModules { get; set; } = null!;
+        public virtual DbSet<Section> Sections { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -91,6 +92,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new ExamResultConfiguration());
             builder.ApplyConfiguration(new NotificationConfiguration());
             builder.ApplyConfiguration(new NotificationGroupModuleConfiguration());
+            builder.ApplyConfiguration(new SectionConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
