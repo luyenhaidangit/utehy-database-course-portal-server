@@ -43,6 +43,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var query = _dbContext.Questions
                 .Include(q => q.QuestionCategory)
                 .Include(q => q.QuestionAnswers)
+                .Include(q => q.Section)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Title))
@@ -56,6 +57,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 query = query.Where(b => b.QuestionCategoryId == request.QuestionCategoryId);
             }
 
+            if (request.SectionId != null)
+            {
+                query = query.Where(b => b.SectionId == request.SectionId);
+            }
 
             if (request.Type != null)
             {

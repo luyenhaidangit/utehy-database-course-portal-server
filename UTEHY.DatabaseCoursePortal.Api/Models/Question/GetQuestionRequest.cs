@@ -9,5 +9,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
         public int? QuestionCategoryId { get; set; }
 
         public int? Type { get; set; }
+
+        public int? SectionId { get; set; }
     }
 }

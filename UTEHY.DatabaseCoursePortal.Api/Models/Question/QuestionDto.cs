@@ -21,6 +21,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public string QuestionCategoryName { get; set; }
 
+        public Data.Entities.Section Section { get; set; }
+
         public List<QuestionAnswerDto> QuestionAnswers { get; set; }
         //public List<QuestionTag> QuestionAnswers { get; set; }
     }
