@@ -10,6 +10,8 @@
 
         public int? Status { get; set; }
 
+        public DateTime? JoinDate { get; set; }
+
         public virtual Student? Student { get; set; }
     }
 }

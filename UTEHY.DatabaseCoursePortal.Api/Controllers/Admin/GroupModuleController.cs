@@ -173,5 +173,57 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = true
             };
         }
+
+        [HttpPost("remove-student")]
+        public async Task<ApiResult<bool>> RemoveStudentGroupModule([FromBody] RemoveStudentRequest request)
+        {
+            await _groupModuleService.RemoveStudentGroupModule(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Xoá sinh viên khỏi nhóm thành công!",
+                Data = true
+            };
+        }
+
+        [HttpPost("remove-students")]
+        public async Task<ApiResult<bool>> RemoveMultipleStudentsFromGroupModule([FromBody] RemoveMultipleStudentsRequest request)
+        {
+            await _groupModuleService.RemoveMultipleStudentsFromGroupModule(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Xoá sinh viên khỏi nhóm thành công!",
+                Data = true
+            };
+        }
+
+        [HttpGet("get-exams")]
+        public async Task<ApiResult<List<Exam>>> GetExamsByGroupModule([FromQuery] EntityIdentityRequest<int> request)
+        {
+            var result = await _groupModuleService.GetExamsByGroupModule(request.Id);
+
+            return new ApiResult<List<Exam>>()
+            {
+                Status = true,
+                Message = "Lấy danh sách bài kiểm tra thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-notifications")]
+        public async Task<ApiResult<List<Notification>>> GetNotificationsByGroupModule([FromQuery] EntityIdentityRequest<int> request)
+        {
+            var result = await _groupModuleService.GetNotificationsByGroupModule(request.Id);
+
+            return new ApiResult<List<Notification>>()
+            {
+                Status = true,
+                Message = "Lấy danh sách thông báo thành công!",
+                Data = result
+            };
+        }
     }
 }

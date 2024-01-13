@@ -10,6 +10,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public bool? Status { get; set; }
 
+        public int? Sex { get; set; }
+
+        public string? Address { get; set; }
+
+        public DateTime? BirthDay { get; set; }
+
         public DateTime? DeletedAt { get; set; }
 
         #region Relationship
