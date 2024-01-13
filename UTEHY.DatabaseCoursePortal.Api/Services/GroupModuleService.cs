@@ -1,23 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
-using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
-using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using System.Drawing;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
-using UTEHY.DatabaseCoursePortal.Api.Enums;
-using UTEHY.DatabaseCoursePortal.Api.Models.User;
 using System.Globalization;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -26,17 +19,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserService _userService;
-        private readonly ExamService _examService;
         private readonly UserManager<User> _userManager;
         private readonly ConfigService _configService;
         private readonly IMapper _mapper;
 
-        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, ExamService examService, UserManager<User> userManager, ConfigService configService)
+        public GroupModuleService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, UserManager<User> userManager, ConfigService configService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userService = userService;
-            _examService = examService;
             _userManager = userManager;
             _configService = configService;
         }
