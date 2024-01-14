@@ -12,7 +12,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public int? ParentPermissionId { get; set;}
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public Permission? ParentPermission { get; set; }
 
