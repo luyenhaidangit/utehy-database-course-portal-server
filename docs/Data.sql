@@ -97,3 +97,11 @@ VALUES
 (4, 3, 88, '2024-02-10 09:30:00', '01:30:00', 21, 2),
 (5, 1, 75, '2024-02-15 13:45:00', '01:45:00', 18, 4);
 
+--Section
+INSERT INTO Sections ( Title, Description, Priority, Status) VALUES
+( N'Giới thiệu về Cơ sở dữ liệu', N'Khái quát về các khái niệm và hệ thống cơ sở dữ liệu', 1, 1),
+( N'Thiết kế Cơ sở dữ liệu', N'Nguyên lý thiết kế và mô hình hóa cơ sở dữ liệu', 2, 1),
+( N'Cơ bản về SQL', N'Những kiến thức cơ bản về ngôn ngữ SQL', 3, 1),
+( N'SQL Nâng cao', N'Các chủ đề nâng cao trong SQL', 4, 1);
+
+
