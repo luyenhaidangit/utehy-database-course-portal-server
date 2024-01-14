@@ -67,6 +67,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 query = query.Where(b => b.Type == request.Type);
             }
 
+            if (request.Difficulty != null)
+            {
+                query = query.Where(b => b.Difficulty == request.Difficulty);
+            }
+
             int total = await query.CountAsync();
 
             if (request.PageIndex == null) request.PageIndex = 1;
