@@ -17,5 +17,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
         public List<int>? TagIds { get; set; }
 
         public int Type { get; set; }
+
+        public int? SectionId { get; set; }
     }
 }
