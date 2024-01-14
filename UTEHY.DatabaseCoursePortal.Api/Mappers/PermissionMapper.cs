@@ -8,8 +8,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
     {
         public PermissionMapper()
         {
+
+           // CreateMap<Permission, PermissionDto>()
+           //.ForMember(dest => dest.Children, opt => opt.Ignore());
             CreateMap<Permission, PermissionDto>();
             CreateMap<PermissionDto, Permission>();
+
 
         }
     }

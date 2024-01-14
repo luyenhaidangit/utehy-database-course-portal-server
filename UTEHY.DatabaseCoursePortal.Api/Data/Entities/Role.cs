@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
@@ -17,6 +18,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public Guid? DeletedBy { get; set; }
 
         public DateTime? DeletedAt { get; set; }
+
+        [JsonIgnore]
         public List<RolePermission> RolePermissions { get; set; }
     }
 }
