@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
@@ -14,6 +16,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Mail;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -132,21 +135,58 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         public async Task<QuestionDto> GetById(int id)
         {
-
-
-            //return result;
             var question = await _dbContext.Questions
             .Include(x => x.QuestionAnswers)
             .Include(x => x.QuestionCategory)  
-            .Include(x => x.QuestionTags)  
+            .Include(x => x.Section)
+            .Include(x => x.QuestionTags)
+            .ThenInclude(x => x.Tag)
             .FirstOrDefaultAsync(x => x.Id == id);
 
             var result = _mapper.Map<QuestionDto>(question);
 
+            //var questionDto = new QuestionDto()
+            //{
+            //    Id = question.Id,
+            //    Title = question.Title,
+            //    Feedback = question.Feedback,
+            //    Score = question.Score,
+            //    QuestionCategoryId = question.QuestionCategoryId,
+            //    Difficulty = question.Difficulty,
+            //    Type = question.Type,
+            //    QuestionCategoryName = question.QuestionCategory.Name,
+            //    Section = question.Section,
+            //    QuestionAnswers = question.QuestionAnswers,
+
+            //};
+
+            //var tagIds = await _dbContext.QuestionTags.Where(x => x.QuestionId == question.Id).Select(x => x.TagId).ToListAsync();
+
+            //var tags = new List<Tag>() { };
+
+            //if(tagIds.Count > 0)
+            //{
+            //    foreach (var tag in tagIds)
+            //    {
+            //        var newTag = await _dbContext.Tags.FirstOrDefaultAsync(x => x.Id == tag);
+
+            //        tags.Add(newTag);
+            //    }
+            //}
+
+            //var options = new JsonSerializerOptions
+            //{
+            //    ReferenceHandler = ReferenceHandler.Preserve
+            //};
+
+            //var questionDto = JsonSerializer.Deserialize<QuestionDto>(
+            //    JsonSerializer.Serialize(question, options)
+            //);
+
             return result;
         }
 
-        public async Task<QuestionDto> Create(CreateQuestionRequest request)
+        public async Task<bool> Create(CreateQuestionRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -169,7 +209,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         }
 
                         _dbContext.QuestionAnswers.AddRange(questionAnswersEntities);
-                        _dbContext.SaveChanges();
                     }
 
                     if (request.TagIds != null && request.TagIds.Any())
@@ -179,14 +218,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                             .ToList();
 
                         _dbContext.QuestionTags.AddRange(questionTags);
-                        _dbContext.SaveChanges();
                     }
 
+                    _dbContext.SaveChanges();
                     transaction.Commit();
 
-                    var questionDto = _mapper.Map<QuestionDto>(question);
+                    //var questionDto = _mapper.Map<QuestionDto>(question);
 
-                    return questionDto;
+                    return true;
                 }
                 catch (Exception ex)
                 {

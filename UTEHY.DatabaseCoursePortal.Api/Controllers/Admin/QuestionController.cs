@@ -32,6 +32,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
         [HttpGet("get-by-id")]
         public async Task<ApiResult<QuestionDto>> GetById([FromQuery] int id)
         {
@@ -46,15 +47,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<QuestionDto>> Create([FromBody] CreateQuestionRequest request)
+        public async Task<ApiResult<bool>> Create([FromBody] CreateQuestionRequest request)
         {
             var result = await _questionService.Create(request);
 
-            return new ApiResult<QuestionDto>()
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Tạo mới câu hỏi thành công!",
-                Data = result
+                Data = true
             };
         }
 
