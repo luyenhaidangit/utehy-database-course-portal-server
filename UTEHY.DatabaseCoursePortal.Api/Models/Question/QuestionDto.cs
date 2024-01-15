@@ -13,6 +13,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public int Score { get; set; }
 
+        public int? SectionId { get; set; }
+
         public int QuestionCategoryId { get; set; }
 
         public int Difficulty { get; set; }
