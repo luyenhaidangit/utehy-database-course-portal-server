@@ -236,19 +236,86 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
+        //public async Task<Question> Edit(EditQuestionRequest request)
+        //{
+        //    var question = await _dbContext.Questions.FindAsync(request.Id);
+
+        //    question.Title = request.Title;
+        //    question.Feedback = request.Feedback;
+
+        //    question.UpdatedAt = DateTime.Now;
+
+        //    await _dbContext.SaveChangesAsync();
+
+        //    return question;
+        //}
+
         public async Task<Question> Edit(EditQuestionRequest request)
         {
-            var question = await _dbContext.Questions.FindAsync(request.Id);
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var question = await _dbContext.Questions.FindAsync(request.Id);
 
-            question.Title = request.Title;
-            question.Feedback = request.Feedback;
+                    if (question == null)
+                    {
+                        throw new ApiException("Không tìm thấy câu hỏi có ID tương ứng.", HttpStatusCode.NotFound);
+                    }
 
-            question.UpdatedAt = DateTime.Now;
+                    question.Title = request.Title;
+                    question.Feedback = request.Feedback;
 
-            await _dbContext.SaveChangesAsync();
+                    var oldAnswers = await _dbContext.QuestionAnswers
+                        .Where(qa => qa.QuestionId == question.Id)
+                        .ToListAsync();
 
-            return question;
+                    _dbContext.QuestionAnswers.RemoveRange(oldAnswers);
+
+                    if (request.QuestionAnswers != null && request.QuestionAnswers.Any())
+                    {
+                        var newAnswers = request.QuestionAnswers
+                            .Select(answerDto => _mapper.Map<QuestionAnswer>(answerDto))
+                            .ToList();
+
+                        foreach (var answerEntity in newAnswers)
+                        {
+                            answerEntity.QuestionId = question.Id;
+                        }
+
+                        _dbContext.QuestionAnswers.AddRange(newAnswers);
+                    }
+
+                    var oldTags = await _dbContext.QuestionTags
+                        .Where(qt => qt.QuestionId == question.Id)
+                        .ToListAsync();
+
+                    _dbContext.QuestionTags.RemoveRange(oldTags);
+
+                    if (request.TagIds != null && request.TagIds.Any())
+                    {
+                        var newTags = request.TagIds
+                            .Select(tagId => new QuestionTag { QuestionId = question.Id, TagId = tagId })
+                            .ToList();
+
+                        _dbContext.QuestionTags.AddRange(newTags);
+                    }
+
+                    question.UpdatedAt = DateTime.Now;
+
+                    await _dbContext.SaveChangesAsync();
+                    transaction.Commit();
+
+                    return question;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
+                }
+            }
         }
+
 
         public async Task<QuestionDto> Delete(int id)
         {
@@ -295,6 +362,52 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return result;
         }
+
+
+        public async Task<List<Question>> DeleteMultiple(List<int?> questionIds)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var questions = await _dbContext.Questions
+                        .Where(q => questionIds.Contains(q.Id) && q.DeletedAt == null)
+                        .ToListAsync();
+
+                    if (!questions.Any())
+                    {
+                        throw new ApiException("Không tìm thấy câu hỏi nào hợp lệ để xoá.", HttpStatusCode.BadRequest);
+                    }
+
+                    foreach (var question in questions)
+                    {
+                        question.DeletedAt = DateTime.Now;
+
+                        // Xóa các câu trả lời thuộc về câu hỏi này
+                        var questionAnswers = await _dbContext.QuestionAnswers
+                            .Where(qa => qa.QuestionId == question.Id && qa.DeletedAt == null)
+                            .ToListAsync();
+
+                        foreach (var questionAnswer in questionAnswers)
+                        {
+                            questionAnswer.DeletedAt = DateTime.Now;
+                        }
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return questions;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new ApiException($"Lỗi khi xoá các câu hỏi: {ex.Message}", HttpStatusCode.InternalServerError, ex);
+                }
+            }
+        }
+
+
 
         public async Task<CheckQuestionResult> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
         {
