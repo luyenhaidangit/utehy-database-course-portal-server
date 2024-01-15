@@ -14,6 +14,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Permisson
 
         public string Description { get; set; }
 
-        public List<Permission> Children { get; set; }
+        public List<PermissionDto> Children { get; set; }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Twilio.Http;
+using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Exceptions;
+using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Permisson;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -19,74 +22,133 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
         }
 
+        private List<PermissionDto> GetChildren(int parentId)
+        {
+            var children = _dbContext.Permissions
+                .Where(p => p.ParentPermissionId == parentId)
+                .ToList();
+
+            var childDtos = new List<PermissionDto>();
+
+            foreach (var childPermission in children)
+            {
+                var childDto = _mapper.Map<PermissionDto>(childPermission);
+                childDto.Children = GetChildren(childPermission.Id);
+                childDtos.Add(childDto);
+            }
+
+            return childDtos;
+        }
 
 
-        //public List<Permission> GetPermissionsByRoleId(GetPermissonRequest request)
-        //{
-        //    var rolePermissions = _dbContext.RolePermissions
-        //        .Where(rp => rp.RoleId == request.RoleId)
-        //        .Include(rp => rp.Permission) 
+        public async Task<PagingResult<PermissionDto>> Get(GetPermissionRequest request)
+        {
+            try
+            {
+                var permissions = await GetRecursive(null);
 
-        //    var permissions = rolePermissions.Select(rp => rp.Permission).ToList();
+                var total = permissions.Count;
 
-        //    // Lấy danh sách quyền con cho mỗi quyền và kết hợp vào danh sách chung
-        //    var allPermissions = new List<Permission>();
-        //    foreach (var permission in permissions)
-        //    {
-        //        var permissionAndChildren = GetChildPermissions(permission.Id);
-        //        allPermissions.AddRange(permissionAndChildren);
-        //    }
+                if (request.PageIndex == null) request.PageIndex = 1;
+                if (request.PageSize == null) request.PageSize = total;
 
-        //    return allPermissions;
-        //}
+                int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
 
-        //public List<Permission> GetChildPermissions(int parentPermissionId)
-        //{
-        //    var childPermissions = _dbContext.Permissions
-        //        .Where(p => p.ParentPermissionId == parentPermissionId)
-        //        .ToList();
+                if (string.IsNullOrEmpty(request.SortBy) || request.SortBy == SortByConstant.Desc)
+                {
+                    permissions = request.OrderBy switch
+                    {
+                        OrderByConstant.Id or _ => permissions.OrderByDescending(p => p.Id).ToList(),
+                    };
+                }
+                else if (request.SortBy == SortByConstant.Asc)
+                {
+                    permissions = request.OrderBy switch
+                    {
+                        OrderByConstant.Id or _ => permissions.OrderBy(p => p.Id).ToList(),
+                    };
+                }
 
-        //    return childPermissions;
-        //}
+                var items = permissions
+                    .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
+                    .Take(request.PageSize.Value)
+                    .ToList();
+
+                var result = new PagingResult<PermissionDto>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        private async Task<List<PermissionDto>> GetRecursive(int? parentPermissionId)
+        {
+            var children = _dbContext.Permissions
+                 .Where(p => p.ParentPermissionId == parentPermissionId)
+                 .ToList();
+
+            var childDtos = new List<PermissionDto>();
+
+            foreach (var childPermission in children)
+            {
+                var childDto = _mapper.Map<PermissionDto>(childPermission);
+                childDto.Children = GetChildren(childPermission.Id);
+                childDtos.Add(childDto);
+            }
+
+            return childDtos;
+        }
 
 
 
 
 
 
+        //theo roleID
+        public async Task<List<PermissionDto>> GetByRoleId(Guid roleId)
+        {
+            try
+            {
+                var rolePermissions = await _dbContext.RolePermissions
+                    .Where(rp => rp.RoleId == roleId)
+                    .Include(rp => rp.Permission)
+                    .ToListAsync();
+
+                var permissions = rolePermissions.Select(rp => rp.Permission);
+
+                var result = await GetRecursive(null, permissions);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        private async Task<List<PermissionDto>> GetRecursive(int? parentPermissionId, IEnumerable<Data.Entities.Permission> allPermissions)
+        {
+            var children = allPermissions
+                .Where(p => p.ParentPermissionId == parentPermissionId)
+                .ToList();
+
+            var childDtos = new List<PermissionDto>();
+
+            foreach (var childPermission in children)
+            {
+                var childDto = _mapper.Map<PermissionDto>(childPermission);
+                childDto.Children = await GetRecursive(childPermission.Id, allPermissions);
+                childDtos.Add(childDto);
+            }
+
+            return childDtos;
+        }
 
 
 
-        //public List<PermissionDto> GetAllPermissionsHierarchy()
-        //{
-        //    var allPermissions = _dbContext.Permissions
-        //        .Where(p => p.ParentPermissionId == null)
-        //        .ToList();
-
-        //    var permissionDtos = allPermissions.Select(p => MapPermissionToDto(p)).ToList();
-
-        //    return permissionDtos;
-        //}
-
-        //private PermissionDto MapPermissionToDto(PermissionDto permissionDtoRequest)
-        //{
-        //    var permission = _mapper.Map<Permission>(permissionDtoRequest);
-
-        //    var permissionDto = new PermissionDto
-        //    {
-        //        Id = permission.Id,
-        //        Name = permission.Name,
-        //        DisplayName = permission.DisplayName,
-        //        ParentPermissionId = permission.ParentPermissionId,
-        //        Description = permission.Description,
-        //        Children = _dbContext.Permissions
-        //            .Where(p => p.ParentPermissionId == permission.Id)
-        //            .Select(p => MapPermissionToDto(p))
-        //            .ToList()
-        //    };
-
-        //    return permissionDto;
-        //}
 
 
 

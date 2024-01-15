@@ -22,11 +22,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpGet("get")]
-        public async Task<ApiResult<PagingResult<Role>>> Get([FromQuery] GetRoleRequest request)
+        public async Task<ApiResult<PagingResult<RoleDto>>> Get([FromQuery] GetRoleRequest request)
         {
             var result = await _roleService.Get(request);
 
-            return new ApiResult<PagingResult<Role>>()
+            return new ApiResult<PagingResult<RoleDto>>()
             {
                 Status = true,
                 Message = "Lấy thông tin danh vai trò thành công!",
@@ -36,7 +36,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 
 
         [HttpPost("create")]
-        public async Task<ApiResult<Role>> Create([FromForm] CreateRoleRequest request)
+        public async Task<ApiResult<Role>> Create([FromBody] CreateRoleRequest request)
         {
             var result = await _roleService.Create(request);
 
