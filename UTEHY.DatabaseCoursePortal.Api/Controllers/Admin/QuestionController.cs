@@ -86,15 +86,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("delete-multiple")]
-        public async Task<ApiResult<List<Question>>> DeleteMultiple([FromBody] ListEntityIdentityRequest<int?> request)
+        public async Task<ApiResult<bool>> DeleteMultiple([FromBody] ListEntityIdentityRequest<int?> request)
         {
             var result = await _questionService.DeleteMultiple(request.Ids);
 
-            return new ApiResult<List<Question>>()
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Đã xóa các question",
-                Data = result
+                Data = true
             };
         }
 

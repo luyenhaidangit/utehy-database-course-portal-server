@@ -363,9 +363,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-
-        public async Task<List<Question>> DeleteMultiple(List<int?> questionIds)
+        public async Task<bool> DeleteMultiple(List<int?> questionIds)
         {
+            if (questionIds == null || !questionIds.Any())
+            {
+                throw new ApiException("Danh sách ID câu hỏi rỗng.", HttpStatusCode.BadRequest);
+            }
+
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -382,22 +386,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     foreach (var question in questions)
                     {
                         question.DeletedAt = DateTime.Now;
-
-                        // Xóa các câu trả lời thuộc về câu hỏi này
-                        var questionAnswers = await _dbContext.QuestionAnswers
-                            .Where(qa => qa.QuestionId == question.Id && qa.DeletedAt == null)
-                            .ToListAsync();
-
-                        foreach (var questionAnswer in questionAnswers)
-                        {
-                            questionAnswer.DeletedAt = DateTime.Now;
-                        }
                     }
+
+                    await _dbContext.QuestionAnswers
+                        .Where(qa => questionIds.Contains(qa.QuestionId) && qa.DeletedAt == null)
+                        .ForEachAsync(qa => qa.DeletedAt = DateTime.Now);
 
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return questions;
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -406,8 +404,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
             }
         }
-
-
 
         public async Task<CheckQuestionResult> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
         {
