@@ -17,6 +17,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Mail;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Irony.Parsing;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -250,7 +251,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         //    return question;
         //}
 
-        public async Task<Question> Edit(EditQuestionRequest request)
+        public async Task<bool> Edit(EditQuestionRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -263,8 +264,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         throw new ApiException("Không tìm thấy câu hỏi có ID tương ứng.", HttpStatusCode.NotFound);
                     }
 
-                    question.Title = request.Title;
-                    question.Feedback = request.Feedback;
+                    _mapper.Map(request, question);
 
                     var oldAnswers = await _dbContext.QuestionAnswers
                         .Where(qa => qa.QuestionId == question.Id)
@@ -274,13 +274,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                     if (request.QuestionAnswers != null && request.QuestionAnswers.Any())
                     {
-                        var newAnswers = request.QuestionAnswers
-                            .Select(answerDto => _mapper.Map<QuestionAnswer>(answerDto))
-                            .ToList();
+                        var newAnswers = _mapper.Map<List<QuestionAnswer>>(request.QuestionAnswers);
 
                         foreach (var answerEntity in newAnswers)
                         {
                             answerEntity.QuestionId = question.Id;
+                            answerEntity.Question = null;
                         }
 
                         _dbContext.QuestionAnswers.AddRange(newAnswers);
@@ -306,7 +305,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     await _dbContext.SaveChangesAsync();
                     transaction.Commit();
 
-                    return question;
+                    return true;
                 }
                 catch (Exception ex)
                 {
