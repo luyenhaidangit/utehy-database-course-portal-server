@@ -13,7 +13,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
     public class ExamController : ControllerBase
     {
         private readonly ExamService _examService;
-        private readonly ExamService _examService;
 
         public ExamController(ExamService examService)
         {
