@@ -14,6 +14,9 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using UTEHY.DatabaseCoursePortal.Api.Models.Role;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -22,127 +25,143 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly FileService _fileService;
         private readonly IMapper _mapper;
+        private readonly UserService _userService;
 
-        public ExamService(ApplicationDbContext dbContext, FileService fileService, IMapper mapper)
+        public ExamService(ApplicationDbContext dbContext, FileService fileService, IMapper mapper , UserService userService)
         {
             _dbContext = dbContext;
             _fileService = fileService;
             _mapper = mapper;
+            _userService = userService;
         }
 
-        //public async Task<PagingResult<ExamDto>> Get(GetExamRequest request)
-        //{
-        //    var query = _dbContext.Exams
-        // .Include(e => e.ExamQuestions)
-        //     .ThenInclude(eq => eq.Question)
-        // .AsQueryable();
+        public async Task<PagingResult<ExamDto>> Get(GetExamRequest request)
+        {
+            var query = _dbContext.Exams
+         .Include(e => e.ExamQuestions)
+             .ThenInclude(eq => eq.Question)
+         .AsQueryable();
 
-        //    if (!string.IsNullOrEmpty(request.Title))
-        //    {
-        //        query = query.Where(b => b.Title == request.Title);
-        //    }
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                query = query.Where(b => b.Title == request.Title);
+            }
 
-        //    if (!string.IsNullOrEmpty(request.Description))
-        //    {
-        //        query = query.Where(b => b.Description == request.Description);
-        //    }
-
-
-
-        //    // Các điều kiện lọc tại đây
-
-        //    // ...
-
-        //    int total = await query.CountAsync();
-
-        //    if (request.PageIndex == null) request.PageIndex = 1;
-        //    if (request.PageSize == null) request.PageSize = total;
-
-        //    int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
-
-        //    // Sắp xếp và phân trang ở đây
-
-        //    // ...
-
-        //    var items = await query
-        //        .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
-        //        .Take(request.PageSize.Value)
-        //        .Select(exam => new ExamDto
-        //        {
-        //            Id = exam.Id,
-        //            Title = exam.Title,
-        //            Description = exam.Description,
-        //            Duration = exam.Duration,
-        //            Questions = exam.ExamQuestions
-        //                .Select(eq => new QuestionDto
-        //                {
-        //                    Id = eq.Question.Id,
-        //                    Title = eq.Question.Title,
-        //                    Feedback = eq.Question.Feedback,
-        //                    Score = eq.Question.Score,
-        //                    QuestionCategoryId = eq.Question.QuestionCategoryId,
-        //                    Difficulty = eq.Question.Difficulty,
-        //                    Type = eq.Question.Type
-        //                })
-        //                .ToList()
-        //        })
-        //        .ToListAsync();
-
-        //    var result = new PagingResult<ExamDto>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
-
-        //    return result;
-        //}
-
-        //public async Task<ExamDto> GetById(int id)
-        //{
-        //    var options = new JsonSerializerOptions
-        //    {
-        //        ReferenceHandler = ReferenceHandler.Preserve,
-        //        // Các tùy chọn khác nếu cần thiết
-        //    };
+            if (!string.IsNullOrEmpty(request.Description))
+            {
+                query = query.Where(b => b.Description == request.Description);
+            }
 
 
 
-        //    var exam = await _dbContext.Exams
-        //        .Include(e => e.ExamQuestions)
-        //        .ThenInclude(eq => eq.Question)
-        //        .Where(e => e.DeletedAt == null && e.Id == id)
-        //        .FirstOrDefaultAsync();
+            int total = await query.CountAsync();
+
+            if (request.PageIndex == null) request.PageIndex = 1;
+            if (request.PageSize == null) request.PageSize = total;
+
+            int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
+
+     
+
+            var items = await query
+                .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
+                .Take(request.PageSize.Value)
+                .Select(exam => new ExamDto
+                {
+                    Id = (int)exam.Id,
+                    Title = exam.Title,
+                    Description = exam.Description,
+                    Duration = (TimeSpan)exam.Duration,
+                    StartTime=exam.StartTime,
+                    EndTime=exam.EndTime,
+                    NumberQuestionDifficult = exam.NumberQuestionDifficult,
+                    NumberQuestionEasy = exam.NumberQuestionEasy,
+                    NumberQuestionModerate = exam.NumberQuestionModerate,
+                    Type = exam.Type,
+                    IsSeeScore=exam.IsSeeScore,
+                    IsShowContent=exam.IsShowContent,
+                    Questions = exam.ExamQuestions
+                        .Select(eq => new QuestionDto
+                        {
+                            Id = eq.Question.Id,
+                            Title = eq.Question.Title,
+                            Feedback = eq.Question.Feedback,
+                            Score = eq.Question.Score,
+                            QuestionCategoryId = eq.Question.QuestionCategoryId,
+                            Difficulty = eq.Question.Difficulty,
+                            Type = eq.Question.Type
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            var examDtos = _mapper.Map<List<ExamDto>>(items);
+
+            var result = new PagingResult<ExamDto>(examDtos, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
+
+            return result;
+        }
 
 
-        //    if (exam == null)
-        //    {
-        //        // Xử lý trường hợp không tìm thấy đề thi
-        //        return null;
-        //    }
 
-        //    var examDto = new ExamDto
-        //    {
-        //        Id = exam.Id,
-        //        Title = exam.Title,
-        //        Description = exam.Description,
-        //        Duration = exam.Duration,
-        //        Questions = new List<QuestionDto>() // Khởi tạo danh sách câu hỏi
-        //    };
+        public async Task<ExamDto> GetById(int id)
+        {
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+            };
 
-        //    foreach (var eq in exam.ExamQuestions)
-        //    {
-        //        var questionDto = new QuestionDto
-        //        {
-        //            Id = eq.Question.Id,
-        //            Title = eq.Question.Title,
-        //            Feedback = eq.Question.Feedback,
-        //            Score = eq.Question.Score,
-        //            QuestionCategoryId = eq.Question.QuestionCategoryId,
-        //            Difficulty = eq.Question.Difficulty,
-        //            Type = eq.Question.Type
-        //        };
 
-        //        examDto.Questions.Add(questionDto); // Thêm câu hỏi vào danh sách
-        //    }
 
-        //    return examDto;
-        //}
+            var exam = await _dbContext.Exams
+                .Include(e => e.ExamQuestions)
+                .ThenInclude(eq => eq.Question)
+                .Where(e => e.DeletedAt == null && e.Id == id)
+                .FirstOrDefaultAsync();
+
+
+            if (exam == null)
+            {
+                return null;
+            }
+
+            var examDto = new ExamDto
+            {
+                Id = (int)exam.Id,
+                Title = exam.Title,
+                Description = exam.Description,
+                Duration = (TimeSpan)exam.Duration,
+                StartTime = exam.StartTime,
+                EndTime = exam.EndTime,
+                NumberQuestionDifficult = exam.NumberQuestionDifficult,
+                NumberQuestionEasy = exam.NumberQuestionEasy,
+                NumberQuestionModerate = exam.NumberQuestionModerate,
+                Type = exam.Type,
+                IsSeeScore = exam.IsSeeScore,
+                IsShowContent = exam.IsShowContent,
+                Questions = new List<QuestionDto>() 
+            };
+
+            var examdto = _mapper.Map<ExamDto>(examDto);
+
+            foreach (var eq in exam.ExamQuestions)
+            {
+                var questionDto = new QuestionDto
+                {
+                    Id = eq.Question.Id,
+                    Title = eq.Question.Title,
+                    Feedback = eq.Question.Feedback,
+                    Score = eq.Question.Score,
+                    QuestionCategoryId = eq.Question.QuestionCategoryId,
+                    Difficulty = eq.Question.Difficulty,
+                    Type = eq.Question.Type
+                };
+
+                examDto.Questions.Add(questionDto); 
+            }
+
+            return examdto;
+        }
 
         //public async Task<Exam> Create(CreateExamRequest createExamRequest)
         //{
@@ -174,6 +193,70 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         //    return exam;
         //}
+
+
+
+
+
+        public async Task<Exam> Delete(int id)
+        {
+            try
+            {
+                var exam = await _dbContext.Exams.FindAsync(id);
+
+                if (exam == null)
+                {
+                    throw new ApiException("Không tìm thấy bài thi hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                var userCurrent = await _userService.GetCurrentUserAsync();
+                exam.DeletedAt = DateTime.Now;
+                exam.CreatedBy = userCurrent?.Id;
+
+                await _dbContext.SaveChangesAsync();
+
+                return exam;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task<List<Exam>> DeleteMultiple(List<int?> ids)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var exams = await _dbContext.Exams
+                                                   .Where(s => ids.Contains(s.Id) && s.DeletedAt == null)
+                                                   .ToListAsync();
+
+                    if (!exams.Any())
+                    {
+                        throw new ApiException("Không tìm thấy bài thi nào hợp lệ để xoá.", HttpStatusCode.BadRequest);
+                    }
+
+                    foreach (var exam in exams)
+                    {
+                        exam.DeletedAt = DateTime.Now;
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return exams;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new ApiException($"Lỗi khi xoá các bài thi: {ex.Message}", HttpStatusCode.InternalServerError, ex);
+                }
+            }
+        }
+
+
 
         public async Task<ExamResult?> GetScoreExamStudent(int studentId, int examId)
         {
