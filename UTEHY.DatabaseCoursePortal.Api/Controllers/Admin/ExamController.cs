@@ -12,25 +12,25 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
     [ApiController]
     public class ExamController : ControllerBase
     {
-        private readonly ExamService _ExamService;
+        private readonly ExamService _examService;
 
-        public ExamController(ExamService ExamService)
+        public ExamController(ExamService examService)
         {
-            _ExamService = ExamService;
+            _examService = examService;
         }
 
-        //[HttpGet("get")]
-        //public async Task<ApiResult<PagingResult<ExamDto>>> Get([FromQuery] GetExamRequest request)
-        //{
-        //    var result = await _ExamService.Get(request);
+        [HttpGet("get")]
+        public async Task<ApiResult<PagingResult<Exam>>> Get([FromQuery] GetExamRequest request)
+        {
+            var result = await _examService.Get(request);
 
-        //    return new ApiResult<PagingResult<ExamDto>>()
-        //    {
-        //        Status = true,
-        //        Message = "Lấy thông tin danh sách bài giảng thành công!",
-        //        Data = result
-        //    };
-        //}
+            return new ApiResult<PagingResult<Exam>>()
+            {
+                Status = true,
+                Message = "Lấy thông tin danh sách đề thi thành công!",
+                Data = result
+            };
+        }
 
         //[HttpGet("get-by-id")]
         //public async Task<ApiResult<ExamDto>> GetById([FromQuery] int id)
