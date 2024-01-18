@@ -1,4 +1,5 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+﻿using Newtonsoft.Json;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
@@ -14,6 +15,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public int QuestionId { get; set; }
 
+        [JsonIgnore]
         public virtual Question Question { get; set; }
     }
 }

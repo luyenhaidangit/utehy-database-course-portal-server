@@ -60,15 +60,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("edit")]
-        public async Task<ApiResult<Question>> Edit([FromBody] EditQuestionRequest request)
+        public async Task<ApiResult<bool>> Edit([FromBody] EditQuestionRequest request)
         {
             var result = await _questionService.Edit(request);
 
-            return new ApiResult<Question>()
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Cập nhật mới câu hỏi thành công!",
-                Data = result
+                Data = true
             };
         }
 
@@ -86,15 +86,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("delete-multiple")]
-        public async Task<ApiResult<List<Question>>> DeleteMultiple([FromBody] ListEntityIdentityRequest<int?> request)
+        public async Task<ApiResult<bool>> DeleteMultiple([FromBody] ListEntityIdentityRequest<int?> request)
         {
             var result = await _questionService.DeleteMultiple(request.Ids);
 
-            return new ApiResult<List<Question>>()
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Đã xóa các question",
-                Data = result
+                Data = true
             };
         }
 
