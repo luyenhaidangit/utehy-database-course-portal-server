@@ -14,7 +14,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<CreateExamRequest, Exam>();
             CreateMap<Exam, GetExamRequest>();
             CreateMap<GetExamRequest, Exam>();
-        
+            CreateMap<Exam, ExamDto>();
+            CreateMap<ExamDto, Exam>();
+
+
         }
     }
 }

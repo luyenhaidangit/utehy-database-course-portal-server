@@ -237,20 +237,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        //public async Task<Question> Edit(EditQuestionRequest request)
-        //{
-        //    var question = await _dbContext.Questions.FindAsync(request.Id);
-
-        //    question.Title = request.Title;
-        //    question.Feedback = request.Feedback;
-
-        //    question.UpdatedAt = DateTime.Now;
-
-        //    await _dbContext.SaveChangesAsync();
-
-        //    return question;
-        //}
-
         public async Task<bool> Edit(EditQuestionRequest request)
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
@@ -300,10 +286,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         _dbContext.QuestionTags.AddRange(newTags);
                     }
 
-                    question.UpdatedAt = DateTime.Now;
+            question.UpdatedAt = DateTime.Now;
 
-                    await _dbContext.SaveChangesAsync();
-                    transaction.Commit();
+            await _dbContext.SaveChangesAsync();
 
                     return true;
                 }
