@@ -236,85 +236,85 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        //public async Task<Question> Edit(EditQuestionRequest request)
-        //{
-        //    var question = await _dbContext.Questions.FindAsync(request.Id);
-
-        //    question.Title = request.Title;
-        //    question.Feedback = request.Feedback;
-
-        //    question.UpdatedAt = DateTime.Now;
-
-        //    await _dbContext.SaveChangesAsync();
-
-        //    return question;
-        //}
-
         public async Task<Question> Edit(EditQuestionRequest request)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    var question = await _dbContext.Questions.FindAsync(request.Id);
+            var question = await _dbContext.Questions.FindAsync(request.Id);
 
-                    if (question == null)
-                    {
-                        throw new ApiException("Không tìm thấy câu hỏi có ID tương ứng.", HttpStatusCode.NotFound);
-                    }
+            question.Title = request.Title;
+            question.Feedback = request.Feedback;
 
-                    question.Title = request.Title;
-                    question.Feedback = request.Feedback;
+            question.UpdatedAt = DateTime.Now;
 
-                    var oldAnswers = await _dbContext.QuestionAnswers
-                        .Where(qa => qa.QuestionId == question.Id)
-                        .ToListAsync();
+            await _dbContext.SaveChangesAsync();
 
-                    _dbContext.QuestionAnswers.RemoveRange(oldAnswers);
-
-                    if (request.QuestionAnswers != null && request.QuestionAnswers.Any())
-                    {
-                        var newAnswers = request.QuestionAnswers
-                            .Select(answerDto => _mapper.Map<QuestionAnswer>(answerDto))
-                            .ToList();
-
-                        foreach (var answerEntity in newAnswers)
-                        {
-                            answerEntity.QuestionId = question.Id;
-                        }
-
-                        _dbContext.QuestionAnswers.AddRange(newAnswers);
-                    }
-
-                    var oldTags = await _dbContext.QuestionTags
-                        .Where(qt => qt.QuestionId == question.Id)
-                        .ToListAsync();
-
-                    _dbContext.QuestionTags.RemoveRange(oldTags);
-
-                    if (request.TagIds != null && request.TagIds.Any())
-                    {
-                        var newTags = request.TagIds
-                            .Select(tagId => new QuestionTag { QuestionId = question.Id, TagId = tagId })
-                            .ToList();
-
-                        _dbContext.QuestionTags.AddRange(newTags);
-                    }
-
-                    question.UpdatedAt = DateTime.Now;
-
-                    await _dbContext.SaveChangesAsync();
-                    transaction.Commit();
-
-                    return question;
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
-                }
-            }
+            return question;
         }
+
+        //public async Task<Question> Edit(EditQuestionRequest request)
+        //{
+        //    using (var transaction = _dbContext.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+        //            var question = await _dbContext.Questions.FindAsync(request.Id);
+
+        //            if (question == null)
+        //            {
+        //                throw new ApiException("Không tìm thấy câu hỏi có ID tương ứng.", HttpStatusCode.NotFound);
+        //            }
+
+        //            question.Title = request.Title;
+        //            question.Feedback = request.Feedback;
+
+        //            var oldAnswers = await _dbContext.QuestionAnswers
+        //                .Where(qa => qa.QuestionId == question.Id)
+        //                .ToListAsync();
+
+        //            _dbContext.QuestionAnswers.RemoveRange(oldAnswers);
+
+        //            if (request.QuestionAnswers != null && request.QuestionAnswers.Any())
+        //            {
+        //                var newAnswers = request.QuestionAnswers
+        //                    .Select(answerDto => _mapper.Map<QuestionAnswer>(answerDto))
+        //                    .ToList();
+
+        //                foreach (var answerEntity in newAnswers)
+        //                {
+        //                    answerEntity.QuestionId = question.Id;
+        //                }
+
+        //                _dbContext.QuestionAnswers.AddRange(newAnswers);
+        //            }
+
+        //            var oldTags = await _dbContext.QuestionTags
+        //                .Where(qt => qt.QuestionId == question.Id)
+        //                .ToListAsync();
+
+        //            _dbContext.QuestionTags.RemoveRange(oldTags);
+
+        //            if (request.TagIds != null && request.TagIds.Any())
+        //            {
+        //                var newTags = request.TagIds
+        //                    .Select(tagId => new QuestionTag { QuestionId = question.Id, TagId = tagId })
+        //                    .ToList();
+
+        //                _dbContext.QuestionTags.AddRange(newTags);
+        //            }
+
+        //            question.UpdatedAt = DateTime.Now;
+
+        //            await _dbContext.SaveChangesAsync();
+        //            transaction.Commit();
+
+        //            return question;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            transaction.Rollback();
+        //            throw new ApiException("Có lỗi xảy ra trong quá trình xử lý!", HttpStatusCode.InternalServerError, ex);
+        //        }
+        //    }
+        //}
 
 
         public async Task<QuestionDto> Delete(int id)
