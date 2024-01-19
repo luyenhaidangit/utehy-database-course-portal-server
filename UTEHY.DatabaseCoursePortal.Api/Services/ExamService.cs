@@ -134,6 +134,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 Type = exam.Type,
                 IsSeeScore = exam.IsSeeScore,
                 IsShowContent = exam.IsShowContent,
+                Status= exam.Status,
+                IsAllowChangeTab = exam.IsAllowChangeTab,
+                IsMixQuestion = exam.IsMixQuestion,
+                IsMixQuestionAnswer = exam.IsMixQuestionAnswer,
+                
                 Questions = new List<QuestionDto>() 
             };
 
