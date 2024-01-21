@@ -10,6 +10,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public int Type { get; set; }
 
-        public virtual List<QuestionTag> QuestionTags { get; set; }
+        //public virtual List<QuestionTag> QuestionTags { get; set; }
     }
 }

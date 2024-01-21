@@ -13,6 +13,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public int Score { get; set; }
 
+        public int? SectionId { get; set; }
+
         public int QuestionCategoryId { get; set; }
 
         public int Difficulty { get; set; }
@@ -21,7 +23,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
 
         public string QuestionCategoryName { get; set; }
 
+        public Data.Entities.Section Section { get; set; }
+
         public List<QuestionAnswerDto> QuestionAnswers { get; set; }
-        //public List<QuestionTag> QuestionAnswers { get; set; }
+
+        public List<QuestionTag> QuestionTags { get; set; }
+
+        public List<Data.Entities.Tag> Tags { get; set; }
     }
 }

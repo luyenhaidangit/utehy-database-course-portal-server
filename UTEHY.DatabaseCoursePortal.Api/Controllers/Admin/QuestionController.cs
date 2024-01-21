@@ -32,6 +32,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
         [HttpGet("get-by-id")]
         public async Task<ApiResult<QuestionDto>> GetById([FromQuery] int id)
         {
@@ -46,28 +47,28 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<QuestionDto>> Create([FromBody] CreateQuestionRequest request)
+        public async Task<ApiResult<bool>> Create([FromBody] CreateQuestionRequest request)
         {
             var result = await _questionService.Create(request);
 
-            return new ApiResult<QuestionDto>()
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Tạo mới câu hỏi thành công!",
-                Data = result
+                Data = true
             };
         }
 
         [HttpPost("edit")]
-        public async Task<ApiResult<Question>> Edit([FromBody] EditQuestionRequest request)
+        public async Task<ApiResult<bool>> Edit([FromBody] EditQuestionRequest request)
         {
             var result = await _questionService.Edit(request);
 
-            return new ApiResult<Question>()
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Cập nhật mới câu hỏi thành công!",
-                Data = result
+                Data = true
             };
         }
 
@@ -83,6 +84,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("delete-multiple")]
+        public async Task<ApiResult<bool>> DeleteMultiple([FromBody] ListEntityIdentityRequest<int?> request)
+        {
+            var result = await _questionService.DeleteMultiple(request.Ids);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Đã xóa các question",
+                Data = true
+            };
+        }
+
 
         [HttpPost("check-answers")]
         public async Task<ApiResult<CheckQuestionResult>> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)

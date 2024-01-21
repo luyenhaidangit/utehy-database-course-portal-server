@@ -43,41 +43,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                 int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
 
-                if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.SortBy))
+                if (string.IsNullOrEmpty(request.SortBy) || request.SortBy == SortByConstant.Desc)
                 {
-                    query = query.OrderByDescending(b => b.Id);
+                    query = request.OrderBy switch
+                    {
+                        OrderByConstant.Priority => query.OrderByDescending(b => b.Priority),
+                        OrderByConstant.Id or _ => query.OrderByDescending(b => b.Id),
+                    };
                 }
-                else if (string.IsNullOrEmpty(request.OrderBy))
+                else if (request.SortBy == SortByConstant.Asc)
                 {
-                    if (request.SortBy == SortByConstant.Asc)
+                    query = request.OrderBy switch
                     {
-                        query = query.OrderBy(b => b.Id);
-                    }
-                    else
-                    {
-                        query = query.OrderByDescending(b => b.Id);
-                    }
-                }
-                else if (string.IsNullOrEmpty(request.SortBy))
-                {
-                    query = query.OrderByDescending(b => b.Id);
-                }
-                else
-                {
-                    if (request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Asc)
-                    {
-                        query = query.OrderBy(b => b.Id);
-                    }
-                    else if (request.OrderBy == OrderByConstant.Id && request.SortBy == SortByConstant.Desc)
-                    {
-                        query = query.OrderByDescending(b => b.Id);
-                    }
+                        OrderByConstant.Priority => query.OrderBy(b => b.Priority),
+                        OrderByConstant.Id or _ => query.OrderBy(b => b.Id),
+                    };
                 }
 
                 var items = await query
-                .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
-                .Take(request.PageSize.Value)
-                .ToListAsync();
+                    .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
+                    .Take(request.PageSize.Value)
+                    .ToListAsync();
 
                 var result = new PagingResult<Section>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
 

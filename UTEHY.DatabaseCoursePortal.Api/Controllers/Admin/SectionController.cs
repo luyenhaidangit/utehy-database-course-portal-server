@@ -7,7 +7,7 @@ using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class SectionController : ControllerBase
     {
@@ -32,27 +32,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<Data.Entities.Section>> Create([FromBody] CreateSectionRequest request)
+        public async Task<ApiResult<Data.Entities.Section>> Create([FromForm] CreateSectionRequest request)
         {
             var result = await _sectionService.Create(request);
 
             return new ApiResult<Data.Entities.Section>()
             {
                 Status = true,
-                Message = "Danh sách banner đã được lấy thành công!",
+                Message = "Tạo mới thành công!",
                 Data = result
             };
         }
 
         [HttpPost("edit")]
-        public async Task<ApiResult<Data.Entities.Section>> Edit([FromBody] EditSectionRequest request)
+        public async Task<ApiResult<Data.Entities.Section>> Edit([FromForm] EditSectionRequest request)
         {
             var result = await _sectionService.Edit(request);
 
             return new ApiResult<Data.Entities.Section>()
             {
                 Status = true,
-                Message = "Danh sách banner đã được lấy thành công!",
+                Message = "Cập nhập thành công!",
                 Data = result
             };
         }
@@ -65,7 +65,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             return new ApiResult<Data.Entities.Section>()
             {
                 Status = true,
-                Message = "Danh sách banner đã được lấy thành công!",
+                Message = "Đã xóa!",
                 Data = result
             };
         }
@@ -78,7 +78,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             return new ApiResult<List<Data.Entities.Section>>()
             {
                 Status = true,
-                Message = "Danh sách banner đã được lấy thành công!",
+                Message = "Đã xóa các section",
                 Data = result
             };
         }
