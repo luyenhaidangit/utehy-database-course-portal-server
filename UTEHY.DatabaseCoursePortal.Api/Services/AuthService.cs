@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +11,9 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Account;
+using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Mail;
+using UTEHY.DatabaseCoursePortal.Api.Models.User;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -23,8 +26,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly SignInManager<User> _signInManager;
         private readonly TwilioService _twilioService;
         private readonly MailService _mailService;
+        private readonly IMapper _mapper;
 
-        public AuthService(ApplicationDbContext dbContext, IConfiguration config, UserService userService, UserManager<User> userManager,TwilioService twilioService, MailService mailService)
+        public AuthService(ApplicationDbContext dbContext, IConfiguration config, UserService userService, UserManager<User> userManager,TwilioService twilioService, MailService mailService, IMapper mapper, SignInManager<User> signInManager)
         {
             _dbContext = dbContext;
             _config = config;
@@ -32,6 +36,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _userManager = userManager;
             _twilioService = twilioService;
             _mailService = mailService;
+            _mapper = mapper;
+            _signInManager = signInManager;
         }
 
         public async Task<string> CreateToken(User user)
@@ -217,6 +223,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
 
             return token;
+        }
+
+        public async Task<UserDto> GetUserInfo()
+        {
+            var user = await _userService.GetUserCurrentAsync();
+
+            if(user == null)
+            {
+                throw new Exception("Người dùng không tồn tại!");
+            }
+
+            var permissions = await _userService.GetPermissionAsync(user);
+
+            var userDto = _mapper.Map<UserDto>(user);
+
+            userDto.Permissions = permissions;
+
+            return userDto;
         }
     }
 }

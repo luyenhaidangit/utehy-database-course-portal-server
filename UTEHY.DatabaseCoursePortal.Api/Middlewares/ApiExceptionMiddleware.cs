@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Middlewares
@@ -19,17 +20,26 @@ namespace UTEHY.DatabaseCoursePortal.Api.Middlewares
             {
                 await _next(context);
             }
-            catch (ApiException ex)
+            catch (UnauthorizedAccessException ex)
             {
-                context.Response.ContentType = "application/json";
-                //context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.StatusCode = ex.Status;
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 
-                var errorResponse = new { status = ex.Status,message = ex.Message,Data = ex.Data };
-                var jsonErrorResponse = JsonConvert.SerializeObject(errorResponse);
-
-                await context.Response.WriteAsync(jsonErrorResponse);
+                await HandleExceptionAsync(context, ex);
             }
+            catch (Exception ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                await HandleExceptionAsync(context, ex);
+            }
+        }
+
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            context.Response.ContentType = "application/json";
+
+            var jsonErrorResponse = JsonConvert.SerializeObject(ex);
+            await context.Response.WriteAsync(jsonErrorResponse);
         }
     }
 }
