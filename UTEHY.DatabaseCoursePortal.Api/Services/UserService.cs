@@ -192,6 +192,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         }
 
 
+
+
+
         //public async Task<string> GenerateAutoUsername()
         //{
         //    //var userCount = await _dbContext.Users.fi;

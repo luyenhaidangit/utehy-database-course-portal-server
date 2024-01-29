@@ -9,5 +9,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.User
         public string? AvatarUrl { get; set; }
 
         public List<string> Permissions { get; set; }
+
+
     }
 }

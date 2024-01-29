@@ -29,7 +29,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
             _userService = userService;
             _userManager = userManager;
-            _configService = configService;
+            _configService = configService; 
         }
 
         public async Task<PagingResult<Data.Entities.GroupModule>> Get(GetGroupModuleRequest request)

@@ -9,5 +9,8 @@
         public int? NotificationId { get; set; }
 
         public virtual Notification Notification { get; set; }
+
+        public virtual GroupModule GroupModule { get; set; }
+
     }
 }

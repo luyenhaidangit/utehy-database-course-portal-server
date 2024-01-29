@@ -45,6 +45,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 {
                     query = query.Where(b => b.Title.ToLower().Contains(request.Title.ToLower()));
                 }
+                if (request.CreateBy!=null)
+                {
+                    query = query.Where(b => b.CreatedBy==request.CreateBy);
+                }
 
                 int total = await query.CountAsync();
 
