@@ -62,6 +62,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
+        [HttpGet("get-by-userId")]
+        public async Task<ApiResult<TeacherDto>> GetByUserId([FromQuery] Guid id)
+        {
+            var result = await _teacherService.GetByUserId(id);
+
+            return new ApiResult<TeacherDto>()
+            {
+                Status = true,
+                Message = "Lấy thông tin giáo viên thành công!",
+                Data = result
+            };
+        }
+
         [HttpPost("edit")]
         public async Task<ApiResult<TeacherDto>> Edit([FromBody] EditTeacherRequest request)
         {

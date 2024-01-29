@@ -13,6 +13,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<CreateGroupModuleRequest, GroupModule>();
 
             CreateMap<EditGroupModuleRequest, GroupModule>();
+
+             CreateMap<GroupModuleDto, GroupModule>();
+
+            CreateMap<GroupModule, GroupModuleDto>();
         }
     }
 }

@@ -9,5 +9,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string? Title { get; set; }
 
         public string? Message { get; set; }
+
+        public virtual List<NotificationGroupModule> NotificationGroupModules { get; set; }
+
     }
 }

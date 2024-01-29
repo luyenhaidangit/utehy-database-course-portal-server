@@ -1,8 +1,8 @@
 ﻿using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 
-namespace UTEHY.DatabaseCoursePortal.Api.Models.Exam
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Notification
 {
-    public class GetExamRequest: PagingRequest
+    public class GetNotificationRequest : PagingRequest
     {
         public string? Title { get; set; }
 
