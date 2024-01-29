@@ -18,6 +18,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public DateTime? DeletedAt { get; set; }
 
+        public string? RefreshToken { get; set; }
+
+        public DateTime? RefreshTokenExpiryTime { get; set; }
+
         #region Relationship
         public virtual ICollection<Blog> Blogs { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
+using UTEHY.DatabaseCoursePortal.Api.Models.Account;
+using UTEHY.DatabaseCoursePortal.Api.Models.Auth;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.User;
 using UTEHY.DatabaseCoursePortal.Api.Services;
@@ -41,6 +43,30 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Guest
             catch (UnauthorizedAccessException ex)
             {
                 throw new UnauthorizedAccessException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<ApiResult<LoginResult>> LoginByUsername([FromBody] LoginUsernameRequest request)
+        {
+            try
+            {
+                var loginResult = await _authService.LoginByUsername(request);
+
+                return new ApiResult<LoginResult>()
+                {
+                    Status = true,
+                    Message = "Đăng nhập thành công!",
+                    Data = loginResult
+                };
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
             }
             catch (Exception ex)
             {

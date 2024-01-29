@@ -36,17 +36,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<List<string>> GetPermissionAsync(User user)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var permissions = await _dbContext.Roles.Where(role => roles.Contains(role.Name))
-            .SelectMany(role => role.RolePermissions)
-            .Select(rolePermission => rolePermission.Permission.Name).ToListAsync();
-
-            return permissions;
-        }
-
         public async Task<User> Create(CreateUserRequest request)
         {
             var existingUser = _dbContext.Users.FirstOrDefault(user =>
@@ -191,7 +180,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return user;
         }
 
+        public async Task<List<string>> GetPermissionAsync(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
 
+            var permissions = await _dbContext.Roles.Where(role => roles.Contains(role.Name))
+            .SelectMany(role => role.RolePermissions)
+            .Select(rolePermission => rolePermission.Permission.Name).ToListAsync();
+
+            return permissions;
+        }
+
+        public async Task<List<string>> GetUserWithRolePermission(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var permissions = await _dbContext.Roles.Where(role => roles.Contains(role.Name))
+            .SelectMany(role => role.RolePermissions)
+            .Select(rolePermission => rolePermission.Permission.Name).ToListAsync();
+
+            return permissions;
+        }
 
 
         //public async Task<string> GenerateAutoUsername()
