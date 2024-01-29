@@ -82,7 +82,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 var notification = _mapper.Map<Notification>(request);
 
-                var userCurrent = await _userService.GetUserCurrent();
+                var userCurrent = await _userService.GetUserCurrentAsync();
                 notification.CreatedAt = DateTime.Now;
                 notification.CreatedBy = userCurrent?.Id;
 
@@ -124,7 +124,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
 
                 _mapper.Map(request, notification);
-                var userCurrent = await _userService.GetUserCurrent();
+                var userCurrent = await _userService.GetUserCurrentAsync();
                 notification.UpdatedAt = DateTime.Now;
                 notification.UpdatedBy = userCurrent?.Id;
 
@@ -149,7 +149,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     throw new ApiException("Không tìm thấy thông báo hợp lệ!", HttpStatusCode.InternalServerError);
                 }
 
-                var userCurrent = await _userService.GetUserCurrent();
+                var userCurrent = await _userService.GetUserCurrentAsync();
                 notification.DeletedAt = DateTime.Now;
                 notification.UpdatedBy = userCurrent?.Id;
 
