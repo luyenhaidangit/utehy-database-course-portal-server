@@ -131,20 +131,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
         }
 
-        public async Task<User> GetUserCurrent()
-        {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId != null)
-            {
-                var user = await _userManager.FindByIdAsync(userId);
-
-                return user;
-            }
-
-            return null;
-        }
-
         public async Task<User?> GetCurrentUserAsync()
         {
             return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -191,6 +177,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         }
 
+        public async Task<User?> GetUserCurrentAsync()
+        {
+            var username = _httpContextAccessor?.HttpContext?.User.FindFirst(x => x.Type == ClaimType.UserName)?.Value;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new UnauthorizedAccessException("Người dùng chưa đăng nhập hoặc phiên làm việc đã hết hạn.");
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            return user;
+        }
 
 
 
