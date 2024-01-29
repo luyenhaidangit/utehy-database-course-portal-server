@@ -29,6 +29,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             var jwtKey = builder.Configuration.GetValue<string>("Jwt:Key");
+            var audience = builder.Configuration.GetValue<string>("Jwt:Audience");
+            var issuer = builder.Configuration.GetValue<string>("Jwt:Issuer");
 
             var key = Encoding.ASCII.GetBytes(jwtKey);
 
@@ -36,6 +38,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = false;
@@ -43,9 +46,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Providers
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+
+                    ValidAudience = audience,
+                    ValidIssuer = issuer,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
                 };
             });
 

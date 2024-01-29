@@ -13,6 +13,7 @@ using Twilio.Rest.Api.V2010.Account;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Enums;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Account;
 using UTEHY.DatabaseCoursePortal.Api.Models.Auth;
@@ -247,8 +248,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ArgumentNullException(nameof(minuteValidToken), "Không thể tải cấu hình TokenValidityInMinutes Jwt!");
             }
 
-            var issuer = _config["Jwt:Issuer"] ?? "";
-            var audience = _config["Jwt:Audience"] ?? "";
+            var issuer = _config["Jwt:Issuer"];
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key), "Không thể tải cấu hình Issuer Jwt!");
+            }
+
+            var audience = _config["Jwt:Audience"];
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key), "Không thể tải cấu hình Audience Jwt!");
+            }
 
             var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256);
             var expires = DateTime.UtcNow.AddMinutes(int.Parse(minuteValidToken));
@@ -358,6 +370,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             if (user == null)
             {
                 throw new BadHttpRequestException("Tên người dùng không tồn tại trong hệ thống!");
+            }
+
+            UserType userType = (UserType)request.Type;
+            string typeRole = Enum.GetName(typeof(UserType), userType).ToLower().Trim();
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (!roles.Contains(typeRole))
+            {
+                throw new UnauthorizedAccessException($"Người dùng không có vai trò {typeRole}!");
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);

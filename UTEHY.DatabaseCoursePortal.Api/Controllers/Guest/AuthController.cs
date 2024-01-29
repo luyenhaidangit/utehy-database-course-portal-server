@@ -68,6 +68,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Guest
             {
                 throw new BadHttpRequestException(ex.Message);
             }
+            catch(UnauthorizedAccessException ex)
+            {
+                throw new UnauthorizedAccessException(ex.Message);
+            }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
