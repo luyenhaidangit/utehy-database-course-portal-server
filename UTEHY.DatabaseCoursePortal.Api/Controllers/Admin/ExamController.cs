@@ -5,6 +5,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
 using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
 using UTEHY.DatabaseCoursePortal.Api.Services;
+using UTEHY.DatabaseCoursePortal.Api.Models.ExamResult;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
@@ -82,6 +83,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             {
                 Status = true,
                 Message = "Đã xóa các bài thi",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-result")]
+        public async Task<ApiResult<PagingResult<ExamResultDto>>> GetExamResults([FromQuery] GetExamResultRequest request)
+        {
+            var result = await _examService.GetExamResults(request);
+
+            return new ApiResult<PagingResult<ExamResultDto>>()
+            {
+                Status = true,
+                Message = "Lấy thông tin danh sách điểm  thi thành công!",
                 Data = result
             };
         }

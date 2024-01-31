@@ -2,20 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
-using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Exam;
 using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
-using Newtonsoft.Json;
-using System.Diagnostics;
-using Microsoft.IdentityModel.Tokens;
-using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
+
+using UTEHY.DatabaseCoursePortal.Api.Models.ExamResult;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -259,6 +255,125 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 }
             }
         }
+
+
+        public async Task<ExamResult?> GetExamResults(int studentId, int examId)
+        {
+            try
+            {
+                var result = await _dbContext.ExamResults.FirstOrDefaultAsync(x => x.StudentId == studentId && x.ExamId == examId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+
+
+        public async Task<PagingResult<ExamResultDto>> GetExamResults(GetExamResultRequest request)
+        {
+            var studentQuery = from stg in _dbContext.StudentGroupModules
+                               join st in _dbContext.Students on stg.StudentId equals st.Id
+                               where !request.GroupModuleId.HasValue || stg.GroupModuleId == request.GroupModuleId.Value
+                               select new { st, stg };
+
+            var query = from st in studentQuery
+                        join er in _dbContext.ExamResults.Where(x => x.ExamId == request.ExamId) on st.st.Id equals er.StudentId into examResults
+                        from er in examResults.DefaultIfEmpty() // Đây là cách để thực hiện LEFT JOIN
+                        select new
+                        {
+                            Student = st.st,
+                            StudentGroupModule = st.stg,
+                            ExamResult = er
+                        };
+
+            if (request.Type.HasValue)
+            {
+                if (request.Type.Value == 1)
+                {
+                    query = query.Where(x => x.ExamResult != null && x.ExamResult.Score != null);
+                }
+                else if (request.Type.Value == 2)
+                {
+                    query = query.Where(x => x.ExamResult == null || x.ExamResult.Score == null);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(request.StudentName))
+            {
+                query = query.Where(x => x.Student.User.Name.Contains(request.StudentName));
+            }
+
+
+
+            int total = await query.CountAsync();
+
+            if (request.PageIndex == null) request.PageIndex = 1;
+            if (request.PageSize == null) request.PageSize = total;
+
+            int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
+
+            if (string.IsNullOrEmpty(request.SortBy) || request.SortBy == SortByConstant.Desc)
+            {
+                query = request.OrderBy switch
+                {
+                    OrderByConstant.Score => query.OrderByDescending(b => b.ExamResult.Score),
+                    OrderByConstant.NumberChangeTab => query.OrderByDescending(b => b.ExamResult.NumberChangeTab),
+                    OrderByConstant.StudentId or _ => query.OrderByDescending(b => b.ExamResult.StudentId),
+
+
+                };
+            }
+            else if (request.SortBy == SortByConstant.Asc)
+            {
+                query = request.OrderBy switch
+                {
+                    OrderByConstant.Score => query.OrderBy(b => b.ExamResult.Score),
+                    OrderByConstant.NumberChangeTab => query.OrderBy(b => b.ExamResult.NumberChangeTab),
+                    OrderByConstant.StudentId or _ => query.OrderBy(b => b.ExamResult.StudentId),
+
+                };
+            }
+
+
+            var items = await query
+                .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
+                .Take(request.PageSize.Value)
+                .ToListAsync();
+
+
+
+
+            var examResultDtos = await query.Select(x => new ExamResultDto
+            {
+                Id= x.ExamResult.Id,
+                StudentId = x.Student.StudentId,
+                StudentName = x.Student.User.Name, 
+                Score = x.ExamResult != null ? x.ExamResult.Score : null,
+                StartTime = x.ExamResult.StartTime,
+                DurationTime = x.ExamResult.DurationTime,
+                NumberChangeTab=x.ExamResult.NumberChangeTab,
+                NumberCorrectAnswers=x.ExamResult.Score
+            })
+            .Distinct()
+            .ToListAsync();
+
+
+            var result = new PagingResult<ExamResultDto>(examResultDtos, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
+
+            return result;
+        }
+
+
+
+
+
+
+
+
 
 
 

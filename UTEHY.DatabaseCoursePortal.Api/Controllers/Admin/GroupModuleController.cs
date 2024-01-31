@@ -110,6 +110,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
+        [HttpGet("get-by-exam-id")]
+        public async Task<ApiResult<List<Data.Entities.GroupModule>>> GetByExamId([FromQuery] DeleteRequest request)
+        {
+            var result = await _groupModuleService.GetByExamId(request.Id);
+
+            return new ApiResult<List<Data.Entities.GroupModule>>()
+            {
+                Status = true,
+                Message = "Lấy thông tin nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
         [HttpGet("export-excel-students")]
         public async Task<IActionResult> Export([FromQuery] DeleteRequest request)
         {

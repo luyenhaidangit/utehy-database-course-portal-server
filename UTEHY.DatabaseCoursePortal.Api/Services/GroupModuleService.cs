@@ -29,7 +29,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
             _userService = userService;
             _userManager = userManager;
-            _configService = configService; 
+            _configService = configService;
         }
 
         public async Task<PagingResult<Data.Entities.GroupModule>> Get(GetGroupModuleRequest request)
@@ -209,6 +209,28 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
         }
+        public async Task<List<Data.Entities.GroupModule>> GetByExamId(int id)
+        {
+            try
+            {
+                var groupModule = await _dbContext.GroupModules
+                .Include(x => x.ExamGroupModules)
+                 .Where(group => group.DeletedAt == null &&
+                    group.ExamGroupModules.Any(examGroupModule => examGroupModule.ExamId == id))
+                 .ToListAsync();
+                if (groupModule == null)
+                {
+                    throw new ApiException("Không tìm thấy nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                return groupModule;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
 
         public async Task<Data.Entities.GroupModule> Create(CreateGroupModuleRequest request)
         {
@@ -276,7 +298,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                 var currentTime = DateTime.Now;
 
-                if(request.Type == Constants.GroupModule.GetCode)
+                if (request.Type == Constants.GroupModule.GetCode)
                 {
                     if (groupModule.ExpiryTimeInvitation <= currentTime || groupModule.ExpiryTimeInvitation == null)
                     {
@@ -718,14 +740,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     _dbContext.StudentGroupModules.RemoveRange(studentsToRemove);
                     await _dbContext.SaveChangesAsync();
 
-                    await transaction.CommitAsync(); 
+                    await transaction.CommitAsync();
 
-                    return true; 
+                    return true;
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync(); 
-                                                      
+                    await transaction.RollbackAsync();
+
                     throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
                 }
             }

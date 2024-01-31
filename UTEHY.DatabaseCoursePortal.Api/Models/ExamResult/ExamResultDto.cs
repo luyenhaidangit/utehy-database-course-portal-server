@@ -1,14 +1,15 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
-
-namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.ExamResult
 {
-    public class ExamResult : EntityBase
+    public class ExamResultDto
     {
+
         public int? Id { get; set; }
 
         public int? ExamId { get; set; }
 
-        public int? StudentId { get; set; }
+        public string? StudentId { get; set; }
+
+        public string? StudentName { get; set; }
 
         public int? Score { get; set; }
 
@@ -20,6 +21,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public int? NumberChangeTab { get; set; }
 
-        public virtual Student Student { get; set; }
     }
 }
