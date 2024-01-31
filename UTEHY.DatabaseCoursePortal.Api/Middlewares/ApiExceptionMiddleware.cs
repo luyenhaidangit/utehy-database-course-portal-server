@@ -26,6 +26,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Middlewares
 
                 await HandleExceptionAsync(context, ex);
             }
+            catch (BadHttpRequestException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                await HandleExceptionAsync(context, ex);
+            }
+            catch (ArgumentNullException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                await HandleExceptionAsync(context, ex);
+            }
             catch (Exception ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
