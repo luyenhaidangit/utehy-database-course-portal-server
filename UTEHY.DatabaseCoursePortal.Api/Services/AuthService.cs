@@ -424,7 +424,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             var loginResult = new LoginResult()
             {
-                Token = tokenString,
+                AccessToken = tokenString,
                 RefreshToken = refreshToken,
                 Expiration = token.ValidTo
             };

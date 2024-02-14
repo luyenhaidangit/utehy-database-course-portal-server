@@ -26,7 +26,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Guest
             _authService = authService;                           
         }
 
-        [HttpGet("info")]
+        [HttpGet("user-current")]
         public async Task<ApiResult<UserDto>> GetUserInfo()
         {
             try
