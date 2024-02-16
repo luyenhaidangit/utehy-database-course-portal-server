@@ -77,5 +77,33 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Guest
                 throw new Exception(ex.Message);
             }
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<ApiResult<LoginResult>> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            try
+            {
+                var loginResult = await _authService.RefreshToken(request.RefreshToken);
+
+                return new ApiResult<LoginResult>()
+                {
+                    Status = true,
+                    Message = "Đăng nhập thành công!",
+                    Data = loginResult
+                };
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw new UnauthorizedAccessException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

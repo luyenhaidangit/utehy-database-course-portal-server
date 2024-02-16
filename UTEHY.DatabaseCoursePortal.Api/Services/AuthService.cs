@@ -33,8 +33,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly TwilioService _twilioService;
         private readonly MailService _mailService;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(ApplicationDbContext dbContext, IConfiguration config, UserService userService, UserManager<User> userManager,TwilioService twilioService, MailService mailService, IMapper mapper, SignInManager<User> signInManager)
+        public AuthService(ApplicationDbContext dbContext, IConfiguration config, UserService userService, UserManager<User> userManager,TwilioService twilioService, MailService mailService, IMapper mapper, SignInManager<User> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _config = config;
@@ -44,6 +45,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mailService = mailService;
             _mapper = mapper;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string> CreateToken(User user)
@@ -341,28 +343,60 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return principal;
 
         }
-        #endregion
 
-        #region LogIn/LogOut
-        public async Task<UserDto> GetUserInfo()
+        public async Task<LoginResult> RefreshToken(string refreshToken)
         {
-            var user = await _userService.GetUserCurrentAsync();
+            var authorizationHeader = _httpContextAccessor?.HttpContext?.Request.Headers[HeaderRequest.Authorization].ToString();
 
-            if(user == null)
+            if (string.IsNullOrEmpty(authorizationHeader))
             {
-                throw new Exception("Người dùng không tồn tại!");
+                throw new UnauthorizedAccessException("AccessToken không tồn tại trong yêu cầu!");
             }
 
-            var permissions = await _userService.GetPermissionAsync(user);
+            var token = authorizationHeader.Split(' ').LastOrDefault();
 
-            var userDto = _mapper.Map<UserDto>(user);
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("AccessToken không hợp lệ!");
+            }
 
-            userDto.Permissions = permissions;
+            var principal = GetPrincipalFromExpiredToken(token);
 
-            return userDto;
+            //string username = principal.Identity.Name;
+
+            string username = principal.Claims.FirstOrDefault(x => x.Type == ClaimType.UserName).Value;
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("Người dùng không tồn tại trong hệ thống!");
+            }
+
+            if (user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now){
+                throw new UnauthorizedAccessException("RefreshToken không hợp lệ hoặc đã hết hạn!");
+            }
+
+            var newAccessToken = this.CreateToken(principal.Claims.ToList());
+            var newRefreshToken = this.CreateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+            await _userManager.UpdateAsync(user);
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(newAccessToken);
+
+            var loginResult = new LoginResult()
+            {
+                AccessToken = tokenString,
+                RefreshToken = refreshToken,
+                Expiration = newAccessToken.ValidTo
+            };
+
+            return loginResult;
         }
         #endregion
 
+        #region LogIn/LogOut
         public async Task<LoginResult> LoginByUsername(LoginUsernameRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.Username);
@@ -431,5 +465,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return loginResult;
         }
+
+        public async Task<UserDto> GetUserInfo()
+        {
+            var user = await _userService.GetUserCurrentAsync();
+
+            if(user == null)
+            {
+                throw new Exception("Người dùng không tồn tại!");
+            }
+
+            var permissions = await _userService.GetPermissionAsync(user);
+
+            var userDto = _mapper.Map<UserDto>(user);
+
+            userDto.Permissions = permissions;
+
+            return userDto;
+        }
+        #endregion
     }
 }
