@@ -350,19 +350,17 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             if (string.IsNullOrEmpty(authorizationHeader))
             {
-                throw new UnauthorizedAccessException("AccessToken không tồn tại trong yêu cầu!");
+                throw new BadHttpRequestException("AccessToken không tồn tại trong yêu cầu!");
             }
 
             var token = authorizationHeader.Split(' ').LastOrDefault();
 
             if (string.IsNullOrEmpty(token))
             {
-                throw new UnauthorizedAccessException("AccessToken không hợp lệ!");
+                throw new BadHttpRequestException("AccessToken không hợp lệ!");
             }
 
             var principal = GetPrincipalFromExpiredToken(token);
-
-            //string username = principal.Identity.Name;
 
             string username = principal.Claims.FirstOrDefault(x => x.Type == ClaimType.UserName).Value;
 
@@ -370,11 +368,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             if (user == null)
             {
-                throw new UnauthorizedAccessException("Người dùng không tồn tại trong hệ thống!");
+                throw new BadHttpRequestException("Token chứa thông tin người dùng không tồn tại trong hệ thống!");
             }
 
             if (user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now){
-                throw new UnauthorizedAccessException("RefreshToken không hợp lệ hoặc đã hết hạn!");
+                throw new BadHttpRequestException("RefreshToken không hợp lệ hoặc đã hết hạn!");
             }
 
             var newAccessToken = this.CreateToken(principal.Claims.ToList());
@@ -388,7 +386,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var loginResult = new LoginResult()
             {
                 AccessToken = tokenString,
-                RefreshToken = refreshToken,
+                RefreshToken = newRefreshToken,
                 Expiration = newAccessToken.ValidTo
             };
 
