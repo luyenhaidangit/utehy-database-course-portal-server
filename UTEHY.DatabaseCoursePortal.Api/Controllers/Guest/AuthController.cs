@@ -105,5 +105,33 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Guest
                 throw new Exception(ex.Message);
             }
         }
+
+        [HttpPost("logout")]
+        public async Task<ApiResult<bool>> Logout()
+        {
+            try
+            {
+                var isLogout = await _authService.Logout();
+
+                return new ApiResult<bool>()
+                {
+                    Status = true,
+                    Message = "Đăng xuất thành công!",
+                    Data = isLogout
+                };
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw new UnauthorizedAccessException(ex.Message);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

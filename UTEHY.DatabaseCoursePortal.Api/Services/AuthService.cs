@@ -84,7 +84,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return token;
         }
 
-        public async Task<bool> Logout()
+        public async Task<bool> Logout1()
         {
             await _signInManager.SignOutAsync();
 
@@ -394,7 +394,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         }
         #endregion
 
-        #region LogIn/LogOut
+        #region User
         public async Task<LoginResult> LoginByUsername(LoginUsernameRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.Username);
@@ -480,6 +480,17 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             userDto.Permissions = permissions;
 
             return userDto;
+        }
+
+        public async Task<bool> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            User user = await _userService.GetUserCurrentAsync();
+
+            await this.RevokeRefreshToken(user.UserName);
+
+            return true;
         }
         #endregion
     }
