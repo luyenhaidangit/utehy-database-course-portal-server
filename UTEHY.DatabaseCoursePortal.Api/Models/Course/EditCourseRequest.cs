@@ -1,11 +1,9 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 
-namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+namespace UTEHY.DatabaseCoursePortal.Api.Models.Course
 {
-    public class Course : EntityBase, IDefaultAttribute
+    public class EditCourseRequest
     {
-        public int? Id { get; set; }
-
         public string? CertificateName { get; set; }
 
         public string? Content { get; set; }
@@ -33,11 +31,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public bool? IsPublished { get; set; }
 
         public bool IsDefault { get; set; }
-
-        public List<UserCourse>? UserCourses { get; set; }
-
-        public virtual List<Lesson> Lessons { get; set; }
-
-        //public List<Track>? Tracks { get; set; }
     }
 }

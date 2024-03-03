@@ -25,6 +25,33 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _fileService = fileService;
         }
 
+        #region Manage Course
+        public async Task<Course> GetCourse()
+        {
+            var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
+
+            if(course is null)
+            {
+                throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
+            }
+
+            return course;
+        }
+
+        public async Task<Course> EditCourse(EditCourseRequest request)
+        {
+            Course course = await this.GetCourse();
+
+            _mapper.Map(request, course);
+
+            course.UpdatedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            return course;
+        }
+        #endregion
+
         public async Task<Course> GetDatabaseCourse()
         {
             try
