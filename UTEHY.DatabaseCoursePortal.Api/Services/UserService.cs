@@ -166,7 +166,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         }
 
-        public async Task<User?> GetUserCurrentAsync()
+        public async Task<User> GetUserCurrentAsync()
         {
             var username = _httpContextAccessor?.HttpContext?.User.FindFirst(x => x.Type == ClaimType.UserName)?.Value;
 
@@ -176,6 +176,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             }
 
             var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                throw new BadHttpRequestException("Người dùng không tồn tại trong hệ thống!");
+            }
 
             return user;
         }
