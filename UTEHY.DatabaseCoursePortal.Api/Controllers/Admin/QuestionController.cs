@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using UTEHY.DatabaseCoursePortal.Api.Models.Post;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
@@ -111,5 +112,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = results
             };
         }
+
+        [HttpPost("import-questions-excel")]
+        public async Task<ApiResult<bool>> ImportQuestionsExcel([FromForm] ImportQuestionsRequest request)
+        {
+            await _questionService.ImportQuestionsExcel(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Import file thành công!",
+                Data = true
+            };
+        }
+
     }
 }
