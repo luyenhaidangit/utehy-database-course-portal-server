@@ -17,17 +17,17 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Guest
             _courseService = courseService;
         }
 
-        [HttpGet("get-database-course")]
-        public async Task<ApiResult<Course>> GetDatabaseCourse()
-        {
-            var result = await _courseService.GetDatabaseCourse();
+        //[HttpGet("get-database-course")]
+        //public async Task<ApiResult<Course>> GetDatabaseCourse()
+        //{
+        //    var result = await _courseService.GetDatabaseCourse();
 
-            return new ApiResult<Course>()
-            {
-                Status = true,
-                Message = "Lấy thông tin khoá học thành công!",
-                Data = result
-            };
-        }
+        //    return new ApiResult<Course>()
+        //    {
+        //        Status = true,
+        //        Message = "Lấy thông tin khoá học thành công!",
+        //        Data = result
+        //    };
+        //}
     }
 }
