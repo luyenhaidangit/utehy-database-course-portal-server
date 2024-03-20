@@ -3,6 +3,7 @@ using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Lesson;
 using UTEHY.DatabaseCoursePortal.Api.Models.Comment;
 using UTEHY.DatabaseCoursePortal.Api.Models.Exam;
+using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Mappers
 {
@@ -16,6 +17,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<GetExamRequest, Exam>();
             CreateMap<Exam, ExamDto>();
             CreateMap<ExamDto, Exam>();
+
+
+
+
+
+            CreateMap<ExamQuestionRequest, Question>();
+            CreateMap<Question, ExamQuestionRequest>();
+
 
 
         }
