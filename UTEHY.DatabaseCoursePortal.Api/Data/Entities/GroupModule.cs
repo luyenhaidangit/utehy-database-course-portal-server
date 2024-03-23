@@ -28,7 +28,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public virtual List<NotificationGroupModule> NotificationGroupModules { get; set; }
 
-
         public virtual Teacher Teacher { get; set; }
     }
 }

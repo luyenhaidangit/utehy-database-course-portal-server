@@ -54,6 +54,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<NotificationGroupModule> NotificationGroupModules { get; set; } = null!;
         public virtual DbSet<Section> Sections { get; set; } = null!;
+        public virtual DbSet<Schedule> Schedules { get; set; } = null!;
+        public virtual DbSet<Attendance> Attendances { get; set; } = null!;
+        public virtual DbSet<ClassPeriod> ClassPeriods { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -93,6 +96,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new NotificationConfiguration());
             builder.ApplyConfiguration(new NotificationGroupModuleConfiguration());
             builder.ApplyConfiguration(new SectionConfiguration());
+            builder.ApplyConfiguration(new ScheduleConfiguration());
+            builder.ApplyConfiguration(new AttendanceConfiguration());
+            builder.ApplyConfiguration(new ClassPeriodConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
