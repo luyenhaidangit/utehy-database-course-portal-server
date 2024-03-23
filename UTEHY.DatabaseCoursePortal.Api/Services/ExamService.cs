@@ -12,6 +12,8 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 
 using UTEHY.DatabaseCoursePortal.Api.Models.ExamResult;
+using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -162,37 +164,69 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return examdto;
         }
-
-        //public async Task<Exam> Create(CreateExamRequest createExamRequest)
+        //var newExam = new Exam
         //{
-        //    var exam = _mapper.Map<Exam>(createExamRequest);
+        //    Title =createExamRequest.Title,
+        //    Description =createExamRequest.Description,
+        //    Duration =createExamRequest.Duration,
+        //    StartTime = createExamRequest.StartTime,
+        //    EndTime = createExamRequest.EndTime,
+        //    IsShowContent = createExamRequest.IsShowContent,
+        //    IsSeeScore = createExamRequest.IsSeeScore,
+        //    IsMixQuestion = createExamRequest.IsMixQuestion,
+        //    IsMixQuestionAnswer = createExamRequest.IsMixQuestionAnswer,
+        //    IsAllowChangeTab = createExamRequest.IsAllowChangeTab,
+        //    Status = createExamRequest.Status,
+        //    Type = createExamRequest.Type,
+        //    NumberQuestionDifficult = createExamRequest.NumberQuestionDifficult,
+        //    NumberQuestionModerate= createExamRequest.NumberQuestionModerate,
+        //    NumberQuestionEasy = createExamRequest.NumberQuestionEasy,
 
-        //    var newExam = new Exam
-        //    {
-        //        Title = createExamRequest.Title,
-        //        Description = createExamRequest.Description,
-        //        Duration = createExamRequest.Duration,
-        //    };
 
-        //    _dbContext.Exams.Add(newExam);
-        //    await _dbContext.SaveChangesAsync(); 
+        public async Task<Exam> Create(CreateExamRequest createExamRequest)
+        {
+            var userCurrent = await _userService.GetCurrentUserAsync();
 
-        //    foreach (var questionDto in createExamRequest.Questions)
-        //    {
-        //        var newExamQuestion = new ExamQuestion
-        //        {
-        //            ExamId = newExam.Id,
-        //            QuestionId = questionDto.Id 
+            var exam = _mapper.Map<Exam>(createExamRequest);
+            exam.CreatedAt = DateTime.Now;
+            exam.CreatedBy = userCurrent?.Id;
 
-        //        };
+        
+                
+            //};
 
-        //        _dbContext.ExamQuestions.Add(newExamQuestion);
-        //    }
+            _dbContext.Exams.Add(exam);
+            await _dbContext.SaveChangesAsync();
 
-        //    await _dbContext.SaveChangesAsync(); 
+            //if (createExamRequest.IsMixQuestion == true)
+            //{
 
-        //    return exam;
-        //}
+
+            //}
+            var createAuto = new GetQuestionAuto
+            {
+                NumberQuestionDifficult = exam.NumberQuestionDifficult,
+                NumberQuestionEasy = exam.NumberQuestionEasy,
+                NumberQuestionModerate = exam.NumberQuestionModerate,
+            };
+            var q = await AutoGetQuestion(createAuto);
+            foreach (var questionDto in q)
+            {
+                var newExamQuestion = new ExamQuestion
+                {
+                    ExamId = (int)exam.Id,
+                    QuestionId = questionDto.Id
+
+                };
+
+                _dbContext.ExamQuestions.Add(newExamQuestion);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+
+            return exam;
+        }
 
 
 
@@ -390,5 +424,67 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
         }
+
+
+
+
+
+
+
+
+        public async Task<List<Question>?> AutoGetQuestion(GetQuestionAuto request)
+        {
+            try
+            {
+                List<Question> allQuestions = new List<Question>();
+
+                // Lấy câu hỏi dễ
+                var easyQuestions = await _dbContext.Questions
+                    .Where(q => q.Difficulty == 1)
+                    .OrderBy(q => Guid.NewGuid()) 
+                    .Take(request.NumberQuestionEasy ?? 0)
+                    .ToListAsync();
+
+                allQuestions.AddRange(easyQuestions);
+
+                // Lấy câu hỏi trung bình
+                var moderateQuestions = await _dbContext.Questions
+                    .Where(q => q.Difficulty == 2)
+                    .OrderBy(q => Guid.NewGuid()) 
+                    .Take(request.NumberQuestionModerate ?? 0)
+                    .ToListAsync();
+
+                allQuestions.AddRange(moderateQuestions);
+
+                // Lấy câu hỏi khó
+                var difficultQuestions = await _dbContext.Questions
+                    .Where(q => q.Difficulty == 3)
+                    .OrderBy(q => Guid.NewGuid()) 
+                    .Take(request.NumberQuestionDifficult ?? 0)
+                    .ToListAsync();
+
+                allQuestions.AddRange(difficultQuestions);
+
+                //var allQuestionDtos= _mapper.Map<QuestionDto>(allQuestions);
+
+                return allQuestions;
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi
+                return null;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 }

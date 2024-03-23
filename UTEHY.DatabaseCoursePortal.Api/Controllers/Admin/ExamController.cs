@@ -6,6 +6,9 @@ using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
 using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 using UTEHY.DatabaseCoursePortal.Api.Models.ExamResult;
+using UTEHY.DatabaseCoursePortal.Api.Models.Question;
+using DocumentFormat.OpenXml.Drawing;
+using FluentValidation;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
@@ -46,18 +49,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
-        //[HttpPost("create")]
-        //public async Task<ApiResult<Exam>> Create([FromForm] CreateExamRequest request)
-        //{
-        //    var result = await _examService.Create(request);
+        [HttpPost("create")]    
+        public async Task<ApiResult<bool>> Create([FromForm] CreateExamRequest request)
+        {
+            var result = await _examService.Create(request);
 
-        //    return new ApiResult<Exam>()
-        //    {
-        //        Status = true,
-        //        Message = "Tạo đề thi thành công",
-        //        Data = result
-        //    };
-        //}
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Tạo đề thi thành công",
+                Data = true
+            };
+        }
 
 
 
@@ -99,5 +102,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+
+        [HttpPost("test-autoAdd")]
+        public async Task<ApiResult<List<Question>>> AutoCreateExam(GetQuestionAuto request)
+        {
+            var results = await _examService.AutoGetQuestion(request);
+
+            return new ApiResult<List<Question>>()
+            {
+                Status = true,
+                Message = "kiểm tra thành công",
+                Data = results
+            };
+        }
     }
 }
+
