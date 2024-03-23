@@ -11,5 +11,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string? TeacherId { get; set; }
 
         public virtual User User { get; set; }
+
+        public virtual List<Schedule> Schedules { get; set; }
     }
 }
