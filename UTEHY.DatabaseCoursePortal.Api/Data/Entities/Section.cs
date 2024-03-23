@@ -6,6 +6,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
     {
         public int? Id { get; set; }
 
+        public int? CourseId { get; set; }
+
         public string? Title { get; set; }
 
         public string? Description { get; set; }
@@ -13,6 +15,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int? Priority { get; set; }
 
         public bool? Status { get; set; }
-
     }
 }

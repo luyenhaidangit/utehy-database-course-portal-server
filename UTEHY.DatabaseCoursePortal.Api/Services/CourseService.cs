@@ -26,9 +26,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         #region Manage Course
         public async Task<Course> GetCourse()
         {
-            var course = await _dbContext.Courses.Include(c => c.Lessons).FirstOrDefaultAsync(x => x.IsDefault == true);
+            var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
 
             if(course is null)
+            {
+                throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
+            }
+
+            return course;
+        }
+
+        public async Task<Course> GetCourseWithSections()
+        {
+            var course = await _dbContext.Courses.Include(c => c.Sections).FirstOrDefaultAsync(x => x.IsDefault == true);
+
+            if (course is null)
             {
                 throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
             }
@@ -48,6 +60,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return course;
         }
+        #endregion
+
+        #region Manage Section
+        
         #endregion
 
         public async Task<Course> GetDatabaseCourse()
