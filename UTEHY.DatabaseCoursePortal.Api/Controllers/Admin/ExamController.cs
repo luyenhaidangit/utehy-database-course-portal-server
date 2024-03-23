@@ -49,7 +49,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
-        [HttpPost("create")]
+        [HttpPost("create")]    
         public async Task<ApiResult<bool>> Create([FromForm] CreateExamRequest request)
         {
             var result = await _examService.Create(request);
