@@ -7,6 +7,8 @@ using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Track;
+using Twilio.Http;
+using DocumentFormat.OpenXml.Office2016.Excel;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -36,16 +38,23 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return course;
         }
 
-        public async Task<Course> GetCourseWithSections()
+        public async Task<CourseWithSection> GetCourseWithSections()
         {
-            var course = await _dbContext.Courses.Include(c => c.Sections).FirstOrDefaultAsync(x => x.IsDefault == true);
+            var course = await _dbContext.Courses
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.UserCreated)
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.UserUpdated)
+                .FirstOrDefaultAsync(x => x.IsDefault == true);
 
-            if (course is null)
+            var result = _mapper.Map<CourseWithSection>(course);
+
+            if (result is null)
             {
                 throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
             }
 
-            return course;
+            return result;
         }
 
         public async Task<Course> EditCourse(EditCourseRequest request)
@@ -74,7 +83,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     .Include(c => c.Lessons)
                     .ThenInclude(l => l.LessonContents)
                     .FirstOrDefaultAsync(x => x.IsDefault == true);
-
                 return course;
             }
             catch (Exception ex)

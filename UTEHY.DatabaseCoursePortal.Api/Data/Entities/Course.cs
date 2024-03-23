@@ -1,4 +1,5 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {

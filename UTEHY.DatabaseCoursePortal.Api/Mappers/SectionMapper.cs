@@ -12,6 +12,10 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
     {
         public SectionMapper()
         {
+            CreateMap<Section, SectionDto>()
+            .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UserCreated != null ? src.UserCreated.UserName : null))
+            .ForMember(dest => dest.UpdatedBy, opt => opt.MapFrom(src => src.UserUpdated != null ? src.UserUpdated.UserName : null));
+
             CreateMap<CreateSectionRequest, Section>();
 
             CreateMap<EditSectionRequest, Section>();

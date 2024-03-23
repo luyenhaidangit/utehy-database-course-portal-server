@@ -42,13 +42,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpGet("get-course-with-section")]
-        public async Task<ApiResult<Course>> GetCourseWithSection()
+        public async Task<ApiResult<CourseWithSection>> GetCourseWithSection()
         {
             try
             {
                 var result = await _courseService.GetCourseWithSections();
 
-                return new ApiResult<Course>()
+                return new ApiResult<CourseWithSection>()
                 {
                     Status = true,
                     Message = "Lấy thông tin khoá học thành công!",

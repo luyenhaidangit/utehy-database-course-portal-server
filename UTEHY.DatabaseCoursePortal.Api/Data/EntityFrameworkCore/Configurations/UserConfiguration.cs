@@ -9,6 +9,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users");
+
+            builder.HasKey(x => x.Id);
+
             builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
 
             builder.HasQueryFilter(x => x.DeletedAt == null);
