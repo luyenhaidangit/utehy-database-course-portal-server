@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using Twilio.Http;
+﻿using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -28,7 +26,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         #region Manage Course
         public async Task<Course> GetCourse()
         {
-            var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
+            var course = await _dbContext.Courses.Include(c => c.Lessons).FirstOrDefaultAsync(x => x.IsDefault == true);
 
             if(course is null)
             {

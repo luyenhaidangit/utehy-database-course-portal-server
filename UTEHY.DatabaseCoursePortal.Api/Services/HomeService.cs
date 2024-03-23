@@ -52,8 +52,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var query = _dbContext.Courses.Include(course => course.UserCourses).AsQueryable();
 
             var courses = await query
-            .Where(b => b.IsPublished == true && b.PublishedAt < DateTime.UtcNow)
-            .OrderByDescending(b => b.Priority)
             .Take(maxCourseHome)
             .ToListAsync();
 
