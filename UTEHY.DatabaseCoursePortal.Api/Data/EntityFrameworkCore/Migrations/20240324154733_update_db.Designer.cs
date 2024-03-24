@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 
@@ -11,9 +12,10 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240324154733_update_db")]
+    partial class update_db
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -293,6 +295,56 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Banners", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Alt = "Banner-1",
+                            CtaTitle = "Học thử miễn phí",
+                            Description = "Thực hành dự án với Figma, hàng trăm bài tập và thử thách, hướng dẫn 100% bởi Sơn Đặng, tặng kèm Flashcards, v.v.",
+                            Expired = new DateTime(2023, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Image = "/Banner/Banner-1.png",
+                            IsBlank = true,
+                            LinkTo = "https://fullstack.edu.vn/landing/htmlcss/",
+                            Place = "Home",
+                            Priority = 1,
+                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#6828fa\",\"background\":\"linear-gradient(to right, #6828fa, #ffbaa4)\"}}}",
+                            Title = "Học HTML CSS cho người mới",
+                            Type = "SlideShow"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Alt = "Banner-2",
+                            CtaTitle = "Đăng ký ngay",
+                            Description = "Khóa học ReactJS từ cơ bản tới nâng cao. Kết quả của khóa học này là bạn có thể làm hầu hết các dự án thường gặp với ReactJS.",
+                            Expired = new DateTime(2023, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Image = "/Banner/Banner-2.png",
+                            IsBlank = true,
+                            LinkTo = "https://fullstack.edu.vn/courses/reactjs?ref=banner",
+                            Place = "Home",
+                            Priority = 2,
+                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#2877FA\",\"background\":\"linear-gradient(to right, #2877FA, #6717CD)\"}}}",
+                            Title = "Học ReactJS Miễn Phí!",
+                            Type = "SlideShow"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Alt = "Banner-3",
+                            CtaTitle = "Xem thành quả",
+                            Description = "Để đạt được kết quả tốt trong mọi việc ta cần xác định mục tiêu rõ ràng cho việc đó. Học lập trình cũng không là ngoại lệ.",
+                            Expired = new DateTime(2023, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Image = "/Banner/Banner-3.png",
+                            IsBlank = true,
+                            LinkTo = "https://fullstack.edu.vn/blog/tong-hop-cac-san-pham-cua-hoc-vien-tai-f8.html",
+                            Place = "Home",
+                            Priority = 3,
+                            Properties = "{\"props\":{\"style\":{\"--cta-hover-color\":\"#7612ff\",\"background\":\"linear-gradient(to right, #7612ff, #05b2ff)\"}}}",
+                            Title = "Thành Quả của Học Viên",
+                            Type = "SlideShow"
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Blog", b =>
@@ -530,6 +582,91 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BlogId = 1,
+                            CommentsCount = 1,
+                            Content = "Học đi nào SGP",
+                            IsAnswered = true,
+                            IsApproved = true,
+                            IsReacted = true,
+                            IsRemoved = false,
+                            IsVoted = false,
+                            PostId = 1,
+                            TypeCommentable = "",
+                            VideoCourseId = 1,
+                            VotersCount = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BlogId = 1,
+                            CommentsCount = 1,
+                            Content = "Học đi nào VGM",
+                            IsAnswered = true,
+                            IsApproved = true,
+                            IsReacted = true,
+                            IsRemoved = false,
+                            IsVoted = false,
+                            ParentCommentId = 1,
+                            PostId = 1,
+                            TypeCommentable = "",
+                            VideoCourseId = 1,
+                            VotersCount = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BlogId = 1,
+                            CommentsCount = 1,
+                            Content = "Học đi nào GGL",
+                            IsAnswered = true,
+                            IsApproved = true,
+                            IsReacted = true,
+                            IsRemoved = false,
+                            IsVoted = false,
+                            ParentCommentId = 1,
+                            PostId = 2,
+                            TypeCommentable = "",
+                            VideoCourseId = 1,
+                            VotersCount = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BlogId = 1,
+                            CommentsCount = 1,
+                            Content = "Học đi nào FL",
+                            IsAnswered = true,
+                            IsApproved = true,
+                            IsReacted = true,
+                            IsRemoved = false,
+                            IsVoted = false,
+                            PostId = 3,
+                            TypeCommentable = "",
+                            VideoCourseId = 1,
+                            VotersCount = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BlogId = 1,
+                            CommentsCount = 1,
+                            Content = "Học đi nào TLN",
+                            IsAnswered = true,
+                            IsApproved = true,
+                            IsReacted = true,
+                            IsRemoved = false,
+                            IsVoted = false,
+                            ParentCommentId = 1,
+                            PostId = 1,
+                            TypeCommentable = "",
+                            VideoCourseId = 1,
+                            VotersCount = 1
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Config", b =>
@@ -570,6 +707,57 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Configs", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Số lượng khoá học hiển thị tối đa tại trang chủ",
+                            Key = "MaxCourseHome",
+                            Value = "20"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Số lượng banner hiển thị tối đa tại trang chủ",
+                            Key = "MaxBannerHome",
+                            Value = "10"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Số lượng trang tính năng hiển thị tối đa tại trang chủ",
+                            Key = "MaxPageFeatureHome",
+                            Value = "10"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Số lượng bài viết hiển thị tối đa tại trang chủ",
+                            Key = "MaxPostHome",
+                            Value = "10"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Id kênh youtube hệ thống",
+                            Key = "IdChannelYoutube",
+                            Value = "UCVy9p7eBCMmHVEITk4yPZjg"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Số lượng video youtube hiển thị tối đa tại trang chủ",
+                            Key = "MaxVideoYoutubeHome",
+                            Value = "10"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Số người dùng đã tạo",
+                            Key = "UserCreationCount",
+                            Value = "0"
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Course", b =>
@@ -622,6 +810,36 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Courses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImageUrl = "/Course/Default.jpg",
+                            IsDefault = true,
+                            Title = "Cơ sở dữ liệu"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ImageUrl = "/Course/Course-2.png",
+                            IsDefault = false,
+                            Title = "HTML CSS từ Zero đến Hero"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ImageUrl = "/Course/Course-3.png",
+                            IsDefault = true,
+                            Title = "Responsive Với Grid System"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ImageUrl = "/Course/Course-4.png",
+                            IsDefault = true,
+                            Title = "Lập Trình JavaScript Cơ Bản"
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Exam", b =>
@@ -1121,6 +1339,48 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pages", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Công cụ sơ đồ ER để trực quan hóa cách các thực thể hệ thống như người hoặc đối tượng liên quan với nhau.",
+                            Image = "/Page/Page-1.png",
+                            Priority = 4,
+                            Status = true,
+                            Title = "Vẽ sơ đồ ER",
+                            Type = "Feature"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Tổng hợp câu hỏi trắc nghiệm CSDL có đáp án đầy đủ nhằm giúp các bạn dễ dàng ôn tập lại toàn bộ các kiến thức.",
+                            Image = "/Page/Page-2.png",
+                            Priority = 3,
+                            Status = true,
+                            Title = "Bộ câu hỏi trắc nghiệm về CSDL",
+                            Type = "Feature"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Trình biên dịch SQL trực tuyến ngay trên nền tảng web, không cần phải cài đặt trên máy tính cá nhân.",
+                            Image = "/Page/Page-3.png",
+                            Priority = 2,
+                            Status = true,
+                            Title = "Thực thi SQL",
+                            Type = "Feature"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Nơi người dùng có thể tương tác, chia sẻ kiến thức, và giải quyết thắc mắc về CSDL.",
+                            Image = "/Page/Page-4.png",
+                            Priority = 1,
+                            Status = true,
+                            Title = "Thảo luận và diễn dàn",
+                            Type = "Feature"
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Permission", b =>
@@ -1225,6 +1485,52 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "",
+                            Description = "Authentication và Authorization là một phần quan trọng trong việc phát triển phần mềm, giúp chúng ta xác thực và phân quyền...",
+                            Image = "/Post/Post-1.png",
+                            IsPublished = true,
+                            Priority = 0,
+                            Title = "Authentication & Authorization trong ReactJS",
+                            UserId = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "",
+                            Description = "Chào bạn! Nếu bạn đã là học viên khóa Pro của F8, chắc hẳn bạn đã biết tới \"Dev Mode\" - giúp thực hành code song song khi xem...",
+                            Image = "/Post/Post-2.png",
+                            IsPublished = true,
+                            Priority = 0,
+                            Title = "Hướng dẫn chi tiết cách sử dụng Dev Mode trong khóa Pro",
+                            UserId = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Content = "",
+                            Description = "Hello ae mọi người nhé, mọi người (đặc biệt là lập trình viên Software) chắc hẳn đã nghe tới Powershell, nhưng bù lại cái màn hình...",
+                            Image = "/Post/Post-3.png",
+                            IsPublished = true,
+                            Priority = 0,
+                            Title = "Cách chỉnh theme Oh-my-posh cho Powershell",
+                            UserId = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192")
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Content = "",
+                            Description = "Ở bài viết này, chúng ta cùng nhau tìm hiểu về các vấn đề liên quan đến Performance ở phía FE. Không dài dòng nữa,...",
+                            Image = "/Post/Post-4.png",
+                            IsPublished = true,
+                            Priority = 0,
+                            Title = "Sự khác biệt giữa var, let và const trong JavaScript",
+                            UserId = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192")
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Question", b =>
@@ -1374,6 +1680,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("QuestionCategories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Thư mục loại câu hỏi mặc định",
+                            IsDefault = true,
+                            Name = "Mặc định",
+                            Priority = 0
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.QuestionTag", b =>
@@ -1543,6 +1859,32 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
+                            ConcurrencyStamp = "d16c4090-e276-43a0-bf3e-e90761efdd9d",
+                            Description = "Admin Role",
+                            Name = "admin",
+                            NormalizedName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c3f087a2-48d5-4e09-8a63-8830a7b5b4e3"),
+                            ConcurrencyStamp = "05eb319b-99af-40f5-969c-6d2b8ab2ee89",
+                            Description = "Student Role",
+                            Name = "student",
+                            NormalizedName = "student"
+                        },
+                        new
+                        {
+                            Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd"),
+                            ConcurrencyStamp = "080c90fc-65a9-496b-bdde-ac685fe6aeea",
+                            Description = "Teacher Role",
+                            Name = "teacher",
+                            NormalizedName = "teacher"
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.RolePermission", b =>
@@ -1753,6 +2095,26 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Students");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StudentId = "10121910",
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a7")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StudentId = "10121911",
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a2")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StudentId = "10121912",
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b2")
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.StudentGroupModule", b =>
@@ -1859,6 +2221,26 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Teachers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            TeacherId = "12520001",
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a6")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            TeacherId = "12520002",
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a1")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            TeacherId = "12520003",
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b1")
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.Track", b =>
@@ -2032,6 +2414,183 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "31f60781-da8e-4718-8f1e-0a5a1ea9decc",
+                            Email = "luyenhaidangit@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Luyện Hải Đăng",
+                            NormalizedEmail = "luyenhaidangit@gmail.com",
+                            NormalizedUserName = "admin",
+                            PasswordHash = "AQAAAAEAACcQAAAAECNz5Q4cUB6/TCx6hGuolt+IJDxgsHwivG+HyOAGYhX5raFk3HKBO1PLgOYIrM4kaw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "029f6412-15d3-46b7-832e-a9950618accf",
+                            Email = "caovandan@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Cao Văn Dân",
+                            NormalizedEmail = "caovandan@gmail.com",
+                            NormalizedUserName = "caovandan",
+                            PasswordHash = "AQAAAAEAACcQAAAAELcFZkzMVls+zgzzrDZetHT+4CKinM6wi9zAIcEGJokeU5Sw4CWCWBNYvgPgX7eYDA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "caovandan"
+                        },
+                        new
+                        {
+                            Id = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "6b6ccbc1-d1f0-4cc7-9d7f-f3f9a6540bb5",
+                            Email = "nguyenvanthang@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Nguyễn Văn Thắng",
+                            NormalizedEmail = "nguyenvanthang@gmail.com",
+                            NormalizedUserName = "nguyenvanthang",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAr9lc0DLFL1guU/TpLav6JSCUAykRNlKP9VBvywhcXwW9psKBDLPWwnhlNJfjvp7Q==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "nguyenvanthang"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a6"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "ffe062f1-2baa-4d37-b86a-44cc1e9146ab",
+                            Email = "phamxuantuyen@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Phạm Xuân Tuyển",
+                            NormalizedEmail = "phamxuantuyen@gmail.com",
+                            NormalizedUserName = "phamxuantuyen",
+                            PasswordHash = "AQAAAAEAACcQAAAAEA82IZf9pjOtzN0kRnJwom/qt9UurGCNos6OQJc8g3yMpUV3Rk7UZpnngURs39kXyw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "phamxuantuyen"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a1"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "bd41cb68-49f6-4850-92e7-b93565f58e96",
+                            Email = "daoxuanduc@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Đào Xuân Đức",
+                            NormalizedEmail = "daoxuanduc@gmail.com",
+                            NormalizedUserName = "daoxuanduc",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHxAOyXYc+mjgp6yQc8gp7LhHqB95E38CzGfSg1DYsrif33CN5oJm/0qoM2dYoONBQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "daoxuanduc"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b1"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "9fac2f8f-d8d9-4577-a356-21f6a5606f45",
+                            Email = "hoanggiabao@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Hoàng Gia Bảo",
+                            NormalizedEmail = "hoanggiabao@gmail.com",
+                            NormalizedUserName = "hoanggiabao",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGaLKIKY29nd3HD+M5lS1k6arzpNv38QU5lqdLDZ3mkCgd3NCXInuwmhLmpVC7f1QA==",
+                            PhoneNumber = "+84922002360",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "hoanggiabao"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a7"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "ce24b8c6-4f25-436f-813f-9ba800a48f11",
+                            Email = "buixuanhoang@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Bùi Xuân Hoàng",
+                            NormalizedEmail = "buixuanhoang@gmail.com",
+                            NormalizedUserName = "buixuanhoang",
+                            PasswordHash = "AQAAAAEAACcQAAAAENTQCjvMQtUeCqTQZu4PNTtkdYnrE0GV4vfVNf78558Z5w3BRLZ1Wg0NZpaEZP9j2g==",
+                            PhoneNumber = "+84922002111",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "buixuanhoang"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a2"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "b05ddadb-fcb1-4a00-908c-c1cc6a41a739",
+                            Email = "phamthanhlong@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Phạm Thanh Long",
+                            NormalizedEmail = "phamthanhlong@gmail.com",
+                            NormalizedUserName = "phamthanhlong",
+                            PasswordHash = "AQAAAAEAACcQAAAAEF0XDGxcgu3Bj43m7q8jKCNWjVU9L7EruANMkZPfbbrvNj1STUO7P2y7oKoB8icYjQ==",
+                            PhoneNumber = "+84922002222",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "phamthanhlong"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b2"),
+                            AccessFailedCount = 0,
+                            AvatarUrl = "/User/AvatarDefault.png",
+                            ConcurrencyStamp = "1c4757fe-ebbe-4b9d-85d5-ce8cde45f354",
+                            Email = "nguyendinhhung@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Nguyễn Đình Hùng",
+                            NormalizedEmail = "nguyendinhhung@gmail.com",
+                            NormalizedUserName = "nguyendinhhung",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPFyhy+m2mLr0V6mXZiYfB7lt229Hlqh2HfM6wK5Y2RsMl7zv5DScKSk+CpD4bdKew==",
+                            PhoneNumber = "+84922002333",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            Status = true,
+                            TwoFactorEnabled = false,
+                            UserName = "nguyendinhhung"
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.UserCourse", b =>
@@ -2070,6 +2629,38 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserCourses", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CourseId = 1,
+                            Progress = 50,
+                            RegistrationDate = new DateTime(2023, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = true,
+                            TimeSpent = 50,
+                            UserId = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CourseId = 1,
+                            Progress = 50,
+                            RegistrationDate = new DateTime(2023, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = true,
+                            TimeSpent = 50,
+                            UserId = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CourseId = 2,
+                            Progress = 50,
+                            RegistrationDate = new DateTime(2023, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = true,
+                            TimeSpent = 50,
+                            UserId = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2")
+                        });
                 });
 
             modelBuilder.Entity("UTEHY.DatabaseCoursePortal.Api.Data.Entities.UserGroup", b =>
@@ -2138,6 +2729,38 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Migrations
                     b.HasIndex("UserId1");
 
                     b.HasDiscriminator().HasValue("UserRole");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
+                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc")
+                        },
+                        new
+                        {
+                            UserId = new Guid("c4f97a72-6b4a-47d3-ba1b-6fe15e62c192"),
+                            RoleId = new Guid("c3f087a2-48d5-4e09-8a63-8830a7b5b4e3")
+                        },
+                        new
+                        {
+                            UserId = new Guid("1a3e854a-843d-4e65-ab88-9d5736c831f2"),
+                            RoleId = new Guid("c3f087a2-48d5-4e09-8a63-8830a7b5b4e3")
+                        },
+                        new
+                        {
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a6"),
+                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd")
+                        },
+                        new
+                        {
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08a1"),
+                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd")
+                        },
+                        new
+                        {
+                            UserId = new Guid("d5e5b63a-53a1-4f88-a399-1f7c7f4b08b1"),
+                            RoleId = new Guid("8d04dce2-969a-435d-bba4-df3f325983dd")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

@@ -112,7 +112,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.Entity<Comment>().HasQueryFilter(x => x.DeletedAt == null);
 
             //Seeder 
-            builder.Seed();
+            //builder.Seed();
         }
 
         public override int SaveChanges()
