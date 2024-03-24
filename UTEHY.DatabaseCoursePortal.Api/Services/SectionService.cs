@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
-using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using UTEHY.DatabaseCoursePortal.Api.Models.Section;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -16,14 +13,35 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserService _userService;
+        private readonly CourseService _courseService;
         private readonly IMapper _mapper;
 
-        public SectionService(ApplicationDbContext dbContext, IMapper mapper, UserService userService)
+        public SectionService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, CourseService courseService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userService = userService;
+            _courseService = courseService;
         }
+
+        #region Manage section
+        public async Task<Section> Create(CreateSectionRequest request)
+        {
+            var section = _mapper.Map<Section>(request);
+
+            var course = await _courseService.GetCourse();
+
+            section.CourseId = course.Id;
+
+            await _userService.AttachCreationInfo(section);
+
+            await _dbContext.Sections.AddAsync(section);
+
+            await _dbContext.SaveChangesAsync();
+
+            return section;
+        }
+        #endregion
 
         public async Task<PagingResult<Section>> Get(GetSectionRequest request)
         {
@@ -68,27 +86,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 var result = new PagingResult<Section>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
 
                 return result;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
-        }
-
-        public async Task<Section> Create(CreateSectionRequest request)
-        {
-            try
-            {
-                var section = _mapper.Map<Section>(request);
-
-                var userCurrent = await _userService.GetCurrentUserAsync();
-                section.CreatedAt = DateTime.Now;
-                section.CreatedBy = userCurrent?.Id;
-
-                await _dbContext.Sections.AddAsync(section);
-                await _dbContext.SaveChangesAsync();
-
-                return section;
             }
             catch (Exception ex)
             {

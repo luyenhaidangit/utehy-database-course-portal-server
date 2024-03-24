@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
+using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Section;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
@@ -32,16 +33,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<Data.Entities.Section>> Create([FromForm] CreateSectionRequest request)
+        public async Task<ApiResult<Data.Entities.Section>> Create(CreateSectionRequest request)
         {
-            var result = await _sectionService.Create(request);
-
-            return new ApiResult<Data.Entities.Section>()
+            try
             {
-                Status = true,
-                Message = "Tạo mới thành công!",
-                Data = result
-            };
+                var result = await _sectionService.Create(request);
+
+                return new ApiResult<Data.Entities.Section>()
+                {
+                    Status = true,
+                    Message = "Tạo mới chương thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         [HttpPost("edit")]

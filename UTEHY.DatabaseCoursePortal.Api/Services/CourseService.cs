@@ -9,6 +9,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Track;
 using Twilio.Http;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using UTEHY.DatabaseCoursePortal.Api.Models.Section;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -16,13 +17,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly UserService _userService;
         private readonly FileService _fileService;
 
-        public CourseService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService)
+        public CourseService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService,UserService userService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _fileService = fileService;
+            _userService = userService;
         }
 
         #region Manage Course
@@ -38,6 +41,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return course;
         }
 
+        public async Task<Course> EditCourse(EditCourseRequest request)
+        {
+            Course course = await this.GetCourse();
+
+            _mapper.Map(request, course);
+
+            course.UpdatedAt = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            return course;
+        }
+        #endregion
+
+        #region Manage Section
         public async Task<CourseWithSection> GetCourseWithSections()
         {
             var course = await _dbContext.Courses
@@ -57,22 +75,22 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-        public async Task<Course> EditCourse(EditCourseRequest request)
+        public async Task<Section> CreateSection(CreateSectionRequest request)
         {
-            Course course = await this.GetCourse();
+            var section = _mapper.Map<Section>(request);
 
-            _mapper.Map(request, course);
+            var course = await GetCourse();
 
-            course.UpdatedAt = DateTime.Now;
+            section.CourseId = course.Id;
+
+            await _userService.AttachCreationInfo(section);
+
+            await _dbContext.Sections.AddAsync(section);
 
             await _dbContext.SaveChangesAsync();
 
-            return course;
+            return section;
         }
-        #endregion
-
-        #region Manage Section
-        
         #endregion
 
         public async Task<Course> GetDatabaseCourse()
