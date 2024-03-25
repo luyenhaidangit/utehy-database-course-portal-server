@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Twilio.Exceptions;
-using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
-using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Lesson;
-using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
-using UTEHY.DatabaseCoursePortal.Api.Exceptions;
-
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -16,70 +10,38 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly UserService _userService;
 
-        public LessonService(ApplicationDbContext dbContext, IMapper mapper)
+        public LessonService(ApplicationDbContext dbContext, IMapper mapper, UserService userService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _userService = userService;
         }
 
-        public async Task<PagingResult<Lesson>> Get(GetLessonRequest request)
+        #region Manage lesson
+        public async Task<List<Lesson>> GetLessonBySectionId(int sectionId)
         {
-            var query = _dbContext.Lessons.AsQueryable();
-
-            if (!string.IsNullOrEmpty(request.Title))
-            {
-                query = query.Where(b => b.Title.ToLower().Contains(request.Title.ToLower()));
-            }
-            if (!string.IsNullOrEmpty(request.Content))
-            {
-                query = query.Where(b => b.Content.ToLower().Contains(request.Content.ToLower()));
-            }
-
-            int total = await query.CountAsync();
-
-            if (request.PageIndex == null) request.PageIndex = 1;
-            if (request.PageSize == null) request.PageSize = total;
-
-            int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
-
-            var items = await query
-            .OrderByDescending(b => b.Id)
-            .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
-            .Take(request.PageSize.Value)
-            .ToListAsync();
-
-            var result = new PagingResult<Lesson>(items, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
+            var result = await _dbContext.Lessons.Where(x => x.SectionId == sectionId).OrderBy(s => s.Priority).ToListAsync();
 
             return result;
         }
 
-        public async Task<Lesson> GetById(int id)
-        {
-            try
-            {
-                var lesson = await _dbContext.Lessons.FindAsync(id);
-
-                if (lesson == null)
-                {
-                    throw new Exceptions.ApiException("Không tìm thấy lesson hợp lệ!", HttpStatusCode.InternalServerError);
-                }
-
-                return lesson;
-            }
-            catch (Exception ex)
-            {
-                throw new Exceptions.ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
-        }
         public async Task<Lesson> Create(CreateLessonRequest request)
         {
-        
+            var section = await _dbContext.Sections.FindAsync(request.SectionId);
+
+            if(section is null)
+            {
+                throw new BadHttpRequestException("Chương không tồn tại trong hệ thống!");
+            }
 
             var lesson = _mapper.Map<Lesson>(request);
-            lesson.CreatedAt = DateTime.Now;
 
-            await _dbContext.Lessons.AddAsync(lesson);
+            await _userService.AttachCreateInfo(section);
+
+            await _dbContext.Sections.AddAsync(section);
+
             await _dbContext.SaveChangesAsync();
 
             return lesson;
@@ -91,12 +53,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             if (lesson == null)
             {
-                throw new Exception("Lessson không tồn tại!");
+                throw new BadHttpRequestException("Bài học không tồn tại trong hệ thống!");
             }
 
+            var section = await _dbContext.Sections.FindAsync(request.SectionId);
+
+            if (section is null)
+            {
+                throw new BadHttpRequestException("Chương không tồn tại trong hệ thống!");
+            }
 
             _mapper.Map(request, lesson);
-            lesson.UpdatedAt = DateTime.Now;
+
+            await _userService.AttachUpdateInfo(section);
 
             await _dbContext.SaveChangesAsync();
 
@@ -107,37 +76,17 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             var lesson = await _dbContext.Lessons.FindAsync(id);
 
-            if (lesson == null)
+            if (lesson is null)
             {
-                throw new Exception("Lesson không tồn tại!");
+                throw new ArgumentNullException(nameof(lesson), "Lesson không tồn tại trong hệ thống!");
             }
 
-            lesson.DeletedAt = DateTime.Now;
-
-            _dbContext.Lessons.Remove(lesson);
-
+            await _userService.AttachDeleteInfo(lesson);
 
             await _dbContext.SaveChangesAsync();
 
             return lesson;
         }
-
-        public async Task<List<Lesson>> DeleteMultiple(List<int> ids)
-        {
-            var lessons = await _dbContext.Lessons.Where(x => ids.Contains(x.Id)).ToListAsync();
-
-            var invalidIds = ids.Except(lessons.Select(b => b.Id)).ToList();
-
-            if (invalidIds.Any())
-            {
-                throw new Exception($"Danh sách Ids lesson không tồn tại: {string.Join(", ", invalidIds)}");
-            }
-
-            _dbContext.Lessons.RemoveRange(lessons);
-
-            await _dbContext.SaveChangesAsync();
-
-            return lessons;
-        }
+        #endregion
     }
 }

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -7,8 +7,6 @@ using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Track;
-using Twilio.Http;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using UTEHY.DatabaseCoursePortal.Api.Models.Section;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
