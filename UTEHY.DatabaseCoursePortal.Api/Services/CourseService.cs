@@ -83,7 +83,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             section.CourseId = course.Id;
 
-            await _userService.AttachCreationInfo(section);
+            await _userService.AttachCreateInfo(section);
 
             await _dbContext.Sections.AddAsync(section);
 

@@ -59,11 +59,25 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         #endregion
 
         #region Action
-        public async Task AttachCreationInfo<TEntity>(TEntity entity) where TEntity : EntityBase
+        public async Task AttachCreateInfo<TEntity>(TEntity entity) where TEntity : EntityBase
         {
             var userCurrent = await GetUserCurrentAsync();
             entity.CreatedAt = DateTime.Now;
             entity.CreatedBy = userCurrent?.Id;
+        }
+
+        public async Task AttachUpdateInfo<TEntity>(TEntity entity) where TEntity : EntityBase
+        {
+            var userCurrent = await GetUserCurrentAsync();
+            entity.UpdatedAt = DateTime.Now;
+            entity.UpdatedBy = userCurrent?.Id;
+        }
+
+        public async Task AttachDeleteInfo<TEntity>(TEntity entity) where TEntity : EntityBase
+        {
+            var userCurrent = await GetUserCurrentAsync();
+            entity.DeletedAt = DateTime.Now;
+            entity.DeletedBy = userCurrent?.Id;
         }
         #endregion
 
