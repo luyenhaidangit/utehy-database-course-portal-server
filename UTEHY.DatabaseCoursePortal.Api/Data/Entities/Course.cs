@@ -25,8 +25,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual List<Section> Sections { get; set; }
 
         public List<UserCourse>? UserCourses { get; set; }
-
-        public virtual List<Lesson> Lessons { get; set; }
         #endregion
     }
 }

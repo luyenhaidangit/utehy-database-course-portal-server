@@ -40,6 +40,34 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             }
         }
 
+        [HttpGet("get-section-with-lesson")]
+        public async Task<ApiResult<Data.Entities.Section>> GetSectionWithLesson([FromQuery] int id)
+        {
+            try
+            {
+                var result = await _sectionService.GetSectionWithLesson(id);
+
+                return new ApiResult<Data.Entities.Section>()
+                {
+                    Status = true,
+                    Message = "Lấy thông tin chương thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         [HttpPost("create")]
         public async Task<ApiResult<Data.Entities.Section>> Create(CreateSectionRequest request)
         {

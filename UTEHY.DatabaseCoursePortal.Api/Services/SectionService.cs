@@ -37,6 +37,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return sections;
         }
 
+        public async Task<Section> GetSectionWithLesson(int id)
+        {
+            var section = await _dbContext.Sections
+               .Where(s => s.Id == id)
+               .Include(s => s.Lessons.OrderBy(l => l.Priority))
+               .FirstOrDefaultAsync();
+
+            if (section is null)
+            {
+                throw new BadHttpRequestException("Chương không tồn tại trong hệ thống!");
+            }
+
+            return section;
+        }
+
         public async Task<Section> Create(CreateSectionRequest request)
         {
             var section = _mapper.Map<Section>(request);

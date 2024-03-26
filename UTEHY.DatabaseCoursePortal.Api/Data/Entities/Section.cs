@@ -26,6 +26,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         [ForeignKey("DeletedBy")]
         public virtual User? UserDeleted { get; set; }
+
+        public virtual List<Lesson> Lessons { get; set; }
         #endregion
     }
 }
