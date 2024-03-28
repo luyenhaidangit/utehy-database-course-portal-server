@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Microsoft.IdentityModel.Tokens;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
-using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using UTEHY.DatabaseCoursePortal.Api.Models.Section;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
@@ -16,168 +14,94 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserService _userService;
+        private readonly CourseService _courseService;
         private readonly IMapper _mapper;
 
-        public SectionService(ApplicationDbContext dbContext, IMapper mapper, UserService userService)
+        public SectionService(ApplicationDbContext dbContext, IMapper mapper, UserService userService, CourseService courseService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userService = userService;
+            _courseService = courseService;
         }
 
-        public async Task<PagingResult<Section>> Get(GetSectionRequest request)
+        #region Manage section
+        public async Task<List<Section>> GetAll()
         {
-            try
+            var sections = await _dbContext.Sections
+               .Include(s => s.UserCreated)
+               .Include(s => s.UserUpdated)
+               .OrderBy(s => s.Priority)
+               .ToListAsync();
+
+            return sections;
+        }
+
+        public async Task<Section> GetSectionWithLesson(int id)
+        {
+            var section = await _dbContext.Sections
+               .Where(s => s.Id == id)
+               .Include(s => s.Lessons.OrderBy(l => l.Priority))
+               .FirstOrDefaultAsync();
+
+            if (section is null)
             {
-                var query = _dbContext.Sections.Where(x => x.DeletedAt == null).AsQueryable();
-
-                if (!string.IsNullOrEmpty(request.Title))
-                {
-                    query = query.Where(b => b.Title.ToLower().Contains(request.Title.ToLower()));
-                }
-
-                int total = await query.CountAsync();
-
-                if (request.PageIndex == null) request.PageIndex = 1;
-                if (request.PageSize == null) request.PageSize = total;
-
-                int totalPages = (int)Math.Ceiling((double)total / request.PageSize.Value);
-
-                if (string.IsNullOrEmpty(request.SortBy) || request.SortBy == SortByConstant.Desc)
-                {
-                    query = request.OrderBy switch
-                    {
-                        OrderByConstant.Priority => query.OrderByDescending(b => b.Priority),
-                        OrderByConstant.Id or _ => query.OrderByDescending(b => b.Id),
-                    };
-                }
-                else if (request.SortBy == SortByConstant.Asc)
-                {
-                    query = request.OrderBy switch
-                    {
-                        OrderByConstant.Priority => query.OrderBy(b => b.Priority),
-                        OrderByConstant.Id or _ => query.OrderBy(b => b.Id),
-                    };
-                }
-
-                var items = await query
-                    .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
-                    .Take(request.PageSize.Value)
-                    .ToListAsync();
-
-                var result = new PagingResult<Section>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
-
-                return result;
+                throw new BadHttpRequestException("Chương không tồn tại trong hệ thống!");
             }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
+
+            return section;
         }
 
         public async Task<Section> Create(CreateSectionRequest request)
         {
-            try
-            {
-                var section = _mapper.Map<Section>(request);
+            var section = _mapper.Map<Section>(request);
 
-                var userCurrent = await _userService.GetCurrentUserAsync();
-                section.CreatedAt = DateTime.Now;
-                section.CreatedBy = userCurrent?.Id;
+            var course = await _courseService.GetCourse();
 
-                await _dbContext.Sections.AddAsync(section);
-                await _dbContext.SaveChangesAsync();
+            section.CourseId = course.Id;
 
-                return section;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
+            await _userService.AttachCreateInfo(section);
+
+            await _dbContext.Sections.AddAsync(section);
+
+            await _dbContext.SaveChangesAsync();
+
+            return section;
         }
 
         public async Task<Section> Edit(EditSectionRequest request)
         {
-            try
+            var section = await _dbContext.Sections.FindAsync(request.Id);
+
+            if (section is null)
             {
-                var section = await _dbContext.Sections.FindAsync(request.Id);
-
-                if (section == null)
-                {
-                    throw new ApiException("Không tìm thấy chương học phần hợp lệ!", HttpStatusCode.InternalServerError);
-                }
-
-                _mapper.Map(request, section);
-                var userCurrent = await _userService.GetCurrentUserAsync();
-                section.UpdatedAt = DateTime.Now;
-                section.CreatedBy = userCurrent?.Id;
-
-                await _dbContext.SaveChangesAsync();
-
-                return section;
+                throw new ArgumentNullException(nameof(section), "Không thể tìm thấy section!");
             }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
+
+            _mapper.Map(request, section);
+
+            await _userService.AttachUpdateInfo(section);
+
+            await _dbContext.SaveChangesAsync();
+
+            return section;
         }
 
         public async Task<Section> Delete(int id)
         {
-            try
+            var section = await _dbContext.Sections.FindAsync(id);
+
+            if (section is null)
             {
-                var section = await _dbContext.Sections.FindAsync(id);
-
-                if (section == null)
-                {
-                    throw new ApiException("Không tìm chương học phần hợp lệ!", HttpStatusCode.InternalServerError);
-                }
-
-                var userCurrent = await _userService.GetCurrentUserAsync();
-                section.DeletedAt = DateTime.Now;
-                section.CreatedBy = userCurrent?.Id;
-
-                await _dbContext.SaveChangesAsync();
-
-                return section;
+                throw new ArgumentNullException(nameof(section), "Không thể tìm thấy section!");
             }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
+
+            await _userService.AttachDeleteInfo(section);
+
+            await _dbContext.SaveChangesAsync();
+
+            return section;
         }
-
-        public async Task<List<Section>> DeleteMultiple(List<int?> ids)
-        {
-            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var sections = await _dbContext.Sections
-                                                   .Where(s => ids.Contains(s.Id) && s.DeletedAt == null)
-                                                   .ToListAsync();
-
-                    if (!sections.Any())
-                    {
-                        throw new ApiException("Không tìm thấy phần học nào hợp lệ để xoá.", HttpStatusCode.BadRequest);
-                    }
-
-                    foreach (var section in sections)
-                    {
-                        section.DeletedAt = DateTime.Now;
-                    }
-
-                    await _dbContext.SaveChangesAsync();
-                    await transaction.CommitAsync();
-
-                    return sections;
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    throw new ApiException($"Lỗi khi xoá các phần học: {ex.Message}", HttpStatusCode.InternalServerError, ex);
-                }
-            }
-        }
+        #endregion
     }
 }

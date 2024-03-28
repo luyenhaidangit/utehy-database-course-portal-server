@@ -6,6 +6,5 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Lesson
     {
         public string? Title { get; set; }
         public string? Content { get; set; }
-
     }
 }

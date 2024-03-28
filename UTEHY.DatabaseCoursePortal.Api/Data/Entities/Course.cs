@@ -1,4 +1,5 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
@@ -24,8 +25,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual List<Section> Sections { get; set; }
 
         public List<UserCourse>? UserCourses { get; set; }
-
-        public virtual List<Lesson> Lessons { get; set; }
         #endregion
     }
 }

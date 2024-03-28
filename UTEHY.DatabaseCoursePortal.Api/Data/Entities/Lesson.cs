@@ -1,4 +1,5 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
@@ -10,9 +11,24 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public string Content { get; set; }
 
-        public bool? IsPublished { get; set; }
+        public bool? Status { get; set; }
 
-        public int? CourseId { get; set; }
+        public int? Priority { get; set; }
+
+        public int? SectionId { get; set; }
+
+        #region Relationship
+        [ForeignKey("CreatedBy")]
+        public virtual User? UserCreated { get; set; }
+
+        [ForeignKey("UpdatedBy")]
+        public virtual User? UserUpdated { get; set; }
+
+        [ForeignKey("DeletedBy")]
+        public virtual User? UserDeleted { get; set; }
+
+        public virtual Section Section { get; set; }
+        #endregion
 
         public virtual List<LessonContent> LessonContents { get; set; }
     }

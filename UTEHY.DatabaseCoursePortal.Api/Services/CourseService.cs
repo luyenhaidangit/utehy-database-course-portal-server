@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
@@ -7,6 +7,7 @@ using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
 using UTEHY.DatabaseCoursePortal.Api.Models.Track;
+using UTEHY.DatabaseCoursePortal.Api.Models.Section;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -14,13 +15,15 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly UserService _userService;
         private readonly FileService _fileService;
 
-        public CourseService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService)
+        public CourseService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService,UserService userService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _fileService = fileService;
+            _userService = userService;
         }
 
         #region Manage Course
@@ -29,18 +32,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var course = await _dbContext.Courses.FirstOrDefaultAsync(x => x.IsDefault == true);
 
             if(course is null)
-            {
-                throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
-            }
-
-            return course;
-        }
-
-        public async Task<Course> GetCourseWithSections()
-        {
-            var course = await _dbContext.Courses.Include(c => c.Sections).FirstOrDefaultAsync(x => x.IsDefault == true);
-
-            if (course is null)
             {
                 throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
             }
@@ -63,25 +54,58 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         #endregion
 
         #region Manage Section
-        
+        public async Task<CourseWithSection> GetCourseWithSections()
+        {
+            var course = await _dbContext.Courses
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.UserCreated)
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.UserUpdated)
+                .FirstOrDefaultAsync(x => x.IsDefault == true);
+
+            var result = _mapper.Map<CourseWithSection>(course);
+
+            if (result is null)
+            {
+                throw new ArgumentNullException("Thông tin khoá học Database không tồn tại!");
+            }
+
+            return result;
+        }
+
+        public async Task<Section> CreateSection(CreateSectionRequest request)
+        {
+            var section = _mapper.Map<Section>(request);
+
+            var course = await GetCourse();
+
+            section.CourseId = course.Id;
+
+            await _userService.AttachCreateInfo(section);
+
+            await _dbContext.Sections.AddAsync(section);
+
+            await _dbContext.SaveChangesAsync();
+
+            return section;
+        }
         #endregion
 
-        public async Task<Course> GetDatabaseCourse()
-        {
-            try
-            {
-                var course = await _dbContext.Courses
-                    .Include(c => c.Lessons)
-                    .ThenInclude(l => l.LessonContents)
-                    .FirstOrDefaultAsync(x => x.IsDefault == true);
-
-                return course;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
-        }
+        //public async Task<Course> GetDatabaseCourse()
+        //{
+        //    try
+        //    {
+        //        var course = await _dbContext.Courses
+        //            .Include(c => c.Lessons)
+        //            .ThenInclude(l => l.LessonContents)
+        //            .FirstOrDefaultAsync(x => x.IsDefault == true);
+        //        return course;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+        //    }
+        //}
 
         public async Task<Course> EditDatabaseCourse(EditDatabaseCourseRequest request)
         {
@@ -271,98 +295,98 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         }
 
         #region Course User
-        public async Task<CourseLearningUser> GetCourseLearningUser(GetCourseLearningUserRequest request, HttpContext httpContext)
-        {
-            try
-            {
-                var course = await _dbContext.Courses
-                    .Include(c => c.Lessons)
-                    .ThenInclude(l => l.LessonContents)
-                    .FirstOrDefaultAsync(x => x.Slug == request.Slug);
+        //public async Task<CourseLearningUser> GetCourseLearningUser(GetCourseLearningUserRequest request, HttpContext httpContext)
+        //{
+        //    try
+        //    {
+        //        var course = await _dbContext.Courses
+        //            .Include(c => c.Lessons)
+        //            .ThenInclude(l => l.LessonContents)
+        //            .FirstOrDefaultAsync(x => x.Slug == request.Slug);
 
-                if(course == null)
-                {
-                    throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError);
-                }
+        //        if(course == null)
+        //        {
+        //            throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError);
+        //        }
 
-                var result = _mapper.Map<CourseLearningUser>(course);
+        //        var result = _mapper.Map<CourseLearningUser>(course);
 
-                if(httpContext.User.Claims.FirstOrDefault() != null)
-                {
-                    var userName = httpContext.User.Claims.First(x => x.Type == "UserName").Value;
+        //        if(httpContext.User.Claims.FirstOrDefault() != null)
+        //        {
+        //            var userName = httpContext.User.Claims.First(x => x.Type == "UserName").Value;
 
-                    if (userName != null)
-                    {
-                        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+        //            if (userName != null)
+        //            {
+        //                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
 
-                        if (user != null)
-                        {
-                            var isRegister = await _dbContext.UserCourses.FirstOrDefaultAsync(x => x.UserId == user.Id && x.CourseId == course.Id);
+        //                if (user != null)
+        //                {
+        //                    var isRegister = await _dbContext.UserCourses.FirstOrDefaultAsync(x => x.UserId == user.Id && x.CourseId == course.Id);
 
-                            result.IsRegister = isRegister != null ? true : false;
-                        }
-                    }
-                }
+        //                    result.IsRegister = isRegister != null ? true : false;
+        //                }
+        //            }
+        //        }
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
-        }
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+        //    }
+        //}
 
-        public async Task<bool> RegisterCourseStudent(RegisterCourseStudentRequest request, HttpContext httpContext)
-        {
-            try
-            {
-                var course = await _dbContext.Courses
-                    .Include(c => c.Lessons)
-                    .ThenInclude(l => l.LessonContents)
-                    .FirstOrDefaultAsync(x => x.Slug == request.Slug);
+        //public async Task<bool> RegisterCourseStudent(RegisterCourseStudentRequest request, HttpContext httpContext)
+        //{
+        //    try
+        //    {
+        //        var course = await _dbContext.Courses
+        //            .Include(c => c.Lessons)
+        //            .ThenInclude(l => l.LessonContents)
+        //            .FirstOrDefaultAsync(x => x.Slug == request.Slug);
 
-                if (course == null)
-                {
-                    throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError);
-                }
+        //        if (course == null)
+        //        {
+        //            throw new ApiException("Không tìm thấy khoá học hợp lệ!", HttpStatusCode.InternalServerError);
+        //        }
 
-                if (httpContext.User.Claims.FirstOrDefault() == null)
-                {
-                    throw new ApiException("Thông tin người dùng đăng nhập không hợp lệ!", HttpStatusCode.Unauthorized);
-                }
+        //        if (httpContext.User.Claims.FirstOrDefault() == null)
+        //        {
+        //            throw new ApiException("Thông tin người dùng đăng nhập không hợp lệ!", HttpStatusCode.Unauthorized);
+        //        }
 
-                var userName = httpContext.User.Claims.First(x => x.Type == "UserName").Value;
+        //        var userName = httpContext.User.Claims.First(x => x.Type == "UserName").Value;
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+        //        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
 
-                var isRegister = await _dbContext.UserCourses.FirstOrDefaultAsync(x => x.UserId == user.Id && x.CourseId == course.Id);
+        //        var isRegister = await _dbContext.UserCourses.FirstOrDefaultAsync(x => x.UserId == user.Id && x.CourseId == course.Id);
 
-                if(isRegister != null) 
-                {
-                    throw new ApiException("Người dùng đã đăng ký khoá học!", HttpStatusCode.BadRequest);
-                }
+        //        if(isRegister != null) 
+        //        {
+        //            throw new ApiException("Người dùng đã đăng ký khoá học!", HttpStatusCode.BadRequest);
+        //        }
 
-                var contentLessonId = course.Lessons?.FirstOrDefault()?.LessonContents?.FirstOrDefault()?.Id;
+        //        var contentLessonId = course.Lessons?.FirstOrDefault()?.LessonContents?.FirstOrDefault()?.Id;
 
-                var userCourse = new UserCourse()
-                {
-                    UserId = user?.Id,
-                    CourseId = course.Id,
-                    LessonContentCurrentId = contentLessonId
-                };
+        //        var userCourse = new UserCourse()
+        //        {
+        //            UserId = user?.Id,
+        //            CourseId = course.Id,
+        //            LessonContentCurrentId = contentLessonId
+        //        };
 
-                userCourse.RegistrationDate = DateTime.Now;
+        //        userCourse.RegistrationDate = DateTime.Now;
 
-                await _dbContext.UserCourses.AddAsync(userCourse);
-                await _dbContext.SaveChangesAsync();
+        //        await _dbContext.UserCourses.AddAsync(userCourse);
+        //        await _dbContext.SaveChangesAsync();
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+        //    }
+        //}
         #endregion
     }
 }

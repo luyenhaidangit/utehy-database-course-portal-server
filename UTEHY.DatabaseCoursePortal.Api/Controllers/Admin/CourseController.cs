@@ -41,30 +41,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             }
         }
 
-        [HttpGet("get-course-with-section")]
-        public async Task<ApiResult<Course>> GetCourseWithSection()
-        {
-            try
-            {
-                var result = await _courseService.GetCourseWithSections();
-
-                return new ApiResult<Course>()
-                {
-                    Status = true,
-                    Message = "Lấy thông tin khoá học thành công!",
-                    Data = result
-                };
-            }
-            catch (ArgumentNullException ex)
-            {
-                throw new ArgumentNullException(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         [HttpPost("edit")]
         public async Task<ApiResult<Course>> EditCourse(EditCourseRequest request)
         {
