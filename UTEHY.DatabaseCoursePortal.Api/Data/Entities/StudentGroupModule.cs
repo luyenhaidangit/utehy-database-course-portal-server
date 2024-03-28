@@ -1,4 +1,6 @@
-﻿namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 {
     public class StudentGroupModule
     {
@@ -13,5 +15,8 @@
         public DateTime? JoinDate { get; set; }
 
         public virtual Student? Student { get; set; }
+
+        [JsonIgnore]
+        public virtual GroupModule GroupModule { get; set; }
     }
 }

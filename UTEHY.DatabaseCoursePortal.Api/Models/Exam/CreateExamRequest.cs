@@ -36,6 +36,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Exam
         public int? NumberQuestionEasy { get; set; }
 
         public List<ExamQuestionRequest>? Questions { get; set; }
+
+        public List<int> GroupModuleIds { get ; set; }
     }
 
 

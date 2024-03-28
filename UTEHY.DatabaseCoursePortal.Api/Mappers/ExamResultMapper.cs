@@ -17,6 +17,11 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
              //.ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.User.Name));
             CreateMap<ExamResultDto, ExamResult>();
 
+            CreateMap<CreateExamResultRequest, ExamResult>();
+            CreateMap<ExamResult, CreateExamResultRequest>();
+
+
+
 
         }
     }

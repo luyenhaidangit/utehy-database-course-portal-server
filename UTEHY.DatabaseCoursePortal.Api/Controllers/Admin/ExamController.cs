@@ -116,6 +116,36 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = results
             };
         }
+
+
+
+        [HttpPost("check-answers")]
+        public async Task<ApiResult<CheckQuestionResult>> CheckAnswers(List<CheckQuestionRequest> questionsToCheck)
+        {
+            var results = await _examService.CheckAnswers(questionsToCheck);
+
+            return new ApiResult<CheckQuestionResult>()
+            {
+                Status = true,
+                Message = "kiểm tra thành công",
+                Data = results
+            };
+        }
+
+        [HttpPost("add-exam-result")]
+        public async Task<ApiResult<bool>> AddExamResult([FromBody] CreateExamResultRequest request)
+        {
+            var result = await _examService.AddExamResult(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Tạo đề thi thành công",
+                Data = true
+            };
+        }
+
+
     }
 }
 

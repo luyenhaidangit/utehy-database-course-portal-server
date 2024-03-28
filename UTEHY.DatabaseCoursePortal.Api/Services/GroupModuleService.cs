@@ -12,6 +12,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using System.Drawing;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
 using System.Globalization;
+using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -108,6 +109,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
                 .Take(request.PageSize.Value)
                 .ToListAsync();
+
+                var itemsMapper = _mapper.Map<List<GroupModuleDto>>(items);
+
 
                 var result = new PagingResult<Data.Entities.GroupModule>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
 
@@ -783,6 +787,37 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 .ToListAsync();
 
                 return notifications;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+
+
+        public async Task<List<Data.Entities.GroupModule>> GetGroupModuleByUser(Guid userId)
+        {
+            try
+            {
+                var studentId = await _dbContext.Students
+                                  .Where(s => s.UserId == userId)
+                                  .Select(s => s.Id)
+                                  .SingleOrDefaultAsync();
+
+                if (studentId == null)
+                {
+                    return new List<Data.Entities.GroupModule>();
+                }
+
+                var groupModules = await _dbContext.StudentGroupModules
+                                                    .Where(sgm => sgm.StudentId == studentId)
+                                                    .Include(sgm => sgm.GroupModule)
+                                                        .ThenInclude(gm => gm.ExamGroupModules)
+                                                    .Select(sgm => sgm.GroupModule)
+                                                    .ToListAsync();
+
+                return groupModules;
             }
             catch (Exception ex)
             {

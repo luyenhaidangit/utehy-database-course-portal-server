@@ -516,11 +516,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                                     CreatedBy = userCurrent?.Id,
                                 };
 
-                                // Thêm Question vào CSDL (đối với EF, thường là thêm vào DbSet và SaveChanges)
                                 _dbContext.Questions.Add(question);
                                 await _dbContext.SaveChangesAsync();
 
-                                // Xử lý các câu trả lời và thêm chúng vào CSDL
                                 for (int col = 9; col <= 13; col++) 
                                 {
                                     if (worksheet.Cells[row, col].Value != null)

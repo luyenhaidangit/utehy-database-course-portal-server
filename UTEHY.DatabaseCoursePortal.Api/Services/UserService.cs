@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -110,7 +111,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                 var userDto = _mapper.Map<UserDto>(user);
 
+
                 userDto.Permissions = permissions;
+
 
                 return userDto;
             }
@@ -214,5 +217,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         //    return $"User{userCount + 1}";
         //}
+
+        public async Task<Student> GetStudentByUser(Guid userId)
+        {
+
+            var student = await _dbContext.Students
+                                 .FirstOrDefaultAsync(s => s.UserId == userId);
+
+            return student;
+        }
+
+
     }
 }

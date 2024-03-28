@@ -476,6 +476,35 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             var userDto = _mapper.Map<UserDto>(user);
 
+            //lấy các lớp mà sinh viên đã tham gia
+            if (permissions.Contains(Constants.Permission.Student))
+            {
+
+                var studentId = await _dbContext.Students
+                                   .Where(s => s.UserId == user.Id)
+                                   .Select(s => s.Id)
+                                   .SingleOrDefaultAsync();
+
+                //if (studentId == default)
+                //{
+                //    throw new ApiException("Không tìm thấy học sinh hợp lệ!", Constants.HttpStatusCode.BadRequest);
+                //}
+                if (studentId != null)
+                {
+                    List<int> groupModuleIds = await _dbContext.StudentGroupModules
+                                                   .Where(sgm => sgm.StudentId == studentId)
+                                                   .Select(sgm => sgm.GroupModuleId).Cast<int>()
+                                                   .ToListAsync();
+
+                    userDto.GroupModuleIds = groupModuleIds;
+                }
+
+              
+
+            }
+
+          
+
             userDto.Permissions = permissions;
 
             return userDto;

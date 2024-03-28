@@ -30,5 +30,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Question
         public List<QuestionTag> QuestionTags { get; set; }
 
         public List<Data.Entities.Tag> Tags { get; set; }
+        public List<QuestionAnswerDto> Answers { get; internal set; }
     }
 }
