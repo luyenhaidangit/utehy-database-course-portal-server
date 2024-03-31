@@ -7,7 +7,7 @@ using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class ScheduleController : ControllerBase
     {
@@ -23,6 +23,20 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         {
             var result = await _scheduleService.Create(request);
             return new ApiResult<Schedule>()
+            {
+                Status = true,
+                Message = "Tạo mới lịch học thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("create-list-schedule")]
+        public async Task<ApiResult<bool>> CreateListSchedule([FromBody] List<CreateScheduleRequest> request)
+        {
+
+            var result = await _scheduleService.CreateListSchedule(request);
+
+            return new ApiResult<bool>()
             {
                 Status = true,
                 Message = "Tạo mới lịch học thành công!",

@@ -9,7 +9,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public string? ClassPeriods { get; set; }
         public DateTime DateSchool { get; set; }
 
-        public virtual GroupModule GroupModule { get; set; }
         public List<Attendance> Attendances { get; set; }
     }
 }

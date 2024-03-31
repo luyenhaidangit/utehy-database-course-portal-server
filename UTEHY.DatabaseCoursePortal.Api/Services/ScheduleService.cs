@@ -6,6 +6,7 @@ using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Schedule;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
+using MoreLinq;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -25,11 +26,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             try
             {
                 var query = _dbContext.Schedules.Where(x => x.DeletedAt == null).AsQueryable();
-
-                if (!string.IsNullOrEmpty(request.GroupModuleName))
-                {
-                    query = query.Where(x => x.GroupModule.Name.ToLower().Contains(request.GroupModuleName));
-                }
 
                 if(request.GroupModuleId != null)
                 {
@@ -104,13 +100,44 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 {
                     GroupModuleId = request.GroupModuleId,
                     ClassPeriods = request.ClassPeriods,
-                    DateSchool = request.DateSchool,
+                    DateSchool = DateTime.Parse(request.DateSchool),
                 };
 
                 await _dbContext.Schedules.AddAsync(scheduleCreate);
                 await _dbContext.SaveChangesAsync();
 
                 return scheduleCreate;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+        public async Task<bool> CreateListSchedule(List<CreateScheduleRequest> request)
+        {
+            try
+            {
+                for(int i = 0; i< request.Count; i++)
+                {
+                    var groupModule = await _dbContext.GroupModules.FindAsync(request[i].GroupModuleId);
+                    if (groupModule == null)
+                    {
+                        throw new ApiException("Mã lớp không tồn tại trong hệ thống!", HttpStatusCode.InternalServerError);
+                    }
+
+                    // create schedule
+                    var scheduleCreate = new Schedule
+                    {
+                        GroupModuleId = request[i].GroupModuleId,
+                        ClassPeriods = request[i].ClassPeriods,
+                        DateSchool = DateTime.Parse(request[i].DateSchool),
+                    };
+
+                    await _dbContext.Schedules.AddAsync(scheduleCreate);
+                }
+                await _dbContext.SaveChangesAsync();
+
+                return true;
             }
             catch (Exception ex)
             {
