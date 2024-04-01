@@ -11,6 +11,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore.Configurations
             builder.ToTable("Schedules");
 
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.ClassRoom).HasMaxLength(50);
         }
     }
 }
