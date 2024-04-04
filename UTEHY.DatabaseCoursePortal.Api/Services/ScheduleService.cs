@@ -101,6 +101,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     GroupModuleId = request.GroupModuleId,
                     ClassPeriods = request.ClassPeriods,
                     DateSchool = DateTime.Parse(request.DateSchool),
+                    ClassRoom = request.ClassRoom
                 };
 
                 await _dbContext.Schedules.AddAsync(scheduleCreate);
@@ -131,6 +132,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         GroupModuleId = request[i].GroupModuleId,
                         ClassPeriods = request[i].ClassPeriods,
                         DateSchool = DateTime.Parse(request[i].DateSchool),
+                        ClassRoom = request[i].ClassRoom
                     };
 
                     await _dbContext.Schedules.AddAsync(scheduleCreate);
