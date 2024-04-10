@@ -38,9 +38,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             var lesson = _mapper.Map<Lesson>(request);
 
-            await _userService.AttachCreateInfo(section);
+            await _userService.AttachCreateInfo(lesson);
 
-            await _dbContext.Sections.AddAsync(section);
+            await _dbContext.Lessons.AddAsync(lesson);
 
             await _dbContext.SaveChangesAsync();
 
