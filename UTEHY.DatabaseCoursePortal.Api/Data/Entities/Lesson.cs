@@ -9,7 +9,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public string Title { get; set; }
 
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         public bool? Status { get; set; }
 
