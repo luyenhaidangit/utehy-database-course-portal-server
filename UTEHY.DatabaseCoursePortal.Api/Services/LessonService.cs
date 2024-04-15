@@ -22,7 +22,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         #region Manage lesson
         public async Task<List<Lesson>> GetLessonBySectionId(int sectionId)
         {
-            var result = await _dbContext.Lessons.Where(x => x.SectionId == sectionId).OrderBy(s => s.Priority).ToListAsync();
+            var result = await _dbContext.Lessons.Include(x => x.LessonContents).Where(x => x.SectionId == sectionId).OrderBy(s => s.Priority).ToListAsync();
 
             return result;
         }

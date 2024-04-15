@@ -42,6 +42,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var section = await _dbContext.Sections
                .Where(s => s.Id == id)
                .Include(s => s.Lessons.OrderBy(l => l.Priority))
+               .ThenInclude(x => x.LessonContents)
                .FirstOrDefaultAsync();
 
             if (section is null)
