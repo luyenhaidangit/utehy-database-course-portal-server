@@ -9,7 +9,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public string Title { get; set; }
 
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         public bool? Status { get; set; }
 
@@ -28,8 +28,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual User? UserDeleted { get; set; }
 
         public virtual Section Section { get; set; }
-        #endregion
 
         public virtual List<LessonContent> LessonContents { get; set; }
+        #endregion
     }
 }

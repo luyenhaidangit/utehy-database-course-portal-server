@@ -22,7 +22,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         #region Manage lesson
         public async Task<List<Lesson>> GetLessonBySectionId(int sectionId)
         {
-            var result = await _dbContext.Lessons.Where(x => x.SectionId == sectionId).OrderBy(s => s.Priority).ToListAsync();
+            var result = await _dbContext.Lessons.Include(x => x.LessonContents).Where(x => x.SectionId == sectionId).OrderBy(s => s.Priority).ToListAsync();
 
             return result;
         }
@@ -38,9 +38,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             var lesson = _mapper.Map<Lesson>(request);
 
-            await _userService.AttachCreateInfo(section);
+            await _userService.AttachCreateInfo(lesson);
 
-            await _dbContext.Sections.AddAsync(section);
+            await _dbContext.Lessons.AddAsync(lesson);
 
             await _dbContext.SaveChangesAsync();
 
