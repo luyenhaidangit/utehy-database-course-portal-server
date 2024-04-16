@@ -36,24 +36,56 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             {
                 StudentId = request.StudentId,
                 ScheduleId = request.ScheduleId,
+                Attendant = request.Attendant,
+                PermittedLeave = request.PermittedLeave,
+                UnpermittedLeave = request.UnpermittedLeave,
+                Note = request.Note
             };
             await _dbContext.Attendances.AddAsync(attendence);
-            await _dbContext.SaveChangesAsync();
 
-            foreach(var item in request.classPeriodRequests)
-            {
-                var classPeriod = new ClassPeriod
-                {
-                    NumberOfPeriod = item.NumberOfPeriod,
-                    IsActive = item.IsActive,
-                    AttendanceId = attendence.Id
-                };
-                await _dbContext.ClassPeriods.AddAsync(classPeriod);
-
-            }
             await _dbContext.SaveChangesAsync();
 
             return attendence;
+        }
+
+        public async Task<bool> CreateListAttendence(List<CreateAttendenceRequest> request)
+        {
+            try
+            {
+                for(int i = 0; i < request.Count; i++)
+                {
+                    var student = await _dbContext.Students.FirstOrDefaultAsync(s => s.StudentId == request[i].StudentId);
+                    if (student == null)
+                    {
+                        throw new ApiException("Không tìm thấy mã sinh viên hợp lệ!", HttpStatusCode.InternalServerError);
+                    }
+
+                    var schedule = await _dbContext.Schedules.FindAsync(request[i].ScheduleId);
+                    if (schedule == null)
+                    {
+                        throw new ApiException("Không tìm thấy lịch học nào!", HttpStatusCode.InternalServerError);
+                    }
+
+                    var attendence = new Attendance
+                    {
+                        StudentId = request[i].StudentId,
+                        ScheduleId = request[i].ScheduleId,
+                        Attendant = request[i].Attendant,
+                        PermittedLeave = request[i].PermittedLeave,
+                        UnpermittedLeave = request[i].UnpermittedLeave,
+                        Note = request[i].Note
+                    };
+                    await _dbContext.Attendances.AddAsync(attendence);
+
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Có lỗi xảy ra: ", ex);
+            }
         }
 
         public async Task<PagingResult<Attendance>> Get(GetAttendenceRequest request)

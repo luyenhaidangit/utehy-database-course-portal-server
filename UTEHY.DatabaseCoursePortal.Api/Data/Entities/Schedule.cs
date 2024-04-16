@@ -10,6 +10,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public DateTime DateSchool { get; set; }
         public string? ClassRoom { get; set; }
 
-        public List<Attendance> Attendances { get; set; }
+        public virtual List<Attendance> Attendances { get; set; }
     }
 }
