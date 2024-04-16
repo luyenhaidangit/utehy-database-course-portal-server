@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
@@ -16,13 +17,34 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly FileService _fileService;
+        private readonly UserService _userService;
 
-        public LessonContentService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService)
+        public LessonContentService(ApplicationDbContext dbContext, IMapper mapper, FileService fileService, UserService userService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _fileService = fileService;
+            _userService = userService;
         }
+
+        #region Manage
+        public async Task<List<LessonContent>> GetLessonContentByLessonId(int id)
+        {
+            var result = await _dbContext.LessonContents.Where(x => x.LessonId == id).ToListAsync();
+
+            return result;
+        }
+
+        public async Task<LessonContent> Create(LessonContent request)
+        {
+            await _userService.AttachCreateInfo(request);
+
+            await _dbContext.LessonContents.AddAsync(request);
+            await _dbContext.SaveChangesAsync();
+
+            return request;
+        }
+        #endregion
 
         public async Task<PagingResult<LessonContent>> Get(GetLessonContentRequest request)
         {
@@ -57,20 +79,6 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             var result = new PagingResult<LessonContent>(items, request.PageIndex.Value, request.PageSize.Value, total, totalPages);
 
             return result;
-        }
-
-
-
-        public async Task<LessonContent> Create(CreateLessonContentRequest request)
-        {
-           
-            var lessonContent = _mapper.Map<LessonContent>(request);
-            lessonContent.CreatedAt = DateTime.Now;
-
-            await _dbContext.LessonContents.AddAsync(lessonContent);
-            await _dbContext.SaveChangesAsync();
-
-            return lessonContent;
         }
     }
 }

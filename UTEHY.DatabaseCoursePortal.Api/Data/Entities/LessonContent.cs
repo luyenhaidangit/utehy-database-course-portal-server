@@ -22,7 +22,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public int? LessonId { get; set; }
 
-        public int? EstimatedStudyTime { get ; set; }
+        public int? EstimatedCompletionTime { get; set; }
 
         public int? PrerequisiteLessonId { get; set; }
     }
