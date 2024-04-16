@@ -2,14 +2,11 @@
 {
     public class CreateAttendenceRequest
     {
-        public int StudentId { get; set; }
+        public string? StudentId { get; set; }
         public int ScheduleId { get; set; }
-        public List<CreateClassPeriodRequest> classPeriodRequests { get; set; }
-    }
-
-    public class CreateClassPeriodRequest
-    {
-        public int NumberOfPeriod { get; set; }
-        public bool IsActive { get; set; }
+        public string? Note{ get; set; }
+        public bool Attendant { get; set; }
+        public bool PermittedLeave { get; set; }
+        public bool UnpermittedLeave { get; set; }
     }
 }

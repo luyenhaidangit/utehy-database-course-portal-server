@@ -42,5 +42,18 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("create-list-attendence")]
+        public async Task<ApiResult<bool>> CreateListAttendence([FromBody] List<CreateAttendenceRequest> request)
+        {
+            var result = await _attendenceService.CreateListAttendence(request);
+
+            return new ApiResult<bool>()
+            {
+                Status = true,
+                Message = "Điểm danh thành công!",
+                Data = result
+            };
+        }
     }
 }
