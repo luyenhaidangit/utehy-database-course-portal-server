@@ -25,5 +25,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int? EstimatedCompletionTime { get; set; }
 
         public int? PrerequisiteLessonId { get; set; }
+
+        public int? Priority { get; set; }
     }
 }

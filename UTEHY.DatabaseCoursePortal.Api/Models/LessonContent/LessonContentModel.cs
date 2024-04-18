@@ -24,6 +24,8 @@
 
         public int? PrerequisiteLessonId { get; set; }
 
+        public int? Priority { get; set; }
+
         public IFormFile? File { get; set; }
     }
 }
