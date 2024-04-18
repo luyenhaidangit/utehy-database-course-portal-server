@@ -47,7 +47,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<LessonContent>> Create([FromBody] LessonContent request)
+        public async Task<ApiResult<LessonContent>> Create([FromForm] LessonContentModel request)
         {
             var result = await _lessonContentService.Create(request);
 
@@ -60,7 +60,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
         }
 
         [HttpPost("edit")]
-        public async Task<ApiResult<LessonContent>> Edit([FromBody] LessonContent request)
+        public async Task<ApiResult<LessonContent>> Edit([FromForm] LessonContentModel request)
         {
             var result = await _lessonContentService.Edit(request);
 

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
+using UTEHY.DatabaseCoursePortal.Api.Enums;
 using UTEHY.DatabaseCoursePortal.Api.Models.Banner;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Lesson;
@@ -35,17 +36,27 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return result;
         }
 
-        public async Task<LessonContent> Create(LessonContent request)
+        public async Task<LessonContent> Create(LessonContentModel request)
         {
-            await _userService.AttachCreateInfo(request);
+            if(request.Type == (int)TypeLessonContent.File)
+            {
+                if (request?.File?.Length > 0)
+                {
+                    request.FileUrl = await _fileService.UploadFileAsync(request.File, PathFolder.LessonContent);
+                }
+            }
 
-            await _dbContext.LessonContents.AddAsync(request);
+            var lessonContent = _mapper.Map<LessonContent>(request);
+
+            await _userService.AttachCreateInfo(lessonContent);
+
+            await _dbContext.LessonContents.AddAsync(lessonContent);
             await _dbContext.SaveChangesAsync();
 
-            return request;
+            return lessonContent;
         }
 
-        public async Task<LessonContent> Edit(LessonContent request)
+        public async Task<LessonContent> Edit(LessonContentModel request)
         {
             var lessonContent = await _dbContext.LessonContents.FindAsync(request.Id);
 
@@ -59,6 +70,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             if (lesson is null)
             {
                 throw new BadHttpRequestException("Bài học không tồn tại trong hệ thống!");
+            }
+
+            if (request.Type == (int)TypeLessonContent.File)
+            {
+                if (request?.File?.Length > 0)
+                {
+                    request.FileUrl = await _fileService.UploadFileAsync(request.File, PathFolder.LessonContent);
+                }
             }
 
             _mapper.Map(request, lessonContent);

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
-using UTEHY.DatabaseCoursePortal.Api.Models.Lesson;
-using UTEHY.DatabaseCoursePortal.Api.Models.Comment;
 using UTEHY.DatabaseCoursePortal.Api.Models.LessonContent;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Mappers
@@ -14,6 +12,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<CreateLessonContentRequest, LessonContent>();
 
             CreateMap<LessonContent, LessonContent>();
+
+            CreateMap<LessonContentModel, LessonContent>();
         }
     }
 }
