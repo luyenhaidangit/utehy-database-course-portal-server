@@ -58,6 +58,32 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Data = result
             };
         }
+
+        [HttpPost("edit")]
+        public async Task<ApiResult<LessonContent>> Edit([FromBody] LessonContent request)
+        {
+            var result = await _lessonContentService.Edit(request);
+
+            return new ApiResult<LessonContent>()
+            {
+                Status = true,
+                Message = "Sửa nội dung bài học thành công!",
+                Data = result
+            };
+        }
+
+        [HttpPost("delete")]
+        public async Task<ApiResult<LessonContent>> Delete(EntityIdentityRequest<int> request)
+        {
+            var result = await _lessonContentService.Delete(request.Id);
+
+            return new ApiResult<LessonContent>()
+            {
+                Status = true,
+                Message = "Xoá tài liẹu thành công!",
+                Data = result
+            };
+        }
         #endregion
 
         [HttpGet("get")]

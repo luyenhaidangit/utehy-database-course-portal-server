@@ -44,6 +44,47 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
             return request;
         }
+
+        public async Task<LessonContent> Edit(LessonContent request)
+        {
+            var lessonContent = await _dbContext.LessonContents.FindAsync(request.Id);
+
+            if (lessonContent is null)
+            {
+                throw new BadHttpRequestException("Tài liệu không tồn tại trong hệ thống!");
+            }
+
+            var lesson = await _dbContext.Lessons.FindAsync(request.LessonId);
+
+            if (lesson is null)
+            {
+                throw new BadHttpRequestException("Bài học không tồn tại trong hệ thống!");
+            }
+
+            _mapper.Map(request, lessonContent);
+
+            await _userService.AttachUpdateInfo(lessonContent);
+
+            await _dbContext.SaveChangesAsync();
+
+            return lessonContent;
+        }
+
+        public async Task<LessonContent> Delete(int id)
+        {
+            var lessonContent = await _dbContext.LessonContents.FindAsync(id);
+
+            if (lessonContent is null)
+            {
+                throw new ArgumentNullException(nameof(lessonContent), "LessonContent không tồn tại trong hệ thống!");
+            }
+
+            await _userService.AttachDeleteInfo(lessonContent);
+
+            await _dbContext.SaveChangesAsync();
+
+            return lessonContent;
+        }
         #endregion
 
         public async Task<PagingResult<LessonContent>> Get(GetLessonContentRequest request)

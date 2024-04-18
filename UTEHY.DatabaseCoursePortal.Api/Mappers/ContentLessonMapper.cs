@@ -13,6 +13,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<LessonContent, CreateLessonContentRequest>();
             CreateMap<CreateLessonContentRequest, LessonContent>();
 
+            CreateMap<LessonContent, LessonContent>();
         }
     }
 }
