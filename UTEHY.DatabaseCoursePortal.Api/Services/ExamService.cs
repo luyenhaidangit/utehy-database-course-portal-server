@@ -178,6 +178,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                 examDto.Questions.Add(questionDto);
             }
+            var random = new Random();
+            examDto.Questions = examDto.Questions.OrderBy(q => random.Next()).ToList();
 
             return _mapper.Map<ExamDto>(examDto); 
         }
