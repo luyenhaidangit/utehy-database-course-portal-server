@@ -4,6 +4,7 @@
     {
         public int GroupModuleId { get; set; }
         public string? ClassPeriods { get; set; }
-        public DateTime DateSchool { get; set; }
+        public string DateSchool { get; set; }
+        public string? ClassRoom { get; set; }
     }
 }

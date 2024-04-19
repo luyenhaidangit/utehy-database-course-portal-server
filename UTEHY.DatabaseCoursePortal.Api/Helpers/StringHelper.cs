@@ -10,5 +10,11 @@
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        public static string NumberToLetter(int number)
+        {
+            // Chuyển đổi số thành mã ASCII và trừ đi mã ASCII của ký tự 'A' (65)
+            return ((char)(number + 64)).ToString();
+        }
     }
 }

@@ -4,7 +4,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.Attendence
 {
     public class GetAttendenceRequest : PagingRequest
     {
-        public int? StudentId { get; set; }
+        public string? StudentId { get; set; }
         public int? ScheduleId { get; set; }
     }
 }

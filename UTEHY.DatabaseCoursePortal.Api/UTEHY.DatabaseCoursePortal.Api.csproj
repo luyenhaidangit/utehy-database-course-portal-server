@@ -36,6 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\EntityFrameworkCore\Migrations\" />
+    <Folder Include="wwwroot\LessonContent\" />
     <Folder Include="wwwroot\Page\" />
   </ItemGroup>
 

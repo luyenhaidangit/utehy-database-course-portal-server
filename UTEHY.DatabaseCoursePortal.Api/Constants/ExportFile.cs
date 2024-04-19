@@ -6,6 +6,8 @@
 
         public const string ListScoreStudentExcel = "BangDiemSinhVien.xlsx";
 
+        public const string AttendenceSheetExcel = "BangDiemDanhSinhVien.xlsx";
+
         public const string ListStudentExcelTab = "Danh sách sinh viên";
 
         public const string ListScoreStudentExcelTab = "Danh sách điểm thi sinh viên";
