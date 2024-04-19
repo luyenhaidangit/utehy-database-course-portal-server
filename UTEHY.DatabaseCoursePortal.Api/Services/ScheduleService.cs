@@ -200,42 +200,55 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                         // tổng số buổi nghỉ
                         List<double> numberLessonAbsented = new List<double>();
 
-                        for (int i = 0; i < students.Count; i++)
+                        List<string> listStudentId = new List<string>();
+
+                        if(students != null && students.Count > 0) 
                         {
-                            worksheet.Cells[i + 3, 1].Value = i + 1;
-                            worksheet.Cells[i + 3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                            worksheet.Cells[i + 3, 2].Value = students[i].User.Name;
-                            worksheet.Cells[i + 3, 3].Value = students[i].StudentId;
-                            worksheet.Cells[i + 3, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                            worksheet.Cells[i + 3, 4 + schedules.Count].Value = schedules.Count;
-                            worksheet.Cells[i + 3, 4 + schedules.Count].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            for (int i = 0; i < students.Count; i++)
+                            {
+                                worksheet.Cells[i + 3, 1].Value = i + 1;
+                                worksheet.Cells[i + 3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                                worksheet.Cells[i + 3, 2].Value = students[i].User.Name;
+                                worksheet.Cells[i + 3, 3].Value = students[i].StudentId;
+                                worksheet.Cells[i + 3, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                                worksheet.Cells[i + 3, 4 + schedules.Count].Value = schedules.Count;
+                                worksheet.Cells[i + 3, 4 + schedules.Count].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                            // khởi tạo giá trị ban đầu cho danh sách đếm, giá trị ban đầu = 0;
-                            // mỗi phần tử tương ứng với 1 sinh viên, giá trị ban đầu = 0;
-                            numberLessonPresent.Add(0);
-                            numberLessonAbsented.Add(0);
+                                // khởi tạo giá trị ban đầu cho danh sách đếm, giá trị ban đầu = 0;
+                                // mỗi phần tử tương ứng với 1 sinh viên, giá trị ban đầu = 0;
+                                numberLessonPresent.Add(0);
+                                numberLessonAbsented.Add(0);
+
+                                // lưu trữ list studentId để hiển thị bảng điểm danh lần lượt theo listStudentId
+                                listStudentId.Add(students[i].StudentId);
+                            }
                         }
-
                         int numberLessonStudied = 0;
                         for (int i = 0; i < schedules.Count; i++)
                         {
+
+                            // sắp xếp lại bảng điểm danh lần lượt theo listStudentId
+                            List<Attendance> sortedAttendences = listStudentId
+                                .Join(schedules[i].Attendances, id => id, attendance => attendance.StudentId, (id, attendance) => attendance)
+                                .ToList();
+
                             worksheet.Cells[2, i + 4].Value = $"{schedules[i].DateSchool.Day}/{schedules[i].DateSchool.Month}/{schedules[i].DateSchool.Year}";
 
-                            for (int j = 0; j < schedules[i].Attendances.Count; j++)
+                            for (int j = 0; j < sortedAttendences.Count; j++)
                             {
                                 numberLessonStudied++;
                                 string attendenceValue = "";
-                                if (schedules[i].Attendances[j].Attendant == true)
+                                if (sortedAttendences[j].Attendant == true)
                                 {
                                     numberLessonPresent[j] = numberLessonPresent[j] + 1;
                                     attendenceValue = "C";
                                 }    
-                                else if (schedules[i].Attendances[j].PermittedLeave == true)
+                                else if (sortedAttendences[j].PermittedLeave == true)
                                 {
                                     numberLessonAbsented[j] = numberLessonAbsented[j] + 1;
                                     attendenceValue = "P";
                                 }    
-                                else if (schedules[i].Attendances[j].UnpermittedLeave == true)
+                                else if (sortedAttendences[j].UnpermittedLeave == true)
                                 {
                                     numberLessonAbsented[j] = numberLessonAbsented[j] + 1;
                                     attendenceValue = "K";
