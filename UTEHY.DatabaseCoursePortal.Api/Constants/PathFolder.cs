@@ -8,5 +8,7 @@
         public const string Post = "Post";
 
         public const string User = "User";
+
+        public const string LessonContent = "LessonContent";
     }
 }

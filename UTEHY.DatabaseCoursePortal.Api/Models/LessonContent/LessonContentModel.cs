@@ -1,8 +1,6 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
-
-namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
+﻿namespace UTEHY.DatabaseCoursePortal.Api.Models.LessonContent
 {
-    public class LessonContent : EntityBase
+    public class LessonContentModel
     {
         public int Id { get; set; }
 
@@ -27,5 +25,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int? PrerequisiteLessonId { get; set; }
 
         public int? Priority { get; set; }
+
+        public IFormFile? File { get; set; }
     }
 }
