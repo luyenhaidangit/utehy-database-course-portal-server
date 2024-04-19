@@ -145,6 +145,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             };
         }
 
+        [HttpGet("get-exam-result-by-student-exam-id")]
+        public async Task<ApiResult<ExamResultDto>> GetExamResult([FromQuery] GetOneExamByStudent request)
+        {
+            var result = await _examService.GetExamResult(request.StudentId, request.ExamId);
+
+            return new ApiResult<ExamResultDto>()
+            {
+                Status = true,
+                Message = "Thành công",
+                Data = result
+            };
+        }
+
 
     }
 }

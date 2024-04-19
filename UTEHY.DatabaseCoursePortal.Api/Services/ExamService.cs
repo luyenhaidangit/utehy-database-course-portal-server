@@ -392,13 +392,13 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         }
 
 
-        public async Task<ExamResult?> GetExamResults(int studentId, int examId)
+        public async Task<ExamResultDto?> GetExamResult(int studentId, int examId)
         {
             try
             {
                 var result = await _dbContext.ExamResults.FirstOrDefaultAsync(x => x.StudentId == studentId && x.ExamId == examId);
 
-                return result;
+                return _mapper.Map<ExamResultDto>(result);
             }
             catch (Exception ex)
             {
@@ -648,6 +648,25 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return examR;
 
         }
+
+
+        //public async Task<ExamResult?> GetExamResult(int studentId, int examId)
+        //{
+        //    //var result= await _dbContext.
+
+        //    //return result;
+
+        //    try
+        //    {
+        //        var result = await _dbContext.ExamResults.FirstOrDefaultAsync(x => x.StudentId == studentId && x.ExamId == examId);
+
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+        //    }
+        //}
 
     }
 }
