@@ -476,7 +476,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
 
 
-                            for (int row = 2; row <= rowCount; row++) 
+                            for (int row = 2; row < rowCount-1; row++) 
                             {
                                 var Title = worksheet.Cells[row, 1].Value?.ToString().Trim();
                                 var Feedback = worksheet.Cells[row, 2].Value?.ToString().Trim();
@@ -488,30 +488,30 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                                 var SectionId = worksheet.Cells[row, 8].Value?.ToString().Trim();
 
 
-                                if (string.IsNullOrEmpty(Title))
-                                {
-                                    throw new ApiException("Dữ liệu trường tiêu đề câu hỏi dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
-                                }
+                                //if (string.IsNullOrEmpty(Title))
+                                //{
+                                //    throw new ApiException("Dữ liệu trường tiêu đề câu hỏi dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                //}
 
-                                if (string.IsNullOrEmpty(Feedback))
-                                {
-                                    throw new ApiException("Dữ liệu trường phản hồi câu hỏi dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
-                                }
+                                //if (string.IsNullOrEmpty(Feedback))
+                                //{
+                                //    throw new ApiException("Dữ liệu trường phản hồi câu hỏi dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                //}
 
-                                if (string.IsNullOrEmpty(Score))
-                                {
-                                    throw new ApiException("Dữ liệu trường điểm số câu hỏi " + row + " không được để trống!", HttpStatusCode.BadRequest);
-                                }
+                                //if (string.IsNullOrEmpty(Score))
+                                //{
+                                //    throw new ApiException("Dữ liệu trường điểm số câu hỏi " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                //}
 
                                 Question question = new Question
                                 {
                                     Title = Title,
                                     Feedback = Feedback,
-                                    Score=int.Parse(Score),
-                                    QuestionCategoryId=int.Parse(QuestionCategoryId),
-                                    Difficulty=int.Parse(Difficulty),
-                                    Type=int.Parse(Type),
-                                    SectionId=int.Parse(SectionId),
+                                    Score = int.Parse(Score),
+                                    QuestionCategoryId = int.Parse(QuestionCategoryId),
+                                    Difficulty = int.Parse(Difficulty),
+                                    Type = int.Parse(Type),
+                                    SectionId = int.Parse(SectionId),
                                     CreatedAt = DateTime.Now,
                                     CreatedBy = userCurrent?.Id,
                                 };
