@@ -39,5 +39,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual List<ExamQuestion> ExamQuestions { get; set; }
 
         public virtual List<ExamResult> ExamResults { get; set; }
+
+        public virtual List<ExamGroupModule> ExamGroupModules { get; set; }
+
     }
 }

@@ -1,4 +1,6 @@
-﻿using UTEHY.DatabaseCoursePortal.Api.Configurations;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using System.Text.Json.Serialization;
+using UTEHY.DatabaseCoursePortal.Api.Configurations;
 using UTEHY.DatabaseCoursePortal.Api.Middlewares;
 using UTEHY.DatabaseCoursePortal.Api.Providers;
 using UTEHY.DatabaseCoursePortal.Api.Services;
@@ -14,6 +16,11 @@ builder.Services.AddFluentValidationProvider();
 builder.Services.AddDependencyInjectionProvider();
 builder.Services.AddSwaggerProvider();
 builder.Services.AddAutoMapperProvider();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 var app = builder.Build();
 

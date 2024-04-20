@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -7,6 +8,7 @@ using System.Xml.Linq;
 using Twilio.Rest.Api.V2010.Account;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
+using UTEHY.DatabaseCoursePortal.Api.Data.Entities.Interface;
 using UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore;
 using UTEHY.DatabaseCoursePortal.Api.Exceptions;
 using UTEHY.DatabaseCoursePortal.Api.Models.Account;
@@ -35,6 +37,51 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
+
+        #region Auth
+        public async Task<User> GetUserCurrentAsync()
+        {
+            var username = _httpContextAccessor?.HttpContext?.User.FindFirst(x => x.Type == ClaimType.UserName)?.Value;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new UnauthorizedAccessException("Người dùng chưa đăng nhập hoặc phiên làm việc đã hết hạn.");
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                throw new BadHttpRequestException("Người dùng không tồn tại trong hệ thống!");
+            }
+
+            return user;
+        }
+        #endregion
+
+        #region Action
+        public async Task AttachCreateInfo<TEntity>(TEntity entity) where TEntity : EntityBase
+        {
+            var userCurrent = await GetUserCurrentAsync();
+            entity.CreatedAt = DateTime.Now;
+            entity.CreatedBy = userCurrent?.Id;
+        }
+
+        public async Task AttachUpdateInfo<TEntity>(TEntity entity) where TEntity : EntityBase
+        {
+            var userCurrent = await GetUserCurrentAsync();
+            entity.UpdatedAt = DateTime.Now;
+            entity.UpdatedBy = userCurrent?.Id;
+        }
+
+        public async Task AttachDeleteInfo<TEntity>(TEntity entity) where TEntity : EntityBase
+        {
+            var userCurrent = await GetUserCurrentAsync();
+            entity.DeletedAt = DateTime.Now;
+            entity.DeletedBy = userCurrent?.Id;
+        }
+        #endregion
+
 
         public async Task<User> Create(CreateUserRequest request)
         {
@@ -110,7 +157,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                 var userDto = _mapper.Map<UserDto>(user);
 
+
                 userDto.Permissions = permissions;
+
 
                 return userDto;
             }
@@ -166,19 +215,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         }
 
-        public async Task<User?> GetUserCurrentAsync()
-        {
-            var username = _httpContextAccessor?.HttpContext?.User.FindFirst(x => x.Type == ClaimType.UserName)?.Value;
-
-            if (string.IsNullOrEmpty(username))
-            {
-                throw new UnauthorizedAccessException("Người dùng chưa đăng nhập hoặc phiên làm việc đã hết hạn.");
-            }
-
-            var user = await _userManager.FindByNameAsync(username);
-
-            return user;
-        }
+        
 
         public async Task<List<string>> GetPermissionAsync(User user)
         {
@@ -202,6 +239,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             return permissions;
         }
 
+        
 
         //public async Task<string> GenerateAutoUsername()
         //{
@@ -209,5 +247,16 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
         //    return $"User{userCount + 1}";
         //}
+
+        public async Task<Student> GetStudentByUser(Guid userId)
+        {
+
+            var student = await _dbContext.Students
+                                 .FirstOrDefaultAsync(s => s.UserId == userId);
+
+            return student;
+        }
+
+
     }
 }

@@ -18,6 +18,9 @@ using UTEHY.DatabaseCoursePortal.Api.Models.Question;
 using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Irony.Parsing;
+using OfficeOpenXml;
+using System.Globalization;
+using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -442,5 +445,118 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
         {
             return correctAnswers.FirstOrDefault()?.Content ?? "";
         }
-    }   
+
+
+
+
+
+
+
+
+
+
+
+
+        public async Task ImportQuestionsExcel(ImportQuestionsRequest request)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        var userCurrent = await _userService.GetCurrentUserAsync();
+
+                        await request.File.CopyToAsync(stream);
+
+                        using (var package = new ExcelPackage(stream))
+                        {
+                            var worksheet = package.Workbook.Worksheets[0];
+                            var rowCount = worksheet.Dimension.End.Row;
+
+
+
+                            for (int row = 2; row < rowCount-1; row++) 
+                            {
+                                var Title = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                                var Feedback = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                                var Score = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                                var UserId = worksheet.Cells[row, 4].Value?.ToString().Trim();
+                                var QuestionCategoryId = worksheet.Cells[row, 5].Value?.ToString().Trim();
+                                var Difficulty = worksheet.Cells[row, 6].Value?.ToString().Trim();
+                                var Type = worksheet.Cells[row, 7].Value?.ToString().Trim();
+                                var SectionId = worksheet.Cells[row, 8].Value?.ToString().Trim();
+
+
+                                //if (string.IsNullOrEmpty(Title))
+                                //{
+                                //    throw new ApiException("Dữ liệu trường tiêu đề câu hỏi dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                //}
+
+                                //if (string.IsNullOrEmpty(Feedback))
+                                //{
+                                //    throw new ApiException("Dữ liệu trường phản hồi câu hỏi dòng " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                //}
+
+                                //if (string.IsNullOrEmpty(Score))
+                                //{
+                                //    throw new ApiException("Dữ liệu trường điểm số câu hỏi " + row + " không được để trống!", HttpStatusCode.BadRequest);
+                                //}
+
+                                Question question = new Question
+                                {
+                                    Title = Title,
+                                    Feedback = Feedback,
+                                    Score = int.Parse(Score),
+                                    QuestionCategoryId = int.Parse(QuestionCategoryId),
+                                    Difficulty = int.Parse(Difficulty),
+                                    Type = int.Parse(Type),
+                                    SectionId = int.Parse(SectionId),
+                                    CreatedAt = DateTime.Now,
+                                    CreatedBy = userCurrent?.Id,
+                                };
+
+                                _dbContext.Questions.Add(question);
+                                await _dbContext.SaveChangesAsync();
+
+                                for (int col = 9; col <= 13; col++) 
+                                {
+                                    if (worksheet.Cells[row, col].Value != null)
+                                    {
+                                        QuestionAnswer answer = new QuestionAnswer
+                                        {
+                                            Content = worksheet.Cells[row, col].Value.ToString(),
+                                            IsCorrect = (col - 8) == Convert.ToInt32(worksheet.Cells[row, 14].Value),
+                                            Score = question.Score,
+                                            QuestionId = question.Id,
+                                            CreatedAt = DateTime.Now,
+                                            CreatedBy = userCurrent?.Id,
+                                        };
+
+                                        _dbContext.QuestionAnswers.Add(answer);
+                                    }
+                                }
+                                await _dbContext.SaveChangesAsync();
+                            }
+
+                       
+
+                        }
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+                }
+            }
+        }
+
+
+
+
+    }
 }

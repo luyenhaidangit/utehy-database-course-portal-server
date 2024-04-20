@@ -11,6 +11,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
             CreateMap<Course, CourseHomeDto>()
             .ForMember(dest => dest.NumberRegistrations, opt => opt.MapFrom(src => src.UserCourses != null ? src.UserCourses.Count : 0));
 
+            CreateMap<Course, CourseWithSection>();
+
             CreateMap<EditDatabaseCourseRequest, Course>();
 
             CreateMap<Course, CreateCourseRequest>();
@@ -18,6 +20,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Mappers
 
             CreateMap<Course, CourseLearningUser>();
             CreateMap<CourseLearningUser, Course>();
+
+            CreateMap<EditCourseRequest, Course>();
         }
     }
 }

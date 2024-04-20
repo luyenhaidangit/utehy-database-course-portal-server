@@ -2,9 +2,6 @@
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Lesson;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
-using UTEHY.DatabaseCoursePortal.Api.Models.Lesson;
-using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
-using UTEHY.DatabaseCoursePortal.Api.Models.Teacher;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
@@ -20,43 +17,103 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             _lessonService = lessonService;
         }
 
-        [HttpGet("get")]
-        public async Task<ApiResult<PagingResult<Lesson>>> Get([FromQuery] GetLessonRequest request)
+        #region Manage lesson
+        [HttpGet("get-lesson-by-section-id")]
+        public async Task<ApiResult<List<Lesson>>> GetLessonBySectionId([FromQuery] int id)
         {
-            var result = await _lessonService.Get(request);
-
-            return new ApiResult<PagingResult<Lesson>>()
+            try
             {
-                Status = true,
-                Message = "Lấy thông tin danh sách bài giảng thành công!",
-                Data = result
-            };
-        }
+                var result = await _lessonService.GetLessonBySectionId(id);
 
-        [HttpGet("get-by-id")]
-        public async Task<ApiResult<Lesson>> GetById([FromQuery] int id)
-        {
-            var result = await _lessonService.GetById(id);
-
-            return new ApiResult<Lesson>()
+                return new ApiResult<List<Lesson>>()
+                {
+                    Status = true,
+                    Message = "Lấy danh sách bài học thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
             {
-                Status = true,
-                Message = "Danh sách Lesson đã được lấy thành công!",
-                Data = result
-            };
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         [HttpPost("create")]
-        public async Task<ApiResult<Lesson>> Create([FromForm] CreateLessonRequest request)
+        public async Task<ApiResult<Lesson>> Create(CreateLessonRequest request)
         {
-            var result = await _lessonService.Create(request);
+            try
+            {
+                var result = await _lessonService.Create(request);
+
+                return new ApiResult<Lesson>()
+                {
+                    Status = true,
+                    Message = "Tạo mới bài học thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPost("edit")]
+        public async Task<ApiResult<Lesson>> Edit(EditLessonRequest request)
+        {
+            try
+            {
+                var result = await _lessonService.Edit(request);
+
+                return new ApiResult<Lesson>()
+                {
+                    Status = true,
+                    Message = "Cập nhật bài học thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPost("delete")]
+        public async Task<ApiResult<Lesson>> Delete(EntityIdentityRequest<int> request)
+        {
+            var result = await _lessonService.Delete(request.Id);
 
             return new ApiResult<Lesson>()
             {
                 Status = true,
-                Message = "Danh sách Lesson đã được lấy thành công!",
+                Message = "Xoá bài học thành công!",
                 Data = result
             };
         }
+        #endregion
     }
 }

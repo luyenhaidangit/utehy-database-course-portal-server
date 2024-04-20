@@ -12,6 +12,7 @@ using UTEHY.DatabaseCoursePortal.Api.Models.GroupModule;
 using System.Drawing;
 using UTEHY.DatabaseCoursePortal.Api.Helpers;
 using System.Globalization;
+using UTEHY.DatabaseCoursePortal.Api.Models.Student;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Services
 {
@@ -29,7 +30,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
             _mapper = mapper;
             _userService = userService;
             _userManager = userManager;
-            _configService = configService; 
+            _configService = configService;
         }
 
         public async Task<PagingResult<Data.Entities.GroupModule>> Get(GetGroupModuleRequest request)
@@ -108,6 +109,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 .Skip((request.PageIndex.Value - 1) * request.PageSize.Value)
                 .Take(request.PageSize.Value)
                 .ToListAsync();
+
+                var itemsMapper = _mapper.Map<List<GroupModuleDto>>(items);
+
 
                 var result = new PagingResult<Data.Entities.GroupModule>(items, request.PageIndex.Value, request.PageSize.Value, request.SortBy, request.OrderBy, total, totalPages);
 
@@ -209,6 +213,28 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
             }
         }
+        public async Task<List<Data.Entities.GroupModule>> GetByExamId(int id)
+        {
+            try
+            {
+                var groupModule = await _dbContext.GroupModules
+                .Include(x => x.ExamGroupModules)
+                 .Where(group => group.DeletedAt == null &&
+                    group.ExamGroupModules.Any(examGroupModule => examGroupModule.ExamId == id))
+                 .ToListAsync();
+                if (groupModule == null)
+                {
+                    throw new ApiException("Không tìm thấy nhóm học phần hợp lệ!", HttpStatusCode.InternalServerError);
+                }
+
+                return groupModule;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
 
         public async Task<Data.Entities.GroupModule> Create(CreateGroupModuleRequest request)
         {
@@ -276,7 +302,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
 
                 var currentTime = DateTime.Now;
 
-                if(request.Type == Constants.GroupModule.GetCode)
+                if (request.Type == Constants.GroupModule.GetCode)
                 {
                     if (groupModule.ExpiryTimeInvitation <= currentTime || groupModule.ExpiryTimeInvitation == null)
                     {
@@ -718,14 +744,14 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                     _dbContext.StudentGroupModules.RemoveRange(studentsToRemove);
                     await _dbContext.SaveChangesAsync();
 
-                    await transaction.CommitAsync(); 
+                    await transaction.CommitAsync();
 
-                    return true; 
+                    return true;
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync(); 
-                                                      
+                    await transaction.RollbackAsync();
+
                     throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
                 }
             }
@@ -761,6 +787,37 @@ namespace UTEHY.DatabaseCoursePortal.Api.Services
                 .ToListAsync();
 
                 return notifications;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message, HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+
+
+        public async Task<List<Data.Entities.GroupModule>> GetGroupModuleByUser(Guid userId)
+        {
+            try
+            {
+                var studentId = await _dbContext.Students
+                                  .Where(s => s.UserId == userId)
+                                  .Select(s => s.Id)
+                                  .SingleOrDefaultAsync();
+
+                if (studentId == null)
+                {
+                    return new List<Data.Entities.GroupModule>();
+                }
+
+                var groupModules = await _dbContext.StudentGroupModules
+                                                    .Where(sgm => sgm.StudentId == studentId)
+                                                    .Include(sgm => sgm.GroupModule)
+                                                        .ThenInclude(gm => gm.ExamGroupModules)
+                                                    .Select(sgm => sgm.GroupModule)
+                                                    .ToListAsync();
+
+                return groupModules;
             }
             catch (Exception ex)
             {

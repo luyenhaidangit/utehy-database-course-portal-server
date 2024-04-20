@@ -11,6 +11,7 @@ using Google.Apis.Auth;
 using UTEHY.DatabaseCoursePortal.Api.Services;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
+using UTEHY.DatabaseCoursePortal.Api.Models.Exam;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers
 {
@@ -393,17 +394,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers
             };
         }
 
-        [HttpPost]
-        [Route("logout")]
-        public async Task<ApiResult<string>> Logout()
-        {
-            await _authService.Logout();
 
-            return new ApiResult<string>()
+        //GetStudentByUser
+
+        [HttpGet("get-student-user-id")]
+        public async Task<ApiResult<Data.Entities.Student>> GetStudentByUser([FromQuery] Guid userId)
+        {
+            var result = await _userService.GetStudentByUser(userId);
+
+            return new ApiResult<Data.Entities.Student>()
             {
                 Status = true,
-                Message = "Đăng xuất thành công!",
-                Data = null
+                Message = "Lấy thông tin sinh viên thành công!",
+                Data = result
             };
         }
     }

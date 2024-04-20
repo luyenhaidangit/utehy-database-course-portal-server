@@ -10,6 +10,9 @@ namespace UTEHY.DatabaseCoursePortal.Api.Models.User
 
         public List<string> Permissions { get; set; }
 
+        public List<int>? GroupModuleIds { get; set; }
+
+
 
     }
 }

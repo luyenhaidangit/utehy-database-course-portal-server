@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using Twilio.Http;
 using UTEHY.DatabaseCoursePortal.Api.Constants;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
@@ -103,6 +104,19 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             var result = await _groupModuleService.GetById(request.Id);
 
             return new ApiResult<Data.Entities.GroupModule>()
+            {
+                Status = true,
+                Message = "Lấy thông tin nhóm học phần thành công!",
+                Data = result
+            };
+        }
+
+        [HttpGet("get-by-exam-id")]
+        public async Task<ApiResult<List<Data.Entities.GroupModule>>> GetByExamId([FromQuery] DeleteRequest request)
+        {
+            var result = await _groupModuleService.GetByExamId(request.Id);
+
+            return new ApiResult<List<Data.Entities.GroupModule>>()
             {
                 Status = true,
                 Message = "Lấy thông tin nhóm học phần thành công!",
@@ -224,6 +238,21 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
                 Message = "Lấy danh sách thông báo thành công!",
                 Data = result
             };
+        }
+
+        [HttpGet("get-group-module-by-user")]
+        public async Task<ApiResult<List<Data.Entities.GroupModule>>> GetGroupModuleByUser([FromQuery] Guid userId)
+        {
+
+            var result = await _groupModuleService.GetGroupModuleByUser(userId);
+
+            return new ApiResult<List<Data.Entities.GroupModule>>()
+            {
+                Status = true,
+                Message = "Lấy danh sách nhóm thành công!",
+                Data = result
+            };
+
         }
     }
 }

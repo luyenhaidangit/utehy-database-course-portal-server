@@ -54,6 +54,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<NotificationGroupModule> NotificationGroupModules { get; set; } = null!;
         public virtual DbSet<Section> Sections { get; set; } = null!;
+        public virtual DbSet<Schedule> Schedules { get; set; } = null!;
+        public virtual DbSet<Attendance> Attendances { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -93,6 +95,8 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.ApplyConfiguration(new NotificationConfiguration());
             builder.ApplyConfiguration(new NotificationGroupModuleConfiguration());
             builder.ApplyConfiguration(new SectionConfiguration());
+            builder.ApplyConfiguration(new ScheduleConfiguration());
+            builder.ApplyConfiguration(new AttendanceConfiguration());
 
             //Entity
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaims");
@@ -106,7 +110,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.EntityFrameworkCore
             builder.Entity<Comment>().HasQueryFilter(x => x.DeletedAt == null);
 
             //Seeder 
-            builder.Seed();
+            //builder.Seed();
         }
 
         public override int SaveChanges()

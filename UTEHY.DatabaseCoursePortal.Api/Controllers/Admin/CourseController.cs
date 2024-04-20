@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UTEHY.DatabaseCoursePortal.Api.Services;
 using UTEHY.DatabaseCoursePortal.Api.Data.Entities;
 using UTEHY.DatabaseCoursePortal.Api.Models.Common;
 using UTEHY.DatabaseCoursePortal.Api.Models.Course;
-using UTEHY.DatabaseCoursePortal.Api.Models.QuestionCategory;
-using UTEHY.DatabaseCoursePortal.Api.Services;
 
 namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
 {
@@ -18,30 +17,52 @@ namespace UTEHY.DatabaseCoursePortal.Api.Controllers.Admin
             _courseService = courseService;
         }
 
-        [HttpGet("get-database-course")]
-        public async Task<ApiResult<Course>> GetDatabaseCourse()
+        [HttpGet("get")]
+        public async Task<ApiResult<Course>> GetCourse()
         {
-            var result = await _courseService.GetDatabaseCourse();
-
-            return new ApiResult<Course>()
+            try
             {
-                Status = true,
-                Message = "Lấy thông tin khoá học thành công!",
-                Data = result
-            };
+                var result = await _courseService.GetCourse();
+
+                return new ApiResult<Course>()
+                {
+                    Status = true,
+                    Message = "Lấy thông tin khoá học thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        [HttpPost("edit-database-course")]
-        public async Task<ApiResult<Course>> EditDatabaseCourse(EditDatabaseCourseRequest request)
+        [HttpPost("edit")]
+        public async Task<ApiResult<Course>> EditCourse(EditCourseRequest request)
         {
-            var result = await _courseService.EditDatabaseCourse(request);
-
-            return new ApiResult<Course>()
+            try
             {
-                Status = true,
-                Message = "Cập nhật thông tin khoá học thành công!",
-                Data = result
-            };
+                var result = await _courseService.EditCourse(request);
+
+                return new ApiResult<Course>()
+                {
+                    Status = true,
+                    Message = "Cập nhật thông tin khoá học thành công!",
+                    Data = result
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

@@ -13,5 +13,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public virtual User User { get; set; }
 
         public virtual List<StudentGroupModule> StudentGroupModules { get; set; }
+
+        public virtual List<Attendance> Attendances { get; set; }
     }
 }

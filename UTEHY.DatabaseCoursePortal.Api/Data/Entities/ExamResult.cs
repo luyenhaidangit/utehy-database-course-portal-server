@@ -19,5 +19,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
         public int? NumberCorrectAnswers { get; set; }
 
         public int? NumberChangeTab { get; set; }
+
+        public virtual Student Student { get; set; }
     }
 }

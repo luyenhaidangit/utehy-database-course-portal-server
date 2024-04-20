@@ -8,7 +8,7 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public bool? IsPublished { get; set; }
 
@@ -20,8 +20,12 @@ namespace UTEHY.DatabaseCoursePortal.Api.Data.Entities
 
         public string? FileUrl { get; set; }
 
-        public int LessonId { get; set; }
+        public int? LessonId { get; set; }
 
-        public TimeSpan? EstimatedStudyTime { get; set; }
+        public int? EstimatedCompletionTime { get; set; }
+
+        public int? PrerequisiteLessonId { get; set; }
+
+        public int? Priority { get; set; }
     }
 }

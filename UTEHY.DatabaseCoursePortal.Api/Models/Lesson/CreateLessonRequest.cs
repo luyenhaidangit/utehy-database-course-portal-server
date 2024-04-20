@@ -4,10 +4,12 @@
     {
         public string Title { get; set; }
 
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
-        public bool? IsPublished { get; set; }
+        public bool Status { get; set; }
 
-        public int? CourseId { get; set; }
+        public int SectionId { get; set; }
+
+        public int Priority { get; set; }
     }
 }
